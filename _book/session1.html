@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2&nbsp; Foundations – CRDDS-IBS-R-workshop</title>
+<title>2&nbsp; Foundations – A Crash Course in R for Social Scientists</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -100,7 +135,7 @@ ul.task-list li input[type="checkbox"] {
       <a href="./index.html" class="sidebar-logo-link">
       </a>
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">CRDDS-IBS-R-workshop</a> 
+      <a href="./">A Crash Course in R for Social Scientists</a> 
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -152,6 +187,21 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#r-and-r-studio-installation" id="toc-r-and-r-studio-installation" class="nav-link active" data-scroll-target="#r-and-r-studio-installation"><span class="header-section-number">2.1</span> R and R Studio Installation</a></li>
   <li><a href="#the-r-studio-interface" id="toc-the-r-studio-interface" class="nav-link" data-scroll-target="#the-r-studio-interface"><span class="header-section-number">2.2</span> The R Studio Interface</a></li>
+  <li><a href="#r-as-a-calculator" id="toc-r-as-a-calculator" class="nav-link" data-scroll-target="#r-as-a-calculator"><span class="header-section-number">2.3</span> R as a Calculator</a></li>
+  <li><a href="#object-assignment-and-manipulation" id="toc-object-assignment-and-manipulation" class="nav-link" data-scroll-target="#object-assignment-and-manipulation"><span class="header-section-number">2.4</span> Object Assignment and Manipulation</a>
+  <ul>
+  <li><a href="#naming-objects" id="toc-naming-objects" class="nav-link" data-scroll-target="#naming-objects"><span class="header-section-number">2.4.1</span> Naming Objects</a></li>
+  </ul></li>
+  <li><a href="#data-structures" id="toc-data-structures" class="nav-link" data-scroll-target="#data-structures"><span class="header-section-number">2.5</span> Data Structures</a>
+  <ul>
+  <li><a href="#vectors" id="toc-vectors" class="nav-link" data-scroll-target="#vectors"><span class="header-section-number">2.5.1</span> Vectors</a>
+  <ul class="collapse">
+  <li><a href="#vector-labels" id="toc-vector-labels" class="nav-link" data-scroll-target="#vector-labels"><span class="header-section-number">2.5.1.1</span> Vector labels</a></li>
+  <li><a href="#indexing-subsetting-and-modifying-vectors" id="toc-indexing-subsetting-and-modifying-vectors" class="nav-link" data-scroll-target="#indexing-subsetting-and-modifying-vectors"><span class="header-section-number">2.5.1.2</span> Indexing, Subsetting, and Modifying Vectors</a></li>
+  <li><a href="#vectorized-operations" id="toc-vectorized-operations" class="nav-link" data-scroll-target="#vectorized-operations"><span class="header-section-number">2.5.1.3</span> Vectorized Operations</a></li>
+  </ul></li>
+  <li><a href="#data-frames" id="toc-data-frames" class="nav-link" data-scroll-target="#data-frames"><span class="header-section-number">2.5.2</span> Data Frames</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -186,8 +236,687 @@ ul.task-list li input[type="checkbox"] {
 <section id="the-r-studio-interface" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="the-r-studio-interface"><span class="header-section-number">2.2</span> The R Studio Interface</h2>
 <p>Now that we’ve installed and opened up RStudio, let’s familiarize ourselves with the RStudio interface. When we open up RStudio, we’ll see a window that looks something like this:</p>
+<p>Now that we’ve installed and opened up RStudio, let’s familiarize ourselves with the RStudio interface. When we open up RStudio, we’ll see a window that looks something like this:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/session1/rstudio_window_revised.png" class="img-fluid figure-img" width="691">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.1: The R Studio Interface
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>If your interface doesn’t look exactly like this, it shouldn’t be a problem; we would expect to see minor cosmetic differences in the appearance of the interface across operating systems and computers (based on how they’re configured). However, you should see four distinct windows within the larger RStudio interface:</p>
+<ul>
+<li>The <strong>top-left</strong> window is known as the <em>Source</em> window.
+<ul>
+<li>The <em>Source</em> window is where we can write our R scripts (including the code associated with this tutorial), and execute those scripts. We can also type in R code into the “Console” window (bottom-left window), but it is preferable to write our code in a script within the source window. That’s because scripts can be saved (while code written into the console cannot); writing scripts therefore allows us to keep track of what we’re doing, and facilitates the reproducibility of our work. Note that in some cases, we may not see a <em>Source</em> window when we first open RStudio. In that case, to start a new script, simply click the <code>File</code> button on the RStudio menu bar, scroll down to <code>New File</code> button, and then select <code>R Script</code> from the menu bar that opens up.</li>
+<li>It’s also worth noting that the outputs of certain functions will appear in the <em>Source</em> window. In the context of our tutorial, when we want to view our datasets, we will use the <code>View()</code> function, which will display the relevant data within a new tab in the <em>Source</em> window.</li>
+</ul></li>
+<li>The <strong>top-right</strong> window is the <em>Environment/History</em> pane of the RStudio interface.
+<ul>
+<li>The “Environment” tab of this window provides information on the datasets we’ve loaded into RStudio, as well as objects we have defined (we’ll talk about objects more later in the tutorial). -The “History” tab of the window provides a record of the R commands we’ve run in a given session.</li>
+</ul></li>
+<li>The <strong>bottom-right</strong> window is the <em>Files/Plots/Packages/Help/Viewer</em> window.
+<ul>
+<li>The “Files” tab displays our computer’s directories and file structures and allows us to navigate through them without having to leave the R environment.</li>
+<li>The “Plots” tab is the tab where we can view any visualizations that we create. Within the “Plots” tab, make note of the “Zoom” button, which we can use to enlarge the display of our visualizations if they’re too compressed in the “Plots” window. Also, note the “Export” button within the “Plots” tab (next to the “Zoom” button); we can use this button to export the displayed visualization to a .png or .jpeg file that can be used outside of RStudio.</li>
+<li>The “Packages” tab provides information on which packages have been installed, as well as which packages are currently loaded (more on packages in Sections 2.3 and 2.4 below)</li>
+<li>The “Help” tab displays documentation for R packages and functions. If you want to know more about how a package or function work, we can simply type a “?” followed by the package or function’s name (no space between the question mark and the name) and relevant information will be displayed within the “Help” tab.</li>
+<li>The “Viewer” tab displays HTML output. If we write code that generates an HTML file, we can view it within the “Viewer” tab.</li>
+</ul></li>
+<li>The <strong>bottom-left</strong> window is the <em>Console/Terminal/Jobs</em> window.
+<ul>
+<li>The “Console” tab is where we can see our code execute when we run our scripts, as well as certain outputs produced by those scripts. In addition, if there are any error or warning messages, they will be printed to the “Console” tab. We can also type code directly into the console, but as we noted earlier, it is better practice to write our code in a script and then run it from there.</li>
+<li>The “Terminal”, “Jobs” tabs are not relevant for our workshop. We’ll briefly provide an overview of “R Markdown” towards the end of the lesson.</li>
+</ul></li>
+</ul>
+<p>We’re now ready to begin writing some basic code in R. Please go ahead and open up a new script, and follow along by typing the code as we go. To open up a new script, go to <strong>File</strong>, then click <strong>New File</strong>, then select <strong>R Script</strong>.</p>
+</section>
+<section id="r-as-a-calculator" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="r-as-a-calculator"><span class="header-section-number">2.3</span> R as a Calculator</h2>
+<p>At its most basic level, R can be used as a calculator. For instance:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculates 2+2</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span><span class="sc">+</span><span class="dv">2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4</code></pre>
+</div>
+</div>
+<p>When you type this code out in your script, it should look something like this:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/session1/script.png" class="img-fluid figure-img" width="1135">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.2: Starting an R Studio Script
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>To run the code, you can highlight it and click the <strong>Run</strong> button (boxed in red). Alternatively, you can place the cursor on the line of code you’d like to run, and use a keyboard shortcut to run the code. On a Mac, the shortcut is clicking <strong>Command</strong> + <strong>Shift</strong> + <strong>Return</strong>. If you are using Windows, the keyboard shortcut to run the current line of code should be <strong>Ctrl</strong> + <strong>Enter</strong>.</p>
+<p>You should go ahead and save the script in a convenient location by clicking <strong>File</strong> and then <strong>Save As</strong>. You should periodically save your work. After you close your R Session, you can always open your saved script, and quickly run the entire script to reproduce your work from prior sessions. To reproduce more than one line of code, or even an entire script, simply highlight the code yoou want to run and click the <strong>Run</strong> button in the R Studio interface. On a Mac, the shortcut for running all of the code in your script is <strong>Cmd</strong> + <strong>Option + R</strong>. On a Windows machine, the shortcut to run the entirety of a script is <strong>Ctrl</strong> + <strong>Shift</strong> + <strong>Enter</strong>.</p>
+<p>Before proceeding, one final thing you should note is that the actual code, <code>2+2</code>, was preceded by a “comment” that was in turn preceded by a #; above, the comment was rather trivial, since it’s fairly self evident what the code was doing. But pretty soon, our code will become more complex and challenging to interpret, and code comments will be an essential way of documenting our work. These comment are an essential way we can communicate with others who might read our code, as well as our future selves. The # sign is always used to introduce a comment, and ensures that any text that comes after it will indeed be interpreted as a comment, rather than as code.</p>
+<p>Now, let’s try some more mathematical operations:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculates 65 to the power of 4</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dv">65</span><span class="sc">^</span><span class="dv">4</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 17850625</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculates the sum of 24 and 4, divided by 7</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>(<span class="dv">24</span><span class="sc">+</span><span class="dv">4</span>)<span class="sc">/</span><span class="dv">7</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculates 2.78 subtracted from 10.453</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fl">10.453-2.78</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 7.673</code></pre>
+</div>
+</div>
+<p>While this is a useful and logical starting point, the possibility of assigning values to objects (or variables) considerably increases the scope of the operations we are able to carry out. We turn to object assignment in the next sub-section.</p>
+</section>
+<section id="object-assignment-and-manipulation" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="object-assignment-and-manipulation"><span class="header-section-number">2.4</span> Object Assignment and Manipulation</h2>
+<p>The concept of object (or variable) assignment is a fundamental concept when working in a scripting environment; indeed, the ability to easily assign values to objects is what allows us to easily and intuitively manipulate and process our data in a programmatic setting. To better understand the mechanics of object assignment, consider the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># assign value 5 to new object named x</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>In the code above, we use R’s assignment operator, <code>&lt;-</code> (i.e.&nbsp;a left-pointing arrow) to assign the value 5 to an object named <code>x</code>. Now that an object named <code>x</code> has been created and assigned the value 5, printing <code>x</code> in our console (or printing <code>x</code> in our script and running it) will return the value that has been assigned to the <code>x</code> object, i.e.&nbsp;5:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints value assigned to "x"</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+</div>
+<p>More generally, the process of assignment effectively equates the output created by the code on the right side of the assignment operator (<code>&lt;-</code>) to an object with a name that is specified on the left side of the assignment operator. Whenever we want to look at the contents assigned to an object (i.e.&nbsp;the output created by the code to the right side of the assignment operator), we simply print the name of the object in the R console (or print the name and run it within a script).</p>
+<p>Let’s create another object, named <code>y</code>, and assign it the value “12”:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># assign value 12 to new object named y</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">12</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>As we noted above, we can print the value that was assigned to <code>y</code> by printing the name of the object:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints value assigned to "y"</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>y</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 12</code></pre>
+</div>
+</div>
+<p>Once objects are defined, it’s possible to use those objects in arithmetic operations. For example:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints the value of x + y</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>x<span class="sc">+</span>y</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 17</code></pre>
+</div>
+</div>
+<p>It’s also possible to use existing objects to assign values to new ones. For example, we can assign the sum of <code>x</code> and <code>y</code> to a new object that we’ll name <code>xy_sum</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creates a new object, named "xy_sum" whose value is the sum of "x" and "y"</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>xy_sum <span class="ot">&lt;-</span> x<span class="sc">+</span>y</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now, let’s print the value of <code>xy_sum</code>that was created by the previous assignment operation:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints value of of "xy_sum"</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>xy_sum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 17</code></pre>
+</div>
+</div>
+<p>As expected, we see that the value assigned to <code>xy_sum</code> is “17” (i.e.&nbsp;the sum of the values assigned to <code>x</code> and <code>y</code>).</p>
+<p>It is possible to change the value assigned to a given object. For example, let’s say we want to change the value assigned to <code>x</code> from “5” to “8”:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># assign value of "8" to object named "x"</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">8</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We can confirm that <code>x</code> is now associated with the value “8”, and the old value has been overwritten:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints updated value of "x"</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8</code></pre>
+</div>
+</div>
+<p>It’s worth noting that updating the value assigned to <code>x</code> will not automatically update the value assigned to <code>xy_sum</code> (which, recall, is the sum of <code>x</code> and <code>y</code>). If we print the value assigned to <code>xy_sum</code>, note that it is still “17”):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># print value assigned to xy_sum</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>xy_sum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 17</code></pre>
+</div>
+</div>
+<p>In order for the value assigned to <code>xy_sum</code> to be updated with the new value of <code>x</code>, we must run the assignment operation again, with the updated value of x:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># assigns sum of "y" and newly updated value of "x" to "xy_sum" object</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>xy_sum <span class="ot">&lt;-</span> x<span class="sc">+</span>y</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now, the value of <code>xy_sum</code> should reflect the updated value of <code>x</code>, which we can confirm by printing the value of <code>xy_sum</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints value of "xy_sum"</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>xy_sum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 20</code></pre>
+</div>
+</div>
+<p>Note that the value assigned to <code>xy_sum</code> is now “20” (the sum of “8” and “12”), rather than “17” (the sum of “5” and “12”).</p>
+<p>Thus far, we’ve been working with numeric values, but it’s also possible to assign non-numeric contents to objects. For example, we can assign strings (i.e.&nbsp;lines of text) to objects. Below, consider the string “Boulder, CO” assigned to an object named <code>our_location:</code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># assigns string "Boulder, CO" to object named "our_location"</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>our_location <span class="ot">&lt;-</span> <span class="st">"Boulder, CO"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We can print the string that has been assigned to the <code>our_location</code> object by typing the name of the object in our console, or running it from our script:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents assigned to "our_location" object</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>our_location</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Boulder, CO"</code></pre>
+</div>
+</div>
+<section id="naming-objects" class="level3" data-number="2.4.1">
+<h3 data-number="2.4.1" class="anchored" data-anchor-id="naming-objects"><span class="header-section-number">2.4.1</span> Naming Objects</h3>
+<p>While the examples above were very simple, we can assign virtually any R code, and by extension, the data structure(s) generated by that code (such as datasets, vectors, graphs/plots, functions etc.) to an R object. When naming your objects, try to be descriptive, so that the name of the object signifies something about the code or outputs assigned to it.</p>
+<p>Note that generally speaking, you have a lot of flexibility in naming your R objects, but there are certain rules. For example, object names must start with a letter, and cannot contain any special symbols (they can only contain letters, numbers, underscores, and periods). Also, object names cannot contain multiple unconnected words; if you’d like to use multiple words or phrases, connect the discrete elements with an underscore (<code>_</code>), or use camel case (where different words are distinguished by beginning each discrete word with a capitalized letter). In addition, there are certain words that are “reserved” for other purposes, and therefore cannot be used in object names (i.e.&nbsp;<code>if</code>, <code>else</code>, <code>TRUE</code> , <code>FALSE</code>, etc).</p>
+<p>It is also worth emphasizing that object names are case sensitive; in order to print the contents assigned to an object, that object’s name must be printed <em>exactly</em> as it was created. For example, if we were to type <code>our_Location</code>, we would get an error, since there is no <code>our_Location</code> object (only an <code>our_location</code> object):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "our_Location"</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>our_Location</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error: object 'our_Location' not found</code></pre>
+</div>
+</div>
+<p>In order to keep track of the objects we have created, we can use the handy <code>ls()</code> function, which will print the names of all the objects that are in memory:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints objects in memory</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "our_location" "x"            "xy_sum"       "y"           </code></pre>
+</div>
+</div>
+<p>To delete an object from memory, you can pass it to the <code>rm()</code> function. For example, the following will delete the <code>our_location</code> object from memory:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># deletes "our_location" object from memory</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(our_location)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now, we can confirm that the <code>our_location</code> object has indeed been deleted by running <code>ls()</code> once again:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints objects in memory</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "x"      "xy_sum" "y"     </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="data-structures" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="data-structures"><span class="header-section-number">2.5</span> Data Structures</h2>
+<p>We now turn to a brief overview of some important data structures that help us to work with data in R. We will consider three data structures that are particularly useful: vectors, data frames, and lists. Note that this is not an exhaustive treatment of data structures in R; there are other structures, such as matrices and arrays, that are also important, and which you may encounter or use in your future work. However, for now, we will limit our discussion to vectors, data frames, and lists, since they are the data structures that are essential for getting started with data-based social scientific research in R, and the data structures that you will likely use most frequently.</p>
+<section id="vectors" class="level3" data-number="2.5.1">
+<h3 data-number="2.5.1" class="anchored" data-anchor-id="vectors"><span class="header-section-number">2.5.1</span> Vectors</h3>
+<p>In R, a vector is a sequence of values of the same type (i.e.&nbsp;we can have a sequence of numbers or a sequence of strings, but cannot mix and match types in a vector). A vector is created using the <code>c()</code> function. We’ll discuss functions at greater later, but for now you can think of a function as a programmed command that takes input(s), and returns output(s).</p>
+<p>For example, let’s make a vector to store the temperatures (in Celsius) of some cities in Asia. The <code>c()</code> function takes as its input a series of numbers, and returns as its output a numeric vector with those numbers as elements:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># makes vector with values 32, 18, 41, 11</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="dv">32</span>, <span class="dv">18</span>, <span class="dv">41</span>, <span class="dv">11</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 32 18 41 11</code></pre>
+</div>
+</div>
+<p>Recall that we can assign vectors to objects with descriptive names. Let’s create a new vector object named <code>asia_temperatures_celsius</code> to store these values:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># assigns vector of temperatures from Asian cities to a new object named "asia_temperatures_celsius"</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="dv">32</span>, <span class="dv">18</span>, <span class="dv">41</span>, <span class="dv">11</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now, whenever we want to print the vector assigned to the <code>asia_temperatures_celsius</code> object, we can simply print the name of the object:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "asia_temperatures_celsius"</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 32 18 41 11</code></pre>
+</div>
+</div>
+<p>Though we have focused so far on numeric vectors (i.e.&nbsp;vectors where the elements are numbers), it is also possible to create vectors where the elements are strings (i.e.&nbsp;text). For example, let’s create a vector that contains the names of cities that have a University of Colorado campus, and assign it to an object named <code>university_of_colorado_locations</code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># defines new vector assigned to object named "university_of_colorado_locations" that contains locations of CU campuses</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>university_of_colorado_locations<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"Boulder"</span>, <span class="st">"Denver"</span>, <span class="st">"Colorado Springs"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now let’s print out its contents:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "university_of_colorado_locations"</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>university_of_colorado_locations</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Boulder"          "Denver"           "Colorado Springs"</code></pre>
+</div>
+</div>
+<section id="vector-labels" class="level4" data-number="2.5.1.1">
+<h4 data-number="2.5.1.1" class="anchored" data-anchor-id="vector-labels"><span class="header-section-number">2.5.1.1</span> Vector labels</h4>
+<p>Sometimes, it can be useful to add text labels to numeric vectors, which can provide important context that helps us to keep track of the information stored within a vector. Let’s return to the&nbsp;<code>asia_temperatures_celsius</code>&nbsp;vector we created above and imagine that the first element in the vector represents the temperature for Mumbai; the second element represents the temperature in Hanoi; the third represents the temperature in Singapore; and the fourth represents the temperature in Beijing. Let’s add these country labels to their corresponding temperature values in the&nbsp;<code>asia_temperatures_celsius</code>vector. First, we’ll create a vector that contains these text labels and assign it to a new object named&nbsp;<code>country_labels_vector</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creates country labels vector and assigns it to a new object names "country_labels_vector"</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>country_labels_vector<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"Mumbai"</span>, <span class="st">"Hanoi"</span>, <span class="st">"Singapore"</span>, <span class="st">"Beijing"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now, we’ll use the&nbsp;<code>names()</code>&nbsp;function to assign the labels in&nbsp;<code>country_labels_vector</code>&nbsp;to the temperature values in&nbsp;<code>asia_temperatures_celsius</code>. The first label in&nbsp;<code>country_labels_vector</code>&nbsp;will be assigned to the first temperature value in&nbsp;<code>asia_temperatures_celsius</code>, to indicate that that the temperature of 37 degrees Celsius is associated with Mumbai; the second label in&nbsp;<code>country_labels_vector</code>&nbsp;will be assigned to the second temperature value in&nbsp;<code>asia_temperatures_celsius</code>&nbsp;to indicate that the temperature value of 17 degrees Celsius is associated with Hanoi; and so on.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># uses the "names" function to assign the labels in "country_labels_vector" to the "asia_temperatures_celsius" numeric vector</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(asia_temperatures_celsius)<span class="ot">&lt;-</span>country_labels_vector</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now, let’s view the contents of&nbsp;<code>asia_temperatures_celsius</code>, and note that the numeric values are labelled with the text strings contained in&nbsp;<code>country_labels_vector</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints updated "asia_temperatures_celsius" vector with labels</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Mumbai     Hanoi Singapore   Beijing 
+       32        18        41        11 </code></pre>
+</div>
+</div>
+<p>It is also possible to add labels to a vector during the process of creating that vector, rather than doing so subsequently; creating labels concurrently with the vector is known as “inline naming”. Below, we create a vector of temperatures in some major North American cities in Celsius using inline naming:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creates new vector of temperatures in Celsius of major North American cities with labels created using inline naming</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>north_america_temperatures_celsius<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"New York City"</span><span class="ot">=</span><span class="dv">25</span>, <span class="st">"Toronto"</span><span class="ot">=</span><span class="dv">15</span>, <span class="st">"Mexico City"</span><span class="ot">=</span><span class="fl">8.5</span>, <span class="st">"Vancouver"</span><span class="ot">=</span><span class="dv">10</span>, <span class="st">"Boston"</span><span class="ot">=</span><span class="fl">12.5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Let’s print the contents of the newly created&nbsp;<code>north_america_temperatures_celsius</code>&nbsp;vector:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "north_america_temperatures_celsius"</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>north_america_temperatures_celsius</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>New York City       Toronto   Mexico City     Vancouver        Boston 
+         25.0          15.0           8.5          10.0          12.5 </code></pre>
+</div>
+</div>
+</section>
+<section id="indexing-subsetting-and-modifying-vectors" class="level4" data-number="2.5.1.2">
+<h4 data-number="2.5.1.2" class="anchored" data-anchor-id="indexing-subsetting-and-modifying-vectors"><span class="header-section-number">2.5.1.2</span> Indexing, Subsetting, and Modifying Vectors</h4>
+<p>In many cases, it is useful to subset a vector, and extract specific element(s) from it. Each element in a given vector is assigned an index number, starting with 1; that is, the first element in a vector is assigned an index value of 1, the second element of a vector is assigned an index value of 2, and so on. We can use these index values to extract our desired vector elements. In particular, we can specify the desired index within square brackets after printing the name of the vector object of interest. For example, let’s say we want to extract the 3rd element of the vector in&nbsp;<code>asia_temperature_difference_celsius</code>. We can do so with the following, which returns the temperature value for Singapore, the third element in&nbsp;<code>asia_temperature_difference_celsius</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extracts the third element from the "asia_temperatures_celsius" vector</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius[<span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Singapore 
+       41 </code></pre>
+</div>
+</div>
+<p>Since&nbsp;<code>asia_temperatures_celsius</code>&nbsp;has been labelled, it’s also possible to extract vector elements based on their label. For example, instead of extracting Singapore’s temperature with its corresponding index value of three, we can do so with the city label enclosed in quotation marks:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extracts the third element from the "asia_temperatures_celsius" vector using its label</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius[<span class="st">"Singapore"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Singapore 
+       41 </code></pre>
+</div>
+</div>
+<p>In some cases, we may want to extract more than one vector element. We can conveniently extract a range of vector elements using their index values.For example, let’s say we want to extract a new vector comprised of the first, second, and third numeric elements in&nbsp;<code>asia_temperatures_celsius</code>; we can do so with the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extracts elements 1 through 3 in the "asia_temperatures_celsius" and deposits these elements in a new vector</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Mumbai     Hanoi Singapore 
+       32        18        41 </code></pre>
+</div>
+</div>
+<p>Thus far, we have not assigned our subsetted vectors to new objects, but we can easily do so if we want to call those vectors again down the road. Below, for example, we assign the vectors we just subsetted in the last line of code that we ran to a new object named&nbsp;<code>asia_temperatures_subsetted_1to3</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extracts elements 1 through 3 in the "asia_temperatures_celsius" and deposits these elements in a new vector assigned to the object "asia_temperatures_subsetted_1to3"</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_subsetted_1to3<span class="ot">&lt;-</span>asia_temperatures_celsius[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "asia_temperatures_subsetted_1to3"</span></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>asia_temperatures_subsetted_1to3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Mumbai     Hanoi Singapore 
+       32        18        41 </code></pre>
+</div>
+</div>
+<p>We can also use negative index numbers to subset vectors; in particular, while passing a positive index number will extract the vector element that corresponds with that number and creates a new vector with that subsetted element, passing a negative index number will return a vector that deletes the element that corresponds to the the absolute value of the negative index number. For example, the following removes the temperature associated with Hanoi (the second element in&nbsp;<code>asia_temperatures_celsius</code>) and returns a new vector with the remaining temperatures:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co"># removes second element in "asia_temperatures_celsius" vector and returns a vector with the remaining values</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius[<span class="sc">-</span><span class="dv">2</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Mumbai Singapore   Beijing 
+       32        41        11 </code></pre>
+</div>
+</div>
+<p>It’s also possible to delete a range of elements in a vector using negative index numbers. Below, for example, we delete the second and third elements from&nbsp;<code>asia_temperatures_celsius</code>&nbsp;and return a vector with the remaining values:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># removes second and third elements in "asia_temperatures_celsius" vector (i.e. the temperatures associated with Hanoi and Singapore) and returns a vector with the remaining temperature values</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius[<span class="sc">-</span><span class="dv">2</span><span class="sc">:-</span><span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Mumbai Beijing 
+     32      11 </code></pre>
+</div>
+</div>
+<p>Sometimes, we may want to subset our vectors by referencing non-consecutive elements. For example, instead of extracting the first through third elements of the&nbsp;<code>asia_temperatures_celsius</code>&nbsp;vector, perhaps we only want to extract the first and third elements, without also extracting the second. Intuitively, we could try the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tries to extract the first and third elements from "asia_temperatures_celsius" and deposit them into a new vector</span></span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius[<span class="dv">1</span>,<span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error in asia_temperatures_celsius[1, 3]: incorrect number of dimensions</code></pre>
+</div>
+</div>
+<p>However, as you can see, this syntax throws an error. Instead, if we want to extract non-continuous elements from a vector, we have to pass the index numbers into their own vector, and enclose this vector of index numbers in square brackets. For example, to extract only the first and third elements from <code>asia_temperatures_celsius</code>, we would do the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts the first and third elements from "asia_temperatures_celsius" and deposits them into a new vector</span></span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Mumbai Singapore 
+       32        41 </code></pre>
+</div>
+</div>
+<p>The same syntax can be used when removing multiple non-consecutive elements; for example, let’s say we want to remove the first and third elements from the&nbsp;<code>asia_temperatures_celsius</code>&nbsp;vector, and create a new subsetted vector with the remaining elements. We can do so with the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Removes the first and third elements from "asia_temperatures_celsius" and makes a new vector with the remaining elements</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius[<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">3</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Hanoi Beijing 
+     18      11 </code></pre>
+</div>
+</div>
+<p>We can also use this basic syntax to subset multiple vector elements using labels, rather than index numbers. For example:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts temperature values for Mumbai and Singapore and deposits them in a new vector using labels</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius[<span class="fu">c</span>(<span class="st">"Mumbai"</span>, <span class="st">"Singapore"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Mumbai Singapore 
+       32        41 </code></pre>
+</div>
+</div>
+<p>Though we now have a sense of how to subset vectors, there might be instances in which you want to add new elements to a vector. For example, let’s say that we want to add temperature data (and associated labels) for some other cities to&nbsp;<code>asia_temperatures_celsius</code>. Let’s say we want to add the temperature of Jakarta, which was 32 degrees Celsius, and Manila, which was 26.5 degrees Celsius. We can do so with the following syntax:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Adds temperatures for Jakarta and Manila to the "asia_temperatures_celsius" vector</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius<span class="ot">&lt;-</span><span class="fu">c</span>(asia_temperatures_celsius, <span class="st">"Jakarta"</span><span class="ot">=</span><span class="dv">32</span>, <span class="st">"Manila"</span><span class="ot">=</span><span class="fl">26.5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>In particular, we call the function to make vectors (<code>c()</code>); the first argument is the name of the vector object to which we’re adding elements, and the subsequent arguments are the numeric elements along with their labels. We can confirm that the new elements have been added by printing out the contents of the updated&nbsp;<code>asia_temperatures_celsius</code>&nbsp;vector:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of updated "asia_temperatures_celsius" vector</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Mumbai     Hanoi Singapore   Beijing   Jakarta    Manila 
+     32.0      18.0      41.0      11.0      32.0      26.5 </code></pre>
+</div>
+</div>
+<p>In some cases, we may have two or more vectors that we want to combine into a single, unified vector. For example, let’s say we want to combine our vector of temperatures in Asian cities (<code>asia_temperatures_celsius</code>) with our vector of temperatures in North American cities (<code>north_america_temperatures_celsius</code>). We can do so by passing the name of these vector objects to the&nbsp;<code>c()</code>&nbsp;function; below, we’ll assign this combined vector to a new object named&nbsp;<code>asia_north_america_temperatures_celsius</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># combines "asia_temperatures_celsius" vector and "north_america_temperatures_celsius" into a new combined vector that's assigned to an object named "asia_north_america_temperatures_celsius"</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>asia_north_america_temperatures_celsius<span class="ot">&lt;-</span><span class="fu">c</span>(asia_temperatures_celsius, north_america_temperatures_celsius)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Let’s print the contents of&nbsp;<code>asia_north_america_temperatures_celsius</code>&nbsp;to confirm that the vectors have been combined as expected:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "asia_north_america_temperatures_celsius"</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>asia_north_america_temperatures_celsius</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       Mumbai         Hanoi     Singapore       Beijing       Jakarta 
+         32.0          18.0          41.0          11.0          32.0 
+       Manila New York City       Toronto   Mexico City     Vancouver 
+         26.5          25.0          15.0           8.5          10.0 
+       Boston 
+         12.5 </code></pre>
+</div>
+</div>
+<p>The basic principles and code we’ve used to subset and modify numeric vectors (i.e.&nbsp;vectors comprised of numeric elements) can be applied to subset and modify character vectors (i.e.&nbsp;vectors comprised of string/text elements). Recall the character vector of University of Colorado locations, <code>university_of_colorado</code> locations. We can use index numbers to extract elements from character vectors in much the same way we do for numeric vectors.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts the second element from "university_of_colorado_locations"</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>university_of_colorado_locations[<span class="dv">2</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Denver"</code></pre>
+</div>
+</div>
+<p>We can also subset a character vector using index numbers to extract a range of elements:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts the second and third elements from "university_of_colorado_locations"</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>university_of_colorado_locations[<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Denver"           "Colorado Springs"</code></pre>
+</div>
+</div>
+<p>We could get the same result using a negative index number to delete the first element:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts the second and third elements from "university_of_colorado_locations" using a negative index number to remove the first element</span></span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>university_of_colorado_locations[<span class="sc">-</span><span class="dv">1</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Denver"           "Colorado Springs"</code></pre>
+</div>
+</div>
+<p>We can also combine character vectors. For example, let’s say we have a vector that contains the locations of Colorado State University campuses:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creates character vector of CSU campus locations and assigns it to a new vector named "colorado_state_university_locations"</span></span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>colorado_state_university_locations<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"Fort Collins"</span>, <span class="st">"Pueblo"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>And we want to combine <code>colorado_state_university_locations</code> with <code>university_of_colorado_locations</code> to form a new character vector. We can do so with the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creates new character vector that combines elements from "university_of_colorado_locations" and "colorado_state_university_locations" and assigns it to a new object named "co_public_university_locations"</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>co_public_university_locations<span class="ot">&lt;-</span><span class="fu">c</span>(university_of_colorado_locations, colorado_state_university_locations)</span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "co_public_university_locations"</span></span>
+<span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a>co_public_university_locations</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Boulder"          "Denver"           "Colorado Springs" "Fort Collins"    
+[5] "Pueblo"          </code></pre>
+</div>
+</div>
+<p>It’s also possible to add labels to character vectors, which can be a useful way of embedding metadata in our character vectors. For example, let’s say we want to add labels to&nbsp;<code>co_public_university_locations</code> indicating whether a location corresponds to a UC or CSU institution. We can do so with the&nbsp;<code>names()</code> unction, as we did with numeric vectors:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># uses the "names" function to assign labels to the "co_public_university_locations" vector elements</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(co_public_university_locations)<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"UC"</span>, <span class="st">"UC"</span>, <span class="st">"UC"</span>, <span class="st">"CSU"</span>, <span class="st">"CSU"</span>)</span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "co_public_university_locations" updated with labels</span></span>
+<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>co_public_university_locations</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                UC                 UC                 UC                CSU 
+         "Boulder"           "Denver" "Colorado Springs"     "Fort Collins" 
+               CSU 
+          "Pueblo" </code></pre>
+</div>
+</div>
+<p>We can use the same procedure we used with numeric vectors to create “inline” (i.e.&nbsp;concurrent) labels. To see this, let’s create a vector with the location of the flagship institutions of the University of Colorado and Colorado State systems, respectively, with labels designating which system the university associated with that location is a part of:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creates vector of flagship university locations, with labels designating if a location is associated with the UC or CSU flagship</span></span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>flagship_university_locations<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="at">UC=</span><span class="st">"Boulder"</span>, <span class="at">CSU=</span><span class="st">"Fort Collins"</span>)</span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "flagship_university_locations"</span></span>
+<span id="cb90-5"><a href="#cb90-5" aria-hidden="true" tabindex="-1"></a>flagship_university_locations</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            UC            CSU 
+     "Boulder" "Fort Collins" </code></pre>
+</div>
+</div>
+<p>Finally, if we want to add new elements to an existing character vector, we can use the same syntax we used for numeric vectors. The Colorado State University system also includes a Global online university that we didn’t include in our vectors above. Let’s say we want to add CSU-Global to the&nbsp;<code>colorado_state_university_locations</code> vector. We can do so with the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Adds "Global" campus to "colorado_state_university_locations" vector</span></span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>colorado_state_university_locations<span class="ot">&lt;-</span><span class="fu">c</span>(colorado_state_university_locations, <span class="st">"Global"</span>)</span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prints updated contents of "colorado_state_university_locations" </span></span>
+<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a>colorado_state_university_locations</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Fort Collins" "Pueblo"       "Global"      </code></pre>
+</div>
+</div>
+<p>Let’s say we also want to add the global location to&nbsp;<code>co_public_university_locations</code>&nbsp;with a corresponding label. We can do so with the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="co"># adds global location to "co_public_university_locations" along with CSU label</span></span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>co_public_university_locations<span class="ot">&lt;-</span><span class="fu">c</span>(co_public_university_locations, <span class="at">CSU=</span><span class="st">"Global"</span>)</span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prints updated contents of "co_public_university_locations"</span></span>
+<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a>co_public_university_locations</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                UC                 UC                 UC                CSU 
+         "Boulder"           "Denver" "Colorado Springs"     "Fort Collins" 
+               CSU                CSU 
+          "Pueblo"           "Global" </code></pre>
+</div>
+</div>
+</section>
+<section id="vectorized-operations" class="level4" data-number="2.5.1.3">
+<h4 data-number="2.5.1.3" class="anchored" data-anchor-id="vectorized-operations"><span class="header-section-number">2.5.1.3</span> Vectorized Operations</h4>
+<p>Once a vector has been created, it’s possible to carry out operations on its elements; it’s important to briefly get an intuitive sense for how such vector operations work. There are different types of vector operations to be aware of. There are scalar operations, which involve arithmetic operations apply a constant value to every element of a numeric vector (i.e.&nbsp;adding ten to each vector element). It’s also possible to carry out arithmetic operations with more than one vector (i.e.&nbsp;adding two vectors together); such operations are typically known as vector operations. More generally, one of R’s benefits is that it allows us to use vectors to carry out iterative (repeated) operations without using programming constructs such as loops. For example, if you have some data and want to apply a formula or function to all of your data points, you could simply put those data points into a vector, and apply the formula or function to that vector, which will implement the desired operation on each element of the vector. Such operations, along with scalar and vector operations, are collectively referred to as “vectorized operations.”</p>
+<p>Let’s first consider scalar operations. Let’s go back to the&nbsp;<code>asia_temperatures_celsius</code>&nbsp;vector and remind ourselves of it its contents:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "asia_temperatures_celsius"</span></span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Mumbai     Hanoi Singapore   Beijing   Jakarta    Manila 
+     32.0      18.0      41.0      11.0      32.0      26.5 </code></pre>
+</div>
+</div>
+<p>Let’s say that something went wrong in the transcription of temperatures, and all of the temperatures in <code>asia_temperatures_celsius</code> are understated by two degrees. We can add two to each element in the <code>asia_temperatures_celsius</code> vector, and thereby fix the error, with the following scalar operation:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="co"># adds two to each element of "asia_temperatures_celsius" vector</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius<span class="sc">+</span><span class="dv">2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Mumbai     Hanoi Singapore   Beijing   Jakarta    Manila 
+     34.0      20.0      43.0      13.0      34.0      28.5 </code></pre>
+</div>
+</div>
+<p>Of course, the above operation did not permanently add two to all of the elements in <code>asia_temperatures_celsius</code>, since we did not overwrite the existing vector by assigning the changes back to the object. We can do so with the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="co"># adds two to each element of "asia_temperatures_celsius" vector and assigns the changes back to the object</span></span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius<span class="ot">&lt;-</span>asia_temperatures_celsius<span class="sc">+</span><span class="dv">2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We can now confirm that each of the temperature values in <code>asia_temperatures_celsius</code>&nbsp;have been increased by two:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints updated contents of "asia_temperatures_celsius"</span></span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_celsius</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Mumbai     Hanoi Singapore   Beijing   Jakarta    Manila 
+     34.0      20.0      43.0      13.0      34.0      28.5 </code></pre>
+</div>
+</div>
+<p>Let’s now consider another vectorized operation that’s slightly more complex. Let’s say we want to convert the Celsius temperatures in <code>asia_temperatures_celsius</code> to Fahrenheit values, which are stored in a new <code>asia_temperatures_fahrenheit</code> vector object. We can do so by applying the Celsius to Fahrenheit conversion formula to <code>asia_temperatures_celsius</code> with the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="co"># applies the Celsius to Fahrenheit conversion formula to all of the Celsius temperatures in "asia_temperatures_fahrenheit" and assigns the resulting vector of Fahrenheit temperatures to a new object named "asia_temperatures_fahrenheit"</span></span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_fahrenheit<span class="ot">&lt;-</span>asia_temperatures_celsius<span class="sc">*</span>(<span class="dv">9</span><span class="sc">/</span><span class="dv">5</span>)<span class="sc">+</span><span class="dv">32</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The conversion formula of Celsius*(9/5)+32 is applied to the first element of <code>asia_temperatures_celsius</code> and the result is deposited as the first element in <code>asia_temperatures_fahrenheit</code>; the formula is then applied to the second element of <code>asia_temperatures_celsius</code> and the result is deposited as the second element in <code>asia_temperatures_fahrenheit</code> ; and so on. Let’s take a look at the contents of <code>asia_temperatures_fahrenheit</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "asia_temperatures_fahrenheit"</span></span>
+<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_fahrenheit</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Mumbai     Hanoi Singapore   Beijing   Jakarta    Manila 
+     93.2      68.0     109.4      55.4      93.2      83.3 </code></pre>
+</div>
+</div>
+<p>Though we have been focused thus far on applying changes to a single vector, it is often the case that we may have information stored in multiple numeric vectors, and want to carry out mathematical operations that involves those vectors. For example, recall our vector of temperatures in North America:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "north_america_temperatures_celsius"</span></span>
+<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a>north_america_temperatures_celsius</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>New York City       Toronto   Mexico City     Vancouver        Boston 
+         25.0          15.0           8.5          10.0          12.5 </code></pre>
+</div>
+</div>
+<p>Let’s say we have another vector of North American temperatures for those same cities from a subsequent time period. Below, we’ll create this vector, and assign it to a new object named&nbsp;<code>north_america_temperatures_celsius_B</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creates vector of temperatures in Celsius for the same North American cities as in the "north_america_temperatures_celsius" vector for a subsequent time period, and assigns the vector to a new object named "north_america_temperatures_celsius_B"</span></span>
+<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a>north_america_temperatures_celsius_B<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"New York City"</span><span class="ot">=</span><span class="dv">27</span>, <span class="st">"Toronto"</span><span class="ot">=</span><span class="dv">11</span>, <span class="st">"Mexico City"</span><span class="ot">=</span><span class="fl">8.5</span>, <span class="st">"Vancouver"</span><span class="ot">=</span><span class="fl">10.5</span>, <span class="st">"Boston"</span><span class="ot">=</span><span class="dv">17</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now, let’s say we want to compute the difference in temperatures across these time frames, and deposit the calculated temperature differences in a new vector. We do so below, assigning the vector of temperature differences to a new object named&nbsp;<code>north_america_temperature_difference</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb109"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Computes the difference between "north_america_temperatures_celsius_B" and "north_america_temperatures_celsius" and assigns the difference to a new object named "north_america_temperature_difference"</span></span>
+<span id="cb109-2"><a href="#cb109-2" aria-hidden="true" tabindex="-1"></a>north_america_temperature_difference<span class="ot">&lt;-</span>north_america_temperatures_celsius_B<span class="sc">-</span>north_america_temperatures_celsius</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The code above takes the first element in <code>north_america_temperatures_celsius</code>, subtracts it from the first element in <code>north_america_temperatures_celsius_B</code>, and deposits the difference as the first element in the new <code>north_america_temperature_difference</code>&nbsp;vector; it then takes the second element in <code>north_america_temperatures_celsius</code>, subtracts it from the second element in <code>north_america_temperatures_celsius_B</code>, and deposits the difference as the second element in the new <code>north_america_temperature_difference</code> vector; and so on for the other elements. In short, the corresponding elements of the two vectors are related through the mathematical operation of subtraction; this concept, wherein operations with multiple vectors are applied to the corresponding elements of those vectors, is often referred to as “element-wise operations”.</p>
+<p>Given this framework of element-wise operations, it’s important to note what happens when carrying out operations with vectors of unequal length. Let’s create some toy vectors of unequal length and add them together:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creates two new vectors, "a" and "b" of unequal length</span></span>
+<span id="cb110-2"><a href="#cb110-2" aria-hidden="true" tabindex="-1"></a>a<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">7</span>)</span>
+<span id="cb110-3"><a href="#cb110-3" aria-hidden="true" tabindex="-1"></a>b<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">12</span>,<span class="dv">3</span>,<span class="dv">5</span>)</span>
+<span id="cb110-4"><a href="#cb110-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb110-5"><a href="#cb110-5" aria-hidden="true" tabindex="-1"></a>a <span class="sc">+</span> b</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in a + b: longer object length is not a multiple of shorter object
+length</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  9 17 10  8</code></pre>
+</div>
+</div>
+<p>The first three element-wise operations are straightforward: 3+6=9, 5+12=17, and 7+3=10. However, <code>a</code> does not have a fourth element, but <code>b</code> does; how is this handled? In short, the shorter vector is “recycled” (i.e.&nbsp;repeated) to match the length of the longer one. In this case, once we hit the end of <code>a</code> the recycling process goes back to the beginning, takes the element “3”, and uses it as the fourth element in the vector, which can be added to the fourth element of <code>b</code> to yield “8” as the fourth element in the resultant <code>a+b</code> vector. Let’s now slightly tweak this scenario by adding another element, “6”, to vector <code>b</code> :</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a>a<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">7</span>)</span>
+<span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a>b<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">12</span>,<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>What do you think happens when we carry out <code>a+b</code>? In particular, what do you think are the fourth and fifth elements of <code>a+b</code>? The principle of vector recycling suggests that the fourth element will be 8 (3+5), while the fifth element will be 11 (5+6):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb114"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a>a<span class="sc">+</span>b</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in a + b: longer object length is not a multiple of shorter object
+length</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  9 17 10  8 11</code></pre>
+</div>
+</div>
+<p>Being aware of this property of vectors in R can be helpful in troubleshooting errors or unexpected behavior once you’re working with real-world data in R.</p>
+<p>It is also possible to carry out vectorized operations on character vectors that are somewhat analogous to the mathematical operations carried out on numeric vectors. To illustrate one useful example that draws on the <code>paste0()</code> function, let’s first create two character vectors:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creates vector of university names</span></span>
+<span id="cb117-2"><a href="#cb117-2" aria-hidden="true" tabindex="-1"></a>university_names<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"University of Colorado, "</span>, <span class="st">"Colorado State University, "</span>)</span>
+<span id="cb117-3"><a href="#cb117-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb117-4"><a href="#cb117-4" aria-hidden="true" tabindex="-1"></a><span class="co"># creates vector of locations</span></span>
+<span id="cb117-5"><a href="#cb117-5" aria-hidden="true" tabindex="-1"></a>locations<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"Boulder"</span>, <span class="st">"Fort Collins"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now, we’ll use the <code>paste()</code> function to carry out an element-wise concatenation of the strings in these two vectors; we’ll assign the resulting vector of concatenated strings to a new object named <code>university_name_location</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb118"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a><span class="co"># uses paste0 function to paste the strings in "university_names" and "locations" together in element-wise fashion and assign the resulting character vector to "university_name_location"</span></span>
+<span id="cb118-2"><a href="#cb118-2" aria-hidden="true" tabindex="-1"></a>university_name_location<span class="ot">&lt;-</span><span class="fu">paste0</span>(university_names, locations)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Let’s go ahead and print the contents of <code>university_name_location</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "university_name_location"</span></span>
+<span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a>university_name_location</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "University of Colorado, Boulder"        
+[2] "Colorado State University, Fort Collins"</code></pre>
+</div>
+</div>
+<p>Vectorized operations with the <code>paste0()</code> can be very useful in creating names for objects and file names when working in applied settings.</p>
+</section>
+</section>
+<section id="data-frames" class="level3" data-number="2.5.2">
+<h3 data-number="2.5.2" class="anchored" data-anchor-id="data-frames"><span class="header-section-number">2.5.2</span> Data Frames</h3>
+<p>The data frame structure is the workhorse of data analysis in R. A data frame resembles a table, of the sort you might generate in a spreadsheet application.</p>
+<p>Often, the most important (and arduous) step in a data analysis workflow is to assemble disparate strands of data into a tractable data frame. What does it mean for a data frame to be “tractable”? One way to define this concept more precisely is to appeal to the concept of “tidy” data, which is&nbsp;<a href="https://vita.had.co.nz/papers/tidy-data.pdf">often referenced in the data science world</a>. Broadly speaking, a “tidy” data frame is a table in which:</p>
+<ol type="1">
+<li><p>Each variable has its own column</p></li>
+<li><p>Each observation has its own row</p></li>
+<li><p>Each value has its own cell</p></li>
+</ol>
+<p>We will work extensively with data frames later in the workshop, but let’s generate a toy data frame from scratch, and assign it to a new object. We will generate a data frame containing made up country-level data on basic economic, geographic, and demographic variables, and assign it to a new object named <code>country_df</code>. The data frame is created through the use of the <code>data.frame()</code> function, which has already been programmed into R. Column names and the corresponding column values are passed to the <code>data.frame()</code> function in the manner below, and the function effectively binds these different columns together into a table:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb121"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb121-1"><a href="#cb121-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creates a toy country-level data frame </span></span>
+<span id="cb121-2"><a href="#cb121-2" aria-hidden="true" tabindex="-1"></a>country_df<span class="ot">&lt;-</span><span class="fu">data.frame</span>(<span class="at">Country=</span><span class="fu">c</span>(<span class="st">"Country A"</span>, <span class="st">"Country B"</span>, <span class="st">"Country C"</span>),</span>
+<span id="cb121-3"><a href="#cb121-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">GDP=</span><span class="fu">c</span>(<span class="dv">8000</span>, <span class="dv">30000</span>, <span class="dv">23500</span>),</span>
+<span id="cb121-4"><a href="#cb121-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">Population=</span><span class="fu">c</span>(<span class="dv">2000</span>, <span class="dv">5400</span>, <span class="dv">10000</span>),</span>
+<span id="cb121-5"><a href="#cb121-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">Continent=</span><span class="fu">c</span>(<span class="st">"South America"</span>, <span class="st">"Europe"</span>, <span class="st">"North America"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>To observe the structure of the table, we can print it to the R console by simply printing the name of the object to which it has been assigned:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb122"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints "country_df" data frame to console</span></span>
+<span id="cb122-2"><a href="#cb122-2" aria-hidden="true" tabindex="-1"></a>country_df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country   GDP Population     Continent
+1 Country A  8000       2000 South America
+2 Country B 30000       5400        Europe
+3 Country C 23500      10000 North America</code></pre>
+</div>
+</div>
+<p>One nice feature of R Studio is that instead of simply printing our data frames into the console, we can view a nicely formatted version of our data frame by passing the name of the data frame object through the <code>View()</code> function. For example, the code below will bring up the <code>country_df</code> data frame as a new tab in R Studio:</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

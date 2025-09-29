@@ -2,7 +2,7 @@ project:
   type: book
 
 book:
-  title: "CRDDS-IBS-R-workshop"
+  title: "A Crash Course in R for Social Scientists"
   author: "Aditya Ranganath"
   date: "9/29/2025"
   chapters:
@@ -16,6 +16,9 @@ bibliography: references.bib
 
 format:
   html:
+    toc: true
+    toc-depth: 4
+    number-depth: 4
     theme:
       - cosmo
       - brand
