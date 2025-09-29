@@ -1,0 +1,13 @@
+# Foundations
+
+In this lesson, we'll learn some important foundational concepts related to the R programming language. We will discuss R as a calculator, and object assignment, but will spend most of our time learning about three fundamental data structures that you will use all the time when working on applied social science research projects in R: vectors, data frames, and lists.
+
+## R and R Studio Installation
+
+If you haven't already, please go ahead and install both the R and RStudio applications. R and RStudio must be installed separately; you should install R first, and then RStudio. The R application is a bare-bones computing environment that supports statistical computing using the R programming language; RStudio is a visually appealing, feature-rich, and user-friendly interface that allows users to interact with this environment in an intuitive way. Once you have both applications installed, you don't need to open up R and RStudio separately; you only need to open and interact with RStudio (which will run R in the background).
+
+Please follow these [instructions](https://posit.co/download/rstudio-desktop/#download) to download R and R Studio; make sure you download the version of R appropriate for your operating system.
+
+## The R Studio Interface 
+
+Now that we've installed and opened up RStudio, let's familiarize ourselves with the RStudio interface. When we open up RStudio, we'll see a window that looks something like this:

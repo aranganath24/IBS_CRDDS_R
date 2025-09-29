@@ -3,11 +3,12 @@ project:
 
 book:
   title: "CRDDS-IBS-R-workshop"
-  author: "Norah Jones"
+  author: "Aditya Ranganath"
   date: "9/29/2025"
   chapters:
     - index.qmd
     - intro.qmd
+    - session1.qmd 
     - summary.qmd
     - references.qmd
 
