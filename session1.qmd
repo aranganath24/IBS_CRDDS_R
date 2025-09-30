@@ -3,8 +3,6 @@
 library(reactable)
 ```
 
-# 
-
 # Foundations
 
 In this lesson, we'll learn some important foundational concepts related to the R programming language. We will discuss R as a calculator, and object assignment, but will spend most of our time learning about three fundamental data structures that you will use all the time when working on applied social science research projects in R: vectors, data frames, and lists.
@@ -15,7 +13,7 @@ If you haven't already, please go ahead and install both the R and RStudio appli
 
 Please follow these [instructions](https://posit.co/download/rstudio-desktop/#download) to download R and R Studio; make sure you download the version of R appropriate for your operating system.
 
-## The R Studio Interface 
+## The R Studio Interface
 
 Now that we've installed and opened up RStudio, let's familiarize ourselves with the RStudio interface. When we open up RStudio, we'll see a window that looks something like this:
 
@@ -47,7 +45,7 @@ If your interface doesn't look exactly like this, it shouldn't be a problem; we 
 
 We're now ready to begin writing some basic code in R. Please go ahead and open up a new script, and follow along by typing the code as we go. To open up a new script, go to **File**, then click **New File**, then select **R Script**.
 
-## R as a Calculator 
+## R as a Calculator
 
 At its most basic level, R can be used as a calculator. For instance:
 
@@ -494,7 +492,7 @@ co_public_university_locations<-c(co_public_university_locations, CSU="Global")
 co_public_university_locations
 ```
 
-#### Vectorized Operations 
+#### Vectorized Operations
 
 Once a vector has been created, it’s possible to carry out operations on its elements; it’s important to briefly get an intuitive sense for how such vector operations work. There are different types of vector operations to be aware of. There are scalar operations, which involve arithmetic operations apply a constant value to every element of a numeric vector (i.e. adding ten to each vector element). It’s also possible to carry out arithmetic operations with more than one vector (i.e. adding two vectors together); such operations are typically known as vector operations. More generally, one of R’s benefits is that it allows us to use vectors to carry out iterative (repeated) operations without using programming constructs such as loops. For example, if you have some data and want to apply a formula or function to all of your data points, you could simply put those data points into a vector, and apply the formula or function to that vector, which will implement the desired operation on each element of the vector. Such operations, along with scalar and vector operations, are collectively referred to as “vectorized operations.”
 
@@ -779,7 +777,7 @@ country_df_gdp<-country_df$GDP
 
 The columns that comprise data frames are vectors, so when we extract a column, the resulting object is a vector. We will confirm this below, when we discuss the concept of data classes, which are closely related to data structures.
 
-### Lists 
+### Lists
 
 In R, a list is a data structure that allows us to conveniently store a variety of different objects, of various types. For example, we can use a list to vectors, data frames, visualizations and graphs–basically any R object you can think of! It is also possible to store a list within a list.
 

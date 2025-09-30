@@ -9,6 +9,10 @@ book:
     - index.qmd
     - intro.qmd
     - session1.qmd 
+    - session2.qmd
+    - session3.qmd
+    - session4.qmd
+    - session5.qmd
     - summary.qmd
     - references.qmd
 
@@ -21,7 +25,6 @@ format:
     number-depth: 4
     theme:
       - cosmo
-      - brand
-
+      
 editor: visual
 

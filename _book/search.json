@@ -90,13 +90,53 @@
     ]
   },
   {
+    "objectID": "session2.html",
+    "href": "session2.html",
+    "title": "3  Functional Programming",
+    "section": "",
+    "text": "In this lesson, we’ll continue to develop an understanding of foundational skills and concepts that will allow you to use R effectively for applied social scientific research. Our goal is to develop an elementary proficiency in functional programming, which will allow you to fully exploit R’s capabilities when you use it for your research data tasks. A function is essentially a small program that takes an input (or series of inputs), run the input(s) through an algorithm, and produces output(s). Many functions come pre-programmed into R. R packages are essentially open-source user-written libraries of interrelated functions united by some theme, which we can draw on to extend the range of functions available to us. And finally, we can write our own custom-functions.\nGiven the enormous variety and sophistication of the R package ecosystem, you will not have to become an expert programmer to work with data in R; rather, you can draw on the functions others have written to implement virtually any data-related task you could imagine. However, developing a basic understanding of how to write your own functions is nevertheless important, for a variety of reasons:\n\nSometimes, there won’t be a convenient pre-programmed function available to accomplish a given task, which will require you to write your own custom function.\nWriting your own functions will allow you to automate your workflows\nWriting functions will allow you to write more concise and readable code.\n\nWith those considerations in mind, we’ll learn more in this lesson about built-in functions in R and R packages, but our main purpose is to learn how to write some simple functions of our own. We’ll also learn more about how to use functions from the purrr package (part of the tidyverse suite) to iteratively apply our functions to multiple objects, which can help to automate various data processing workflows. In other words, iteration is the process of applying a function to each element in a vector, list, or data frame; it is a key part of functional programming that can save you enormous amounts of time and energy.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Functional Programming</span>"
+    ]
+  },
+  {
+    "objectID": "session3.html",
+    "href": "session3.html",
+    "title": "4  Data Processing and Wrangling",
+    "section": "",
+    "text": "Introduction",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Processing and Wrangling</span>"
+    ]
+  },
+  {
+    "objectID": "session4.html",
+    "href": "session4.html",
+    "title": "5  Data Analysis and Visualization",
+    "section": "",
+    "text": "Introduction",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Data Analysis and Visualization</span>"
+    ]
+  },
+  {
+    "objectID": "session5.html",
+    "href": "session5.html",
+    "title": "6  Tools for Reproducibility and Reporting",
+    "section": "",
+    "text": "Introduction",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Tools for Reproducibility and Reporting</span>"
+    ]
+  },
+  {
     "objectID": "summary.html",
     "href": "summary.html",
-    "title": "3  Summary",
+    "title": "7  Summary",
     "section": "",
     "text": "In summary, this book has no content whatsoever.\n\n1 + 1\n\n[1] 2",
     "crumbs": [
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Summary</span>"
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Summary</span>"
     ]
   },
   {
