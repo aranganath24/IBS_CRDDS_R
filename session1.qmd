@@ -1,3 +1,10 @@
+```{r}
+#| echo: false
+library(reactable)
+```
+
+# 
+
 # Foundations
 
 In this lesson, we'll learn some important foundational concepts related to the R programming language. We will discuss R as a calculator, and object assignment, but will spend most of our time learning about three fundamental data structures that you will use all the time when working on applied social science research projects in R: vectors, data frames, and lists.
@@ -637,3 +644,461 @@ country_df
 ```
 
 One nice feature of R Studio is that instead of simply printing our data frames into the console, we can view a nicely formatted version of our data frame by passing the name of the data frame object through the `View()` function. For example, the code below will bring up the `country_df` data frame as a new tab in R Studio:
+
+```{r}
+#| eval: false
+# pulls up "country_df" data frame in R Studio data viewer
+View(country_df)
+```
+
+```{r}
+#| echo: false
+reactable(country_df,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+Note the “tidy” features of this simple data frame:
+
+1.  Each of the variables (i.e. GDP, Population, Continent) has its own column
+
+2.  Each of the (country-level) observations has its own row
+
+3.  Each of the values (i.e. country-level information about a given variable) has its own distinct cell
+
+Let's now turn to a brief exploration of how to extract rows and columns from a data frame, using principles of indexing similar to what we learned in the context of working with vectors. Since data frames are the workhorse of social scientific research in R, we'll spend considerably more time on data frames in future lessons; for now, we just want to get acquainted with some basic base R syntax that allows us to get started.
+
+Unlike vectors, data frames are two dimensional; that is, they have both rows and columns. Both rows and columns are assigned index numbers; the convention is to refer to the index number of rows first, followed by the index number for columns. We can reference index numbers within square brackets to extract rows, columns, or observations from a data frame.
+
+Let's say, for example, that we want to extract the entire first row from `country_df`. We can do so with the following:
+
+```{r}
+# extracts entire first row from "country_df"
+country_df[1, ]
+```
+
+The number "1" indicates that we want to extract the first row; we leave the second argument after the comma blank, to indicate that we want all of the columns associated with that row. If we want the entire second row, we can do the following:
+
+```{r}
+# extracts entire second row from "country_df"
+country_df[2, ]
+```
+
+If, instead, we want to extract a particular column, we indicate the index number of the desired column as the second argument in square brackets. Assuming we want all the rows associated with that column, we leave the row index blank. For example, we can extract the entire third column with the following:
+
+```{r}
+# extracts entire third column from "country_df"
+country_df[, 3]
+```
+
+Thus far, we haven't been assigning these subsetted elements of the `country_df` data frame object to their own objects, but we can easily do so if we want to have them handy for future use. For example:
+
+```{r}
+# extracts entire third column from "country_df" and assigns it to an object named country_df_column
+country_df_column<-country_df[, 3]
+
+# prints contents of "country_df_column"
+country_df_column
+```
+
+```{r}
+# extracts entire third row from "country_df" and assigns it to an object named country_df_row
+country_df_row<-country_df[3, ]
+
+# prints contents of "country_df_row"
+country_df_row
+```
+
+We can also extract more than one row or column. For example, let's say we want to extract the entirety of the second and third rows. We can do so with the following:
+
+```{r}
+# extracts second and third rows from "country_df"
+country_df[2:3, ]
+```
+
+If, instead, we want to grab the second and third columns, we can run the following:
+
+```{r}
+# extracts second and third columns from "country_df"
+country_df[, 2:3]
+```
+
+As you would expect, we can simultaneously select particular rows and columns. For example, let's say we want to grab the second through third rows, and the first through third columns:
+
+```{r}
+# extracts second through third rows, and first through third columns from "country_df"
+country_df[2:3, 1:3]
+```
+
+Alternatively, let's say we want to grab the first through second columns from the third row:
+
+```{r}
+# extracts the third row, and first and second columns, from "country_df"
+country_df[3, 1:2]
+```
+
+If we want to extract non-consecutive rows or columns, we must pass the desired index numbers as a vector. For example, let's say we want rows 1 and 3, but not row 2:
+
+```{r}
+# extracts first and third rows from "country_df", while excluding second row
+country_df[c(1,3), ]
+```
+
+Let's say we want the first, second, and fourth columns:
+
+```{r}
+# extracts first, second, and fourth columns from "country_df"
+country_df[, c(1,2,4)]
+```
+
+Or, the first and third rows for the first, second and fourth columns:
+
+```{r}
+# extracts the first and third rows, and second and fourth columns, from "country_df" and assigns it to a new object named "dataset_selection"
+dataset_selection<-country_df[c(1,3), c(1,2,4)]
+
+# prints contents of "dataset_selection"
+dataset_selection
+```
+
+Before proceeding, it's worth noting a convenient way to extract columns from a data frame, which we will often encounter when working with R. In particular, we can extract a column from a data frame by typing the name of the data frame object, followed by the dollar sign (\$), followed by the name of the column we want to extract. For example, let's say we want to extract the "Continent" column from `country_df`:
+
+```{r}
+# extracts "Continent" column from "country_df"
+country_df$Continent
+```
+
+Let's take another example; we'll extract the "GDP" column, and assign it to a new object named `country_df_gdp`:
+
+```{r}
+# extracts "GDP" column from "country_df" and assigns it to a new object named "country_df_gdp"
+country_df_gdp<-country_df$GDP
+```
+
+The columns that comprise data frames are vectors, so when we extract a column, the resulting object is a vector. We will confirm this below, when we discuss the concept of data classes, which are closely related to data structures.
+
+### Lists 
+
+In R, a list is a data structure that allows us to conveniently store a variety of different objects, of various types. For example, we can use a list to vectors, data frames, visualizations and graphs–basically any R object you can think of! It is also possible to store a list within a list.
+
+Lists allow us to keep track of the various objects we create, and are therefore a useful data management tool. In addition, lists are very helpful to use when we want to perform iterative operations across multiple objects.
+
+We can create lists in R using the `list()` function; the arguments to this function are the objects that we want to include in the list. In the code below, we’ll create a list (assigned to an object named `example_list`) using the `list()` function. It contains some of the objects we create earlier in the lesson: the numeric `asia_temperatures_fahrenheit` vector, the `university_name_location`character vector, the `country_df` data frame, and the selection from `country_df`, `dataset_selection`, which is also a data frame.
+
+```{r}
+# creates list whose elements are the "arbitrary_values" numeric vector, the "months_four" character vector, and the "country_df" data frame, and assigns it to a new object named "example_list"
+example_list<-list(asia_temperatures_fahrenheit, university_name_location, country_df, dataset_selection)
+```
+
+Now that we’ve created our list object, let’s print out its contents:
+
+```{r}
+# prints contents of "example_list"
+example_list
+```
+
+As you can see, our list contains each of the various specified objects within a single, unified structure. We can access specific elements within a list using the specific index number of the desired element, in much the same way we did for vectors. When extracting a single list element from a list, the convention is to enclose the index number of the desired list element in double square brackets. For example, if we want to extract the country-level data frame from `example_list`, we can use the following:
+
+```{r}
+# extracts third element from "example_list"
+example_list[[3]]
+```
+
+If we want to subset a list, and extract more than one list element as a separate list, we can do so by creating a vector of the index values of the desired elements, and enclosing it in single brackets after the name of the list object. For example, if we wanted to generate a new list that contained only the first and third elements of `example_list` (the numeric vector of arbitrary values and the data frame), we would use the following syntax:
+
+```{r}
+# extracts first and third elements from "example_list"
+example_list[c(1,3)]
+```
+
+While list elements are not automatically named, we can name our list element using the `names()`function. The first step is to define a character vector of desired names. We can specify any names we’d like but for the sake of illustration, let’s say we want to name the first list element “element1”, the second list element “element2”, and the third list element “element3”. Let’s create a vector of our desired names, and assign it to an object named `name_vector`:
+
+```{r}
+# creates a character vector of desired names for list elements, and assigns it to a new object named "name_vector"
+name_vector_list<-c("element1", "element2", "element3", "element4")
+```
+
+Now, we’ll assign these names in `name_vector` to the list elements in `example_list` with the following:
+
+```{r}
+# assigns names from "name_vector" to list elements in "example_list"
+names(example_list)<-name_vector_list
+```
+
+Let’s now print the contents of `example_list`:
+
+```{r}
+# prints contents of "example_list"
+example_list
+```
+
+Note that the list elements now have names attached to them; the first character string in `name_vector`is assigned as the name of the first element in `example_list`, the second character string in `name_vector` is assigned as the name of the second element in `example_list`, and so on.
+
+Practically speaking, we can now extract list elements using the assigned names. For example, if we want to extract the data frame from `example_list`, we could do so by its assigned name (“element3”), as follows:
+
+```{r}
+# Extracts the data frame from "example_list" by its assigned name
+example_list[["element3"]]
+```
+
+Note that even after assigning names to list elements, you can still extract elements by their index value, if you would prefer to do so:
+
+```{r}
+# Extracts the "element3" data frame from "example_list" by its index number
+example_list[[3]]
+```
+
+We can also create lists with inline naming (analogous to the inline naming of vector elements) instead of assigning names with the `names()` function after the fact. Below, we'll name the list elements after their objects, with "le" (for "list element" appended to the name):
+
+```{r}
+# create a list with inline naming
+example_list_alt<-list(asia_temperatures_fahrenheit_le=asia_temperatures_fahrenheit, 
+                       university_name_location_le=university_name_location, 
+                       country_df_le=country_df, 
+                       dataset_selection_le=dataset_selection)
+```
+
+Let's print the contents of `example_list_alt`:
+
+```{r}
+# prints contents of "example_list_alt"
+example_list_alt
+```
+
+And confirm that we can extract elements with their assigned names:
+
+```{r}
+# extracts "university_name_location" vector from "example_list_alt" using its assigned name 
+example_list_alt[["university_name_location_le"]]
+```
+
+It's also possible to make a list within a list (i.e. a "nested list") which can sometimes come in handy for more complicated data workflows. However, we won't use nested lists in our workshop series, so we will not cover that topic here.
+
+## Data Classes
+
+We're done with our tour of three fundamental data structures in R, which we will repeatedly use in our work as applied social scientists: vectors, data frames, and lists. Data structures are essentially containers for storing and organizing data in well-defined and organized ways, and R functions interact with object differently based on their underlying structure. An object's "class" provides additional information about how it behaves. The class of an object generally corresponds to the object's data structure (for example, the "data.frame" class is often associated with the data frame data structure), but the class of an object can also extend functionality, and customize how an object interacts with R. For example, "tibbles" are a type of enhanced data frame that are used in the *tidyverse*, and tibbles have the class "tbl_df"
+
+We can retrieve the class of an object (i.e. extract information about whether an object behaves as a data frame, vector, list, or some other structure) by passing the name of the object as an argument to the `class()` function. For example, let's say we want to confirm the class of `example_list`:
+
+```{r}
+# prints class of "example_list"
+class(example_list)
+```
+
+As expected, `example_list` belongs to the class "list".
+
+Let's consider another:
+
+```{r}
+# prints class of "asia_temperatures_fahrenheit"
+class(asia_temperatures_fahrenheit)
+```
+
+As expected, given how we created it, `asia_temperatures_fahrenheit` is of the class "numeric", i.e. a numeric vector.
+
+Let's retrieve the class of `country_df:`
+
+```{r}
+# prints class of "country_df"
+class(country_df)
+```
+
+Recall that we extracted the "GDP" column from `country_df` and assigned it to an object named `country_df_gdp`. Recall that the columns of data frames are vectors, which means that we would expect `country_df_gdp` to be of the class "numeric":
+
+```{r}
+# prints class of "country_df_gdp"
+class(country_df_gdp)
+```
+
+While data frame columns are vectors, rows are treated as data frames, which we can confirm by checking the class of `country_df_row` (i.e. the third row of `country_df)`:
+
+```{r}
+# prints class of "country_df_row"
+class(country_df_row)
+```
+
+Sometimes, we will need to transform objects into a different class than the one they are currently assigned. For example, let's say that a function we'd like to use can take a data frame input, but doesn't accept vector inputs. In that case, if our data is stored as a numeric vector, we must convert the object to a data frame before passing it to the desired function. Let's say the numeric vector data we want to convert to a data frame is `asia_temperatures_fahrenheit.` We can do so by passing it to the `as.data.frame()` function which converts objects of different classes to the "data.frame" class. We'll assign the data frame version of `asia_temperatures_fahrenheit` to a new object named `asia_temperatures_df` and print its contents:
+
+```{r}
+# converts "asia_temperatures_fahrenheit" to data frame class and assigns the data frame to a new object named "asia_temperatures_df"
+asia_temperatures_df<-as.data.frame(asia_temperatures_fahrenheit)
+
+# prints contents of "asia_temperatures_df"
+asia_temperatures_df
+```
+
+We can confirm the new class of `asia_temperatures_df` with the following:
+
+```{r}
+# prints class of "asia_temperatures_df"
+class(asia_temperatures_df)
+```
+
+We could carry out the inverse operation (i.e. transforming an object of the "data.frame" class to an object of class "numeric") by passing the data frame object to the `as.numeric()` function. There are several functions that allow for class transformations such as this. Classes may feel confusing now, but they will become more intuitive as you work in R. They are important to be aware of, especially in the context of trouble shooting and debugging, since functions often don't work as expected when they expect arguments of one class but receive another.
+
+## End-of-Lesson Exercises
+
+**Exercise 1**
+
+Consider the following vector of Fahrenheit temperature values:
+
+```{r}
+# creates vector of Fahrenheit temperature values in Colorado
+fahrenheit_colorado <- c(33, 15, 22, 44)
+```
+
+The first temperature is associated with Boulder; the second with Fort Collins; the third with Denver; and the fourth with Colorado Springs. Assign cities as labels to the temperature values with which they're associated, and update `fahrenheit_colorado` with these changes.
+
+<details>
+
+<summary>Suggested Solution to Exercise 1</summary>
+
+```{r}
+# assigns names to "fahrenheit_colorado" using the "names" function and a vector of names
+names(fahrenheit_colorado) <- c("Boulder", "Fort Collins", "Denver", "Colorado Springs")
+
+# prints labeled "fahrenheit_colorado" vector
+fahrenheit_colorado
+```
+
+</details>
+
+**Exercise 2**
+
+Apply a transformation to `fahrenheit_colorado` that converts the temperature values to Celsius, and assign this new vector of Celsius temperatures to a new object named `celsius_colorado`.
+
+<details>
+
+<summary>Suggested Solution to Exercise 2</summary>
+
+```{r}
+# applies Fahrenheit to Celsius conversion formula to "fahrenheit_colorado" and assigns resulting vector of Celsius values to a new object named "celsius_colorado"
+celsius_colorado<-(fahrenheit_colorado-32)*5/9
+
+# prints contents of "celsius_colorado"
+celsius_colorado
+```
+
+</details>
+
+**Exercise 3**
+
+Transform the class of the updated `celsius_colorado` object into "data.frame", and assign the new data frame to an object named `celsius_colorado_df.`
+
+<details>
+
+<summary>Suggested Solution to Exercise 3</summary>
+
+```{r}
+# uses "as.data.frame" function to transform "celsius_colorado" into a data.frame object, and assigns the data frame to a new object named "celsius_colorado_df"
+celsius_colorado_df<-as.data.frame(celsius_colorado)
+
+# prints contents of "celsius_colorado_df"
+celsius_colorado_df
+```
+
+</details>
+
+**Exercise 4**
+
+Consider our toy country-level data frame, which is reproduced below:
+
+```{r}
+#| echo: false
+# makes toy country-level data frame
+country_df<-data.frame(Country=c("Country A", "Country B", "Country C"),
+                       GDP=c(8000, 30000, 23500),
+                       Population=c(2000, 5400, 10000),
+                       Continent=c("South America", "Europe", "North America"))
+
+# prints contents of country_df
+country_df
+```
+
+A). What is the class of the "Continent" Column?
+
+<details>
+
+<summary>Suggested Solution to Exercise 4A</summary>
+
+```{r}
+# extracts class of "Continent" column
+class(country_df$Continent)
+```
+
+</details>
+
+B). Extract the "Population" column into a new object. What is it's class? Convert it to the "data.frame" class.
+
+<details>
+
+<summary>Suggested Solution to Exercise 4B</summary>
+
+```{r}
+# extracts "Population" column into a new object named "country_df_population"
+country_df_population<-country_df$Population
+
+# prints class of "country_df_population"
+class(country_df_population)
+
+# converts "country_df_population" to a data.frame
+country_df_population<-as.data.frame(country_df_population)
+```
+
+</details>
+
+C. Extract the first three columns of `country_df` and assign this subsetted data frame to a new object. View it in the R Studio data viewer.
+
+<details>
+
+<summary>Suggested Solution to Exercise 4C</summary>
+
+```{r}
+# extracts first three columns of "country_df_columns" and assigns it to a new object named "country_df_columns"
+country_df_columns<-country_df[, 1:3]
+
+# prints "country_df_columns", pass object to View() function to see it in the data viewer
+country_df_columns
+
+```
+
+</details>
+
+D. Extract the value of Country B's population using indexing.
+
+<details>
+
+<summary>Suggested Solution to Exercise 4D</summary>
+
+```{r}
+# extracts Country B's population (2nd row, 3rd column)
+country_df[2,3]
+```
+
+</details>
+
+**Exercise 5**
+
+Deposit `fahrenheit_colorado,` `celsius_colorado` , and `country_df` into a new list object. After you have done so, extract `country_df` from the list using index numbers and bracket notation. Then, assign the list elements names of your choosing, and extract the `celsius_colorado` list object using its name and bracket notation.
+
+<details>
+
+<summary>Suggested Solution to Exercise 5</summary>
+
+```{r}
+# makes a list with the relevant elements and assigns it to a new object named "exercise_list"
+exercise_list<-list(fahrenheit_colorado, celsius_colorado, country_df)
+
+# extracts "country_df" from list using its index
+country_df[[3]]
+
+# assigns names to "exercise_list"
+names(exercise_list)<-c("CO_F", "CO_C", "ToyDF")
+
+# extracts data frame using its list label
+exercise_list[["ToyDF"]]
+```
+
+</details>
