@@ -4,6 +4,8 @@ project:
 book:
   title: "A Crash Course in R for Social Scientists"
   author: "Aditya Ranganath"
+  repo-url: https://github.com/aranganath24/IBS_CRDDS_R 
+  repo-actions: [source, edit, issue] 
   date: "9/29/2025"
   chapters:
     - index.qmd
@@ -23,8 +25,9 @@ format:
     toc: true
     toc-depth: 4
     number-depth: 4
+    include-after-body: footer.html
     theme:
       - cosmo
-      
+
 editor: visual
 
