@@ -105,6 +105,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="site_libs/core-js-2.5.3/shim.min.js"></script>
+<script src="site_libs/react-18.2.0/react.min.js"></script>
+<script src="site_libs/react-18.2.0/react-dom.min.js"></script>
+<script src="site_libs/reactwidget-2.0.0/react-tools.js"></script>
+<link href="site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="site_libs/reactable-0.4.4/reactable.css" rel="stylesheet">
+<script src="site_libs/reactable-binding-0.4.4/reactable.js"></script>
 
 
 </head>
@@ -201,7 +209,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#vectorized-operations" id="toc-vectorized-operations" class="nav-link" data-scroll-target="#vectorized-operations"><span class="header-section-number">2.5.1.3</span> Vectorized Operations</a></li>
   </ul></li>
   <li><a href="#data-frames" id="toc-data-frames" class="nav-link" data-scroll-target="#data-frames"><span class="header-section-number">2.5.2</span> Data Frames</a></li>
+  <li><a href="#lists" id="toc-lists" class="nav-link" data-scroll-target="#lists"><span class="header-section-number">2.5.3</span> Lists</a></li>
   </ul></li>
+  <li><a href="#data-classes" id="toc-data-classes" class="nav-link" data-scroll-target="#data-classes"><span class="header-section-number">2.6</span> Data Classes</a></li>
+  <li><a href="#end-of-lesson-exercises" id="toc-end-of-lesson-exercises" class="nav-link" data-scroll-target="#end-of-lesson-exercises"><span class="header-section-number">2.7</span> End-of-Lesson Exercises</a></li>
   </ul>
 </nav>
     </div>
@@ -914,9 +925,564 @@ length</code></pre>
 </div>
 </div>
 <p>One nice feature of R Studio is that instead of simply printing our data frames into the console, we can view a nicely formatted version of our data frame by passing the name of the data frame object through the <code>View()</code> function. For example, the code below will bring up the <code>country_df</code> data frame as a new tab in R Studio:</p>
-
-
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb124"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb124-1"><a href="#cb124-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pulls up "country_df" data frame in R Studio data viewer</span></span>
+<span id="cb124-2"><a href="#cb124-2" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(country_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div class="reactable html-widget html-fill-item" id="htmlwidget-fbfe605cb6220f599136" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-fbfe605cb6220f599136">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Country":["Country A","Country B","Country C"],"GDP":[8000,30000,23500],"Population":[2000,5400,10000],"Continent":["South America","Europe","North America"]},"columns":[{"id":"Country","name":"Country","type":"character"},{"id":"GDP","name":"GDP","type":"numeric"},{"id":"Population","name":"Population","type":"numeric"},{"id":"Continent","name":"Continent","type":"character"}],"bordered":true,"striped":true,"dataKey":"51d69d204a8436ea4d6e38857b37a35b"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>Note the “tidy” features of this simple data frame:</p>
+<ol type="1">
+<li><p>Each of the variables (i.e.&nbsp;GDP, Population, Continent) has its own column</p></li>
+<li><p>Each of the (country-level) observations has its own row</p></li>
+<li><p>Each of the values (i.e.&nbsp;country-level information about a given variable) has its own distinct cell</p></li>
+</ol>
+<p>Let’s now turn to a brief exploration of how to extract rows and columns from a data frame, using principles of indexing similar to what we learned in the context of working with vectors. Since data frames are the workhorse of social scientific research in R, we’ll spend considerably more time on data frames in future lessons; for now, we just want to get acquainted with some basic base R syntax that allows us to get started.</p>
+<p>Unlike vectors, data frames are two dimensional; that is, they have both rows and columns. Both rows and columns are assigned index numbers; the convention is to refer to the index number of rows first, followed by the index number for columns. We can reference index numbers within square brackets to extract rows, columns, or observations from a data frame.</p>
+<p>Let’s say, for example, that we want to extract the entire first row from <code>country_df</code>. We can do so with the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb125"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts entire first row from "country_df"</span></span>
+<span id="cb125-2"><a href="#cb125-2" aria-hidden="true" tabindex="-1"></a>country_df[<span class="dv">1</span>, ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country  GDP Population     Continent
+1 Country A 8000       2000 South America</code></pre>
+</div>
+</div>
+<p>The number “1” indicates that we want to extract the first row; we leave the second argument after the comma blank, to indicate that we want all of the columns associated with that row. If we want the entire second row, we can do the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb127"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts entire second row from "country_df"</span></span>
+<span id="cb127-2"><a href="#cb127-2" aria-hidden="true" tabindex="-1"></a>country_df[<span class="dv">2</span>, ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country   GDP Population Continent
+2 Country B 30000       5400    Europe</code></pre>
+</div>
+</div>
+<p>If, instead, we want to extract a particular column, we indicate the index number of the desired column as the second argument in square brackets. Assuming we want all the rows associated with that column, we leave the row index blank. For example, we can extract the entire third column with the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb129"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts entire third column from "country_df"</span></span>
+<span id="cb129-2"><a href="#cb129-2" aria-hidden="true" tabindex="-1"></a>country_df[, <span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  2000  5400 10000</code></pre>
+</div>
+</div>
+<p>Thus far, we haven’t been assigning these subsetted elements of the <code>country_df</code> data frame object to their own objects, but we can easily do so if we want to have them handy for future use. For example:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb131"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts entire third column from "country_df" and assigns it to an object named country_df_column</span></span>
+<span id="cb131-2"><a href="#cb131-2" aria-hidden="true" tabindex="-1"></a>country_df_column<span class="ot">&lt;-</span>country_df[, <span class="dv">3</span>]</span>
+<span id="cb131-3"><a href="#cb131-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb131-4"><a href="#cb131-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "country_df_column"</span></span>
+<span id="cb131-5"><a href="#cb131-5" aria-hidden="true" tabindex="-1"></a>country_df_column</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  2000  5400 10000</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts entire third row from "country_df" and assigns it to an object named country_df_row</span></span>
+<span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a>country_df_row<span class="ot">&lt;-</span>country_df[<span class="dv">3</span>, ]</span>
+<span id="cb133-3"><a href="#cb133-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb133-4"><a href="#cb133-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "country_df_row"</span></span>
+<span id="cb133-5"><a href="#cb133-5" aria-hidden="true" tabindex="-1"></a>country_df_row</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country   GDP Population     Continent
+3 Country C 23500      10000 North America</code></pre>
+</div>
+</div>
+<p>We can also extract more than one row or column. For example, let’s say we want to extract the entirety of the second and third rows. We can do so with the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb135"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts second and third rows from "country_df"</span></span>
+<span id="cb135-2"><a href="#cb135-2" aria-hidden="true" tabindex="-1"></a>country_df[<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country   GDP Population     Continent
+2 Country B 30000       5400        Europe
+3 Country C 23500      10000 North America</code></pre>
+</div>
+</div>
+<p>If, instead, we want to grab the second and third columns, we can run the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb137"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts second and third columns from "country_df"</span></span>
+<span id="cb137-2"><a href="#cb137-2" aria-hidden="true" tabindex="-1"></a>country_df[, <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    GDP Population
+1  8000       2000
+2 30000       5400
+3 23500      10000</code></pre>
+</div>
+</div>
+<p>As you would expect, we can simultaneously select particular rows and columns. For example, let’s say we want to grab the second through third rows, and the first through third columns:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts second through third rows, and first through third columns from "country_df"</span></span>
+<span id="cb139-2"><a href="#cb139-2" aria-hidden="true" tabindex="-1"></a>country_df[<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country   GDP Population
+2 Country B 30000       5400
+3 Country C 23500      10000</code></pre>
+</div>
+</div>
+<p>Alternatively, let’s say we want to grab the first through second columns from the third row:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb141"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts the third row, and first and second columns, from "country_df"</span></span>
+<span id="cb141-2"><a href="#cb141-2" aria-hidden="true" tabindex="-1"></a>country_df[<span class="dv">3</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country   GDP
+3 Country C 23500</code></pre>
+</div>
+</div>
+<p>If we want to extract non-consecutive rows or columns, we must pass the desired index numbers as a vector. For example, let’s say we want rows 1 and 3, but not row 2:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb143"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb143-1"><a href="#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts first and third rows from "country_df", while excluding second row</span></span>
+<span id="cb143-2"><a href="#cb143-2" aria-hidden="true" tabindex="-1"></a>country_df[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>), ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country   GDP Population     Continent
+1 Country A  8000       2000 South America
+3 Country C 23500      10000 North America</code></pre>
+</div>
+</div>
+<p>Let’s say we want the first, second, and fourth columns:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb145"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb145-1"><a href="#cb145-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts first, second, and fourth columns from "country_df"</span></span>
+<span id="cb145-2"><a href="#cb145-2" aria-hidden="true" tabindex="-1"></a>country_df[, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">4</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country   GDP     Continent
+1 Country A  8000 South America
+2 Country B 30000        Europe
+3 Country C 23500 North America</code></pre>
+</div>
+</div>
+<p>Or, the first and third rows for the first, second and fourth columns:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb147"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb147-1"><a href="#cb147-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts the first and third rows, and second and fourth columns, from "country_df" and assigns it to a new object named "dataset_selection"</span></span>
+<span id="cb147-2"><a href="#cb147-2" aria-hidden="true" tabindex="-1"></a>dataset_selection<span class="ot">&lt;-</span>country_df[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>), <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">4</span>)]</span>
+<span id="cb147-3"><a href="#cb147-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb147-4"><a href="#cb147-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "dataset_selection"</span></span>
+<span id="cb147-5"><a href="#cb147-5" aria-hidden="true" tabindex="-1"></a>dataset_selection</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country   GDP     Continent
+1 Country A  8000 South America
+3 Country C 23500 North America</code></pre>
+</div>
+</div>
+<p>Before proceeding, it’s worth noting a convenient way to extract columns from a data frame, which we will often encounter when working with R. In particular, we can extract a column from a data frame by typing the name of the data frame object, followed by the dollar sign ($), followed by the name of the column we want to extract. For example, let’s say we want to extract the “Continent” column from <code>country_df</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb149"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb149-1"><a href="#cb149-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts "Continent" column from "country_df"</span></span>
+<span id="cb149-2"><a href="#cb149-2" aria-hidden="true" tabindex="-1"></a>country_df<span class="sc">$</span>Continent</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "South America" "Europe"        "North America"</code></pre>
+</div>
+</div>
+<p>Let’s take another example; we’ll extract the “GDP” column, and assign it to a new object named <code>country_df_gdp</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb151"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb151-1"><a href="#cb151-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts "GDP" column from "country_df" and assigns it to a new object named "country_df_gdp"</span></span>
+<span id="cb151-2"><a href="#cb151-2" aria-hidden="true" tabindex="-1"></a>country_df_gdp<span class="ot">&lt;-</span>country_df<span class="sc">$</span>GDP</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The columns that comprise data frames are vectors, so when we extract a column, the resulting object is a vector. We will confirm this below, when we discuss the concept of data classes, which are closely related to data structures.</p>
 </section>
+<section id="lists" class="level3" data-number="2.5.3">
+<h3 data-number="2.5.3" class="anchored" data-anchor-id="lists"><span class="header-section-number">2.5.3</span> Lists</h3>
+<p>In R, a list is a data structure that allows us to conveniently store a variety of different objects, of various types. For example, we can use a list to vectors, data frames, visualizations and graphs–basically any R object you can think of! It is also possible to store a list within a list.</p>
+<p>Lists allow us to keep track of the various objects we create, and are therefore a useful data management tool. In addition, lists are very helpful to use when we want to perform iterative operations across multiple objects.</p>
+<p>We can create lists in R using the&nbsp;<code>list()</code> function; the arguments to this function are the objects that we want to include in the list. In the code below, we’ll create a list (assigned to an object named <code>example_list</code>) using the <code>list()</code> function. It contains some of the objects we create earlier in the lesson: the numeric <code>asia_temperatures_fahrenheit</code> vector, the <code>university_name_location</code>character vector, the <code>country_df</code> data frame, and the selection from <code>country_df</code>, <code>dataset_selection</code>, which is also a data frame.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb152"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb152-1"><a href="#cb152-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creates list whose elements are the "arbitrary_values" numeric vector, the "months_four" character vector, and the "country_df" data frame, and assigns it to a new object named "example_list"</span></span>
+<span id="cb152-2"><a href="#cb152-2" aria-hidden="true" tabindex="-1"></a>example_list<span class="ot">&lt;-</span><span class="fu">list</span>(asia_temperatures_fahrenheit, university_name_location, country_df, dataset_selection)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now that we’ve created our list object, let’s print out its contents:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb153"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb153-1"><a href="#cb153-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "example_list"</span></span>
+<span id="cb153-2"><a href="#cb153-2" aria-hidden="true" tabindex="-1"></a>example_list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+   Mumbai     Hanoi Singapore   Beijing   Jakarta    Manila 
+     93.2      68.0     109.4      55.4      93.2      83.3 
+
+[[2]]
+[1] "University of Colorado, Boulder"        
+[2] "Colorado State University, Fort Collins"
+
+[[3]]
+    Country   GDP Population     Continent
+1 Country A  8000       2000 South America
+2 Country B 30000       5400        Europe
+3 Country C 23500      10000 North America
+
+[[4]]
+    Country   GDP     Continent
+1 Country A  8000 South America
+3 Country C 23500 North America</code></pre>
+</div>
+</div>
+<p>As you can see, our list contains each of the various specified objects within a single, unified structure. We can access specific elements within a list using the specific index number of the desired element, in much the same way we did for vectors. When extracting a single list element from a list, the convention is to enclose the index number of the desired list element in double square brackets. For example, if we want to extract the country-level data frame from <code>example_list</code>, we can use the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb155"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb155-1"><a href="#cb155-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts third element from "example_list"</span></span>
+<span id="cb155-2"><a href="#cb155-2" aria-hidden="true" tabindex="-1"></a>example_list[[<span class="dv">3</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country   GDP Population     Continent
+1 Country A  8000       2000 South America
+2 Country B 30000       5400        Europe
+3 Country C 23500      10000 North America</code></pre>
+</div>
+</div>
+<p>If we want to subset a list, and extract more than one list element as a separate list, we can do so by creating a vector of the index values of the desired elements, and enclosing it in single brackets after the name of the list object. For example, if we wanted to generate a new list that contained only the first and third elements of <code>example_list</code> (the numeric vector of arbitrary values and the data frame), we would use the following syntax:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb157"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb157-1"><a href="#cb157-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts first and third elements from "example_list"</span></span>
+<span id="cb157-2"><a href="#cb157-2" aria-hidden="true" tabindex="-1"></a>example_list[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+   Mumbai     Hanoi Singapore   Beijing   Jakarta    Manila 
+     93.2      68.0     109.4      55.4      93.2      83.3 
+
+[[2]]
+    Country   GDP Population     Continent
+1 Country A  8000       2000 South America
+2 Country B 30000       5400        Europe
+3 Country C 23500      10000 North America</code></pre>
+</div>
+</div>
+<p>While list elements are not automatically named, we can name our list element using the <code>names()</code>function. The first step is to define a character vector of desired names. We can specify any names we’d like but for the sake of illustration, let’s say we want to name the first list element “element1”, the second list element “element2”, and the third list element “element3”. Let’s create a vector of our desired names, and assign it to an object named <code>name_vector</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb159"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb159-1"><a href="#cb159-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creates a character vector of desired names for list elements, and assigns it to a new object named "name_vector"</span></span>
+<span id="cb159-2"><a href="#cb159-2" aria-hidden="true" tabindex="-1"></a>name_vector_list<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"element1"</span>, <span class="st">"element2"</span>, <span class="st">"element3"</span>, <span class="st">"element4"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now, we’ll assign these names in <code>name_vector</code> to the list elements in <code>example_list</code> with the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb160"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb160-1"><a href="#cb160-1" aria-hidden="true" tabindex="-1"></a><span class="co"># assigns names from "name_vector" to list elements in "example_list"</span></span>
+<span id="cb160-2"><a href="#cb160-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(example_list)<span class="ot">&lt;-</span>name_vector_list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Let’s now print the contents of <code>example_list</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb161"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb161-1"><a href="#cb161-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "example_list"</span></span>
+<span id="cb161-2"><a href="#cb161-2" aria-hidden="true" tabindex="-1"></a>example_list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$element1
+   Mumbai     Hanoi Singapore   Beijing   Jakarta    Manila 
+     93.2      68.0     109.4      55.4      93.2      83.3 
+
+$element2
+[1] "University of Colorado, Boulder"        
+[2] "Colorado State University, Fort Collins"
+
+$element3
+    Country   GDP Population     Continent
+1 Country A  8000       2000 South America
+2 Country B 30000       5400        Europe
+3 Country C 23500      10000 North America
+
+$element4
+    Country   GDP     Continent
+1 Country A  8000 South America
+3 Country C 23500 North America</code></pre>
+</div>
+</div>
+<p>Note that the list elements now have names attached to them; the first character string in <code>name_vector</code>is assigned as the name of the first element in <code>example_list</code>, the second character string in <code>name_vector</code> is assigned as the name of the second element in <code>example_list</code>, and so on.</p>
+<p>Practically speaking, we can now extract list elements using the assigned names. For example, if we want to extract the data frame from <code>example_list</code>, we could do so by its assigned name (“element3”), as follows:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb163"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb163-1"><a href="#cb163-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extracts the data frame from "example_list" by its assigned name</span></span>
+<span id="cb163-2"><a href="#cb163-2" aria-hidden="true" tabindex="-1"></a>example_list[[<span class="st">"element3"</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country   GDP Population     Continent
+1 Country A  8000       2000 South America
+2 Country B 30000       5400        Europe
+3 Country C 23500      10000 North America</code></pre>
+</div>
+</div>
+<p>Note that even after assigning names to list elements, you can still extract elements by their index value, if you would prefer to do so:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb165"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb165-1"><a href="#cb165-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extracts the "element3" data frame from "example_list" by its index number</span></span>
+<span id="cb165-2"><a href="#cb165-2" aria-hidden="true" tabindex="-1"></a>example_list[[<span class="dv">3</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country   GDP Population     Continent
+1 Country A  8000       2000 South America
+2 Country B 30000       5400        Europe
+3 Country C 23500      10000 North America</code></pre>
+</div>
+</div>
+<p>We can also create lists with inline naming (analogous to the inline naming of vector elements) instead of assigning names with the <code>names()</code> function after the fact. Below, we’ll name the list elements after their objects, with “le” (for “list element” appended to the name):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb167"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb167-1"><a href="#cb167-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a list with inline naming</span></span>
+<span id="cb167-2"><a href="#cb167-2" aria-hidden="true" tabindex="-1"></a>example_list_alt<span class="ot">&lt;-</span><span class="fu">list</span>(<span class="at">asia_temperatures_fahrenheit_le=</span>asia_temperatures_fahrenheit, </span>
+<span id="cb167-3"><a href="#cb167-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">university_name_location_le=</span>university_name_location, </span>
+<span id="cb167-4"><a href="#cb167-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">country_df_le=</span>country_df, </span>
+<span id="cb167-5"><a href="#cb167-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">dataset_selection_le=</span>dataset_selection)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Let’s print the contents of <code>example_list_alt</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb168"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb168-1"><a href="#cb168-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "example_list_alt"</span></span>
+<span id="cb168-2"><a href="#cb168-2" aria-hidden="true" tabindex="-1"></a>example_list_alt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$asia_temperatures_fahrenheit_le
+   Mumbai     Hanoi Singapore   Beijing   Jakarta    Manila 
+     93.2      68.0     109.4      55.4      93.2      83.3 
+
+$university_name_location_le
+[1] "University of Colorado, Boulder"        
+[2] "Colorado State University, Fort Collins"
+
+$country_df_le
+    Country   GDP Population     Continent
+1 Country A  8000       2000 South America
+2 Country B 30000       5400        Europe
+3 Country C 23500      10000 North America
+
+$dataset_selection_le
+    Country   GDP     Continent
+1 Country A  8000 South America
+3 Country C 23500 North America</code></pre>
+</div>
+</div>
+<p>And confirm that we can extract elements with their assigned names:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb170"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb170-1"><a href="#cb170-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts "university_name_location" vector from "example_list_alt" using its assigned name </span></span>
+<span id="cb170-2"><a href="#cb170-2" aria-hidden="true" tabindex="-1"></a>example_list_alt[[<span class="st">"university_name_location_le"</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "University of Colorado, Boulder"        
+[2] "Colorado State University, Fort Collins"</code></pre>
+</div>
+</div>
+<p>It’s also possible to make a list within a list (i.e.&nbsp;a “nested list”) which can sometimes come in handy for more complicated data workflows. However, we won’t use nested lists in our workshop series, so we will not cover that topic here.</p>
+</section>
+</section>
+<section id="data-classes" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="data-classes"><span class="header-section-number">2.6</span> Data Classes</h2>
+<p>We’re done with our tour of three fundamental data structures in R, which we will repeatedly use in our work as applied social scientists: vectors, data frames, and lists. Data structures are essentially containers for storing and organizing data in well-defined and organized ways, and R functions interact with object differently based on their underlying structure. An object’s “class” provides additional information about how it behaves. The class of an object generally corresponds to the object’s data structure (for example, the “data.frame” class is often associated with the data frame data structure), but the class of an object can also extend functionality, and customize how an object interacts with R. For example, “tibbles” are a type of enhanced data frame that are used in the <em>tidyverse</em>, and tibbles have the class “tbl_df”</p>
+<p>We can retrieve the class of an object (i.e.&nbsp;extract information about whether an object behaves as a data frame, vector, list, or some other structure) by passing the name of the object as an argument to the <code>class()</code> function. For example, let’s say we want to confirm the class of <code>example_list</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb172"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb172-1"><a href="#cb172-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints class of "example_list"</span></span>
+<span id="cb172-2"><a href="#cb172-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(example_list)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "list"</code></pre>
+</div>
+</div>
+<p>As expected, <code>example_list</code> belongs to the class “list”.</p>
+<p>Let’s consider another:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb174"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb174-1"><a href="#cb174-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints class of "asia_temperatures_fahrenheit"</span></span>
+<span id="cb174-2"><a href="#cb174-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(asia_temperatures_fahrenheit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "numeric"</code></pre>
+</div>
+</div>
+<p>As expected, given how we created it, <code>asia_temperatures_fahrenheit</code> is of the class “numeric”, i.e.&nbsp;a numeric vector.</p>
+<p>Let’s retrieve the class of <code>country_df:</code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb176"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb176-1"><a href="#cb176-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints class of "country_df"</span></span>
+<span id="cb176-2"><a href="#cb176-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(country_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "data.frame"</code></pre>
+</div>
+</div>
+<p>Recall that we extracted the “GDP” column from <code>country_df</code> and assigned it to an object named <code>country_df_gdp</code>. Recall that the columns of data frames are vectors, which means that we would expect <code>country_df_gdp</code> to be of the class “numeric”:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb178"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb178-1"><a href="#cb178-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints class of "country_df_gdp"</span></span>
+<span id="cb178-2"><a href="#cb178-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(country_df_gdp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "numeric"</code></pre>
+</div>
+</div>
+<p>While data frame columns are vectors, rows are treated as data frames, which we can confirm by checking the class of <code>country_df_row</code> (i.e.&nbsp;the third row of <code>country_df)</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb180"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb180-1"><a href="#cb180-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints class of "country_df_row"</span></span>
+<span id="cb180-2"><a href="#cb180-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(country_df_row)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "data.frame"</code></pre>
+</div>
+</div>
+<p>Sometimes, we will need to transform objects into a different class than the one they are currently assigned. For example, let’s say that a function we’d like to use can take a data frame input, but doesn’t accept vector inputs. In that case, if our data is stored as a numeric vector, we must convert the object to a data frame before passing it to the desired function. Let’s say the numeric vector data we want to convert to a data frame is <code>asia_temperatures_fahrenheit.</code> We can do so by passing it to the <code>as.data.frame()</code> function which converts objects of different classes to the “data.frame” class. We’ll assign the data frame version of <code>asia_temperatures_fahrenheit</code> to a new object named <code>asia_temperatures_df</code> and print its contents:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb182"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb182-1"><a href="#cb182-1" aria-hidden="true" tabindex="-1"></a><span class="co"># converts "asia_temperatures_fahrenheit" to data frame class and assigns the data frame to a new object named "asia_temperatures_df"</span></span>
+<span id="cb182-2"><a href="#cb182-2" aria-hidden="true" tabindex="-1"></a>asia_temperatures_df<span class="ot">&lt;-</span><span class="fu">as.data.frame</span>(asia_temperatures_fahrenheit)</span>
+<span id="cb182-3"><a href="#cb182-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb182-4"><a href="#cb182-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "asia_temperatures_df"</span></span>
+<span id="cb182-5"><a href="#cb182-5" aria-hidden="true" tabindex="-1"></a>asia_temperatures_df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          asia_temperatures_fahrenheit
+Mumbai                            93.2
+Hanoi                             68.0
+Singapore                        109.4
+Beijing                           55.4
+Jakarta                           93.2
+Manila                            83.3</code></pre>
+</div>
+</div>
+<p>We can confirm the new class of <code>asia_temperatures_df</code> with the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb184"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb184-1"><a href="#cb184-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prints class of "asia_temperatures_df"</span></span>
+<span id="cb184-2"><a href="#cb184-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(asia_temperatures_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "data.frame"</code></pre>
+</div>
+</div>
+<p>We could carry out the inverse operation (i.e.&nbsp;transforming an object of the “data.frame” class to an object of class “numeric”) by passing the data frame object to the <code>as.numeric()</code> function. There are several functions that allow for class transformations such as this. Classes may feel confusing now, but they will become more intuitive as you work in R. They are important to be aware of, especially in the context of trouble shooting and debugging, since functions often don’t work as expected when they expect arguments of one class but receive another.</p>
+</section>
+<section id="end-of-lesson-exercises" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="end-of-lesson-exercises"><span class="header-section-number">2.7</span> End-of-Lesson Exercises</h2>
+<p><strong>Exercise 1</strong></p>
+<p>Consider the following vector of Fahrenheit temperature values:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb186"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb186-1"><a href="#cb186-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creates vector of Fahrenheit temperature values in Colorado</span></span>
+<span id="cb186-2"><a href="#cb186-2" aria-hidden="true" tabindex="-1"></a>fahrenheit_colorado <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">33</span>, <span class="dv">15</span>, <span class="dv">22</span>, <span class="dv">44</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The first temperature is associated with Boulder; the second with Fort Collins; the third with Denver; and the fourth with Colorado Springs. Assign cities as labels to the temperature values with which they’re associated, and update <code>fahrenheit_colorado</code> with these changes.</p>
+<details>
+<summary>
+Suggested Solution to Exercise 1
+</summary>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb187"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb187-1"><a href="#cb187-1" aria-hidden="true" tabindex="-1"></a><span class="co"># assigns names to "fahrenheit_colorado" using the "names" function and a vector of names</span></span>
+<span id="cb187-2"><a href="#cb187-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(fahrenheit_colorado) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Boulder"</span>, <span class="st">"Fort Collins"</span>, <span class="st">"Denver"</span>, <span class="st">"Colorado Springs"</span>)</span>
+<span id="cb187-3"><a href="#cb187-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb187-4"><a href="#cb187-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prints labeled "fahrenheit_colorado" vector</span></span>
+<span id="cb187-5"><a href="#cb187-5" aria-hidden="true" tabindex="-1"></a>fahrenheit_colorado</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         Boulder     Fort Collins           Denver Colorado Springs 
+              33               15               22               44 </code></pre>
+</div>
+</div>
+</details>
+<p><strong>Exercise 2</strong></p>
+<p>Apply a transformation to <code>fahrenheit_colorado</code> that converts the temperature values to Celsius, and assign this new vector of Celsius temperatures to a new object named <code>celsius_colorado</code>.</p>
+<details>
+<summary>
+Suggested Solution to Exercise 2
+</summary>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb189"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb189-1"><a href="#cb189-1" aria-hidden="true" tabindex="-1"></a><span class="co"># applies Fahrenheit to Celsius conversion formula to "fahrenheit_colorado" and assigns resulting vector of Celsius values to a new object named "celsius_colorado"</span></span>
+<span id="cb189-2"><a href="#cb189-2" aria-hidden="true" tabindex="-1"></a>celsius_colorado<span class="ot">&lt;-</span>(fahrenheit_colorado<span class="dv">-32</span>)<span class="sc">*</span><span class="dv">5</span><span class="sc">/</span><span class="dv">9</span></span>
+<span id="cb189-3"><a href="#cb189-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb189-4"><a href="#cb189-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "celsius_colorado"</span></span>
+<span id="cb189-5"><a href="#cb189-5" aria-hidden="true" tabindex="-1"></a>celsius_colorado</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         Boulder     Fort Collins           Denver Colorado Springs 
+       0.5555556       -9.4444444       -5.5555556        6.6666667 </code></pre>
+</div>
+</div>
+</details>
+<p><strong>Exercise 3</strong></p>
+<p>Transform the class of the updated <code>celsius_colorado</code> object into “data.frame”, and assign the new data frame to an object named <code>celsius_colorado_df.</code></p>
+<details>
+<summary>
+Suggested Solution to Exercise 3
+</summary>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb191"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb191-1"><a href="#cb191-1" aria-hidden="true" tabindex="-1"></a><span class="co"># uses "as.data.frame" function to transform "celsius_colorado" into a data.frame object, and assigns the data frame to a new object named "celsius_colorado_df"</span></span>
+<span id="cb191-2"><a href="#cb191-2" aria-hidden="true" tabindex="-1"></a>celsius_colorado_df<span class="ot">&lt;-</span><span class="fu">as.data.frame</span>(celsius_colorado)</span>
+<span id="cb191-3"><a href="#cb191-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-4"><a href="#cb191-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prints contents of "celsius_colorado_df"</span></span>
+<span id="cb191-5"><a href="#cb191-5" aria-hidden="true" tabindex="-1"></a>celsius_colorado_df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 celsius_colorado
+Boulder                 0.5555556
+Fort Collins           -9.4444444
+Denver                 -5.5555556
+Colorado Springs        6.6666667</code></pre>
+</div>
+</div>
+</details>
+<p><strong>Exercise 4</strong></p>
+<p>Consider our toy country-level data frame, which is reproduced below:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country   GDP Population     Continent
+1 Country A  8000       2000 South America
+2 Country B 30000       5400        Europe
+3 Country C 23500      10000 North America</code></pre>
+</div>
+</div>
+<p>A). What is the class of the “Continent” Column?</p>
+<details>
+<summary>
+Suggested Solution to Exercise 4A
+</summary>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb194"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb194-1"><a href="#cb194-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts class of "Continent" column</span></span>
+<span id="cb194-2"><a href="#cb194-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(country_df<span class="sc">$</span>Continent)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "character"</code></pre>
+</div>
+</div>
+</details>
+<p>B). Extract the “Population” column into a new object. What is it’s class? Convert it to the “data.frame” class.</p>
+<details>
+<summary>
+Suggested Solution to Exercise 4B
+</summary>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb196"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb196-1"><a href="#cb196-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts "Population" column into a new object named "country_df_population"</span></span>
+<span id="cb196-2"><a href="#cb196-2" aria-hidden="true" tabindex="-1"></a>country_df_population<span class="ot">&lt;-</span>country_df<span class="sc">$</span>Population</span>
+<span id="cb196-3"><a href="#cb196-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb196-4"><a href="#cb196-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prints class of "country_df_population"</span></span>
+<span id="cb196-5"><a href="#cb196-5" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(country_df_population)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "numeric"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb198"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb198-1"><a href="#cb198-1" aria-hidden="true" tabindex="-1"></a><span class="co"># converts "country_df_population" to a data.frame</span></span>
+<span id="cb198-2"><a href="#cb198-2" aria-hidden="true" tabindex="-1"></a>country_df_population<span class="ot">&lt;-</span><span class="fu">as.data.frame</span>(country_df_population)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</details>
+<p>C. Extract the first three columns of <code>country_df</code> and assign this subsetted data frame to a new object. View it in the R Studio data viewer.</p>
+<details>
+<summary>
+Suggested Solution to Exercise 4C
+</summary>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb199"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb199-1"><a href="#cb199-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts first three columns of "country_df_columns" and assigns it to a new object named "country_df_columns"</span></span>
+<span id="cb199-2"><a href="#cb199-2" aria-hidden="true" tabindex="-1"></a>country_df_columns<span class="ot">&lt;-</span>country_df[, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span>
+<span id="cb199-3"><a href="#cb199-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb199-4"><a href="#cb199-4" aria-hidden="true" tabindex="-1"></a><span class="co"># prints "country_df_columns", pass object to View() function to see it in the data viewer</span></span>
+<span id="cb199-5"><a href="#cb199-5" aria-hidden="true" tabindex="-1"></a>country_df_columns</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country   GDP Population
+1 Country A  8000       2000
+2 Country B 30000       5400
+3 Country C 23500      10000</code></pre>
+</div>
+</div>
+</details>
+<p>D. Extract the value of Country B’s population using indexing.</p>
+<details>
+<summary>
+Suggested Solution to Exercise 4D
+</summary>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb201"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb201-1"><a href="#cb201-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts Country B's population (2nd row, 3rd column)</span></span>
+<span id="cb201-2"><a href="#cb201-2" aria-hidden="true" tabindex="-1"></a>country_df[<span class="dv">2</span>,<span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5400</code></pre>
+</div>
+</div>
+</details>
+<p><strong>Exercise 5</strong></p>
+<p>Deposit <code>fahrenheit_colorado,</code> <code>celsius_colorado</code> , and <code>country_df</code> into a new list object. After you have done so, extract <code>country_df</code> from the list using index numbers and bracket notation. Then, assign the list elements names of your choosing, and extract the <code>celsius_colorado</code> list object using its name and bracket notation.</p>
+<details>
+<summary>
+Suggested Solution to Exercise 5
+</summary>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb203"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb203-1"><a href="#cb203-1" aria-hidden="true" tabindex="-1"></a><span class="co"># makes a list with the relevant elements and assigns it to a new object named "exercise_list"</span></span>
+<span id="cb203-2"><a href="#cb203-2" aria-hidden="true" tabindex="-1"></a>exercise_list<span class="ot">&lt;-</span><span class="fu">list</span>(fahrenheit_colorado, celsius_colorado, country_df)</span>
+<span id="cb203-3"><a href="#cb203-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb203-4"><a href="#cb203-4" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts "country_df" from list using its index</span></span>
+<span id="cb203-5"><a href="#cb203-5" aria-hidden="true" tabindex="-1"></a>country_df[[<span class="dv">3</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  2000  5400 10000</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb205"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb205-1"><a href="#cb205-1" aria-hidden="true" tabindex="-1"></a><span class="co"># assigns names to "exercise_list"</span></span>
+<span id="cb205-2"><a href="#cb205-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(exercise_list)<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"CO_F"</span>, <span class="st">"CO_C"</span>, <span class="st">"ToyDF"</span>)</span>
+<span id="cb205-3"><a href="#cb205-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb205-4"><a href="#cb205-4" aria-hidden="true" tabindex="-1"></a><span class="co"># extracts data frame using its list label</span></span>
+<span id="cb205-5"><a href="#cb205-5" aria-hidden="true" tabindex="-1"></a>exercise_list[[<span class="st">"ToyDF"</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Country   GDP Population     Continent
+1 Country A  8000       2000 South America
+2 Country B 30000       5400        Europe
+3 Country C 23500      10000 North America</code></pre>
+</div>
+</div>
+</details>
+
+
 </section>
 
 </main> <!-- /main -->
