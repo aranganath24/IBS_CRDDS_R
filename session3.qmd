@@ -5,4 +5,14 @@ library(reactable)
 
 # Data Processing and Wrangling
 
-Introduction
+## Introduction
+
+In the past two sessions, we presented some ideas, concepts, and tools that provide a basic foundation for working with data in R. Now that we have this basic foundation, we'll turn in this session to a more applied exploration of some actual datasets. Our goal here is to introduce you to some useful functions that will allow you to explore and begin making sense of actual datasets in R. This lesson will provide a tour of various functions that can be particularly helpful as you get started processing and wrangling data in R, so that you can get your raw datasets ready for analysis and visualization. Among the topics we'll cover today are:
+
+-   Reading data into R
+
+-   Handling missing data in R
+
+-   Preparing and transforming datasets for analysis using a variety of *tidyverse* functions for data wrangling and processing
+
+## Preliminaries

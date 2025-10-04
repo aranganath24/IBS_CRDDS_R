@@ -3,7 +3,7 @@
 library(reactable)
 ```
 
-# Foundations
+# R Foundations
 
 In this lesson, we'll learn some important foundational concepts related to the R programming language. We will discuss R as a calculator, and object assignment, but will spend most of our time learning about three fundamental data structures that you will use all the time when working on applied social science research projects in R: vectors, data frames, and lists.
 
