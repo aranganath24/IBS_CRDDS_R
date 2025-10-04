@@ -154,7 +154,27 @@
     "href": "session3.html",
     "title": "4  Data Processing and Wrangling",
     "section": "",
-    "text": "4.1 Introduction\nIn the past two sessions, we presented some ideas, concepts, and tools that provide a basic foundation for working with data in R. Now that we have this basic foundation, we’ll turn in this session to a more applied exploration of some actual datasets. Our goal here is to introduce you to some useful functions that will allow you to explore and begin making sense of actual datasets in R. This lesson will provide a tour of various functions that can be particularly helpful as you get started processing and wrangling data in R. Among the topics we’ll cover today are:",
+    "text": "4.1 Introduction\nIn the past two sessions, we presented some ideas, concepts, and tools that provide a basic foundation for working with data in R. Now that we have this basic foundation, we’ll turn in this session to a more applied exploration of some actual datasets. Our goal here is to introduce you to some useful functions that will allow you to explore and begin making sense of actual datasets in R. This lesson will provide a tour of various functions that can be particularly helpful as you get started processing and wrangling data in R, so that you can get your raw datasets ready for analysis and visualization. Among the topics we’ll cover today are:",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Processing and Wrangling</span>"
+    ]
+  },
+  {
+    "objectID": "session3.html#introduction",
+    "href": "session3.html#introduction",
+    "title": "4  Data Processing and Wrangling",
+    "section": "",
+    "text": "Reading data into R\nHandling missing data in R\nPreparing and transforming datasets for analysis using a variety of tidyverse functions for data wrangling and processing",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Processing and Wrangling</span>"
+    ]
+  },
+  {
+    "objectID": "session3.html#preliminaries",
+    "href": "session3.html#preliminaries",
+    "title": "4  Data Processing and Wrangling",
+    "section": "4.2 Preliminaries",
+    "text": "4.2 Preliminaries",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Data Processing and Wrangling</span>"
     ]
