@@ -3,7 +3,7 @@
 library(reactable)
 ```
 
-# Data Processing and Wrangling
+# Transferring, Processing, and Wrangling Data
 
 ## Introduction
 
@@ -16,3 +16,435 @@ In the past two sessions, we presented some ideas, concepts, and tools that prov
 -   Preparing and transforming datasets for analysis using a variety of *tidyverse* functions for data wrangling and processing
 
 ## Preliminaries
+
+### Install and Load Packages
+
+In this lesson, we'll work with a variety of packages from the *tidyverse* suite, as well as the *fastDummies* package, which is a handy package for quickly transforming categorical variables into binary indicator variables (i.e. dummy variables). Please go ahead and make sure that both the *tidyverse* and *fastDummies* are installed and loaded. Recall that in general, you only need to install packages once, so assuming you completed the previous lesson, you wouldn't need to install the *tidyverse* again (assuming you're working on the same computer and haven't made significant changes to your operating system or updated R since then). If you haven't installed one or both packages, recall that you can install packages by passing the name of the package as an argument to the `install.packages()` function (i.e. `install.packages("fastDummies").`
+
+Note that when you need to install more than one package, you can do so by passing a vector of package names to the `install.packages()` function. For example, in this case, you could use the following:
+
+```{r}
+#| eval: FALSE
+install.packages(c("tidyverse", "fastDummmies", "haven"))
+```
+
+Remember that even if you've already installed the packages that you need in a previous session, you must load packages into memory each time you begin a new R session by passing the package names as arguments to the `library()` function. In this case:
+
+```{r}
+#| warning: FALSE
+#| message: FALSE
+# load packages into memory
+library(tidyverse)
+library(fastDummies)
+library(haven)
+```
+
+### Lesson Datasets
+
+In this lesson, we'll be working with a handful of datasets, which you should have download from the Workshop's repository page. One of the datasets is a [cross-national dataset published](https://www.gu.se/en/quality-government/qog-data/data-downloads/basic-dataset) by the Quality of Government (QoG) Institute at the University of Gothenburg. The dataset contains information on a variety of political, social, and economic variables from the early 2020s; additional [documentation](https://www.gu.se/en/quality-government/qog-data/data-downloads/basic-dataset) is available on the QoG's website. In addition, we'll be working with several World Bank datasets downloaded from the [World Development Indicators](https://databank.worldbank.org/source/world-development-indicators). You can download these datasets from the Workshop Repository.
+
+## Importing Datasets into R
+
+We will begin this section by learning a few ways to read an individual dataset into memory in R, using the QoG dataset as an example. Then, we'll explore how to read in multiple external datasets into R in an efficient manner through some basic functional programing techniques.
+
+### Importing Individual Datasets
+
+Below, we'll learn how to import individual datasets into R from various sources. We'll also explore how to handle data stored in different file formats.
+
+#### Reading in Local Files
+
+Though it's not strictly necessary, it's useful to begin by setting your working directory to the location on your computer where the data is stored. The easiest way to do this is to go to the R Studio menu: click **Session**, then click **Set Working Directory**, then click **Choose Directory**. We can also set the working directory programmatically using the `setwd()` function.
+
+```{r test4}
+#| include: false
+setwd("/Users/adra7980/Library/CloudStorage/OneDrive-UCB-O365/Desktop/git-repositories/IBS_CRDDS_R")
+```
+
+We can now pass the name of file and its extension in quotation marks to the `read_csv()` function (since the data we want to load is a CSV file). We'll assign it to an object named `qog` (for "Quality of Government"):
+
+```{r}
+# reads in the workshop dataset (Persson and Tabellini cross-national dataset) by passing the file path as an argument to the "read_csv" and assigns it to a new object named "pt"
+qog<-read_csv("data/quality_of_government/qog_bas_cs_jan25.csv")
+```
+
+By printing the name of the object, we can extract a preview of the dataset, along with some useful metadata:
+
+```{r}
+# prints contents of "qog" object to console
+qog
+```
+
+Recall, also, that we can view data frames in the R Studio data viewer by passing the name of the object to the `View() function:`
+
+```{r}
+#| eval: false
+# views "qog" in data viewer
+View(qog)
+```
+
+```{r}
+#| echo: false
+#| results: false
+qog_truncated<-qog[, 1:30]
+
+qog_truncated_withna<-qog_truncated %>% 
+  mutate(across(everything(), ~ replace_na(as.character(.x), "NA")))
+
+```
+
+```{r}
+#| echo: false
+reactable(qog_truncated_withna,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+Note that to keep things tractable within this document, the table printed above does not print all of the columns in the dataset, but the full data frame should appear in the Viewer when the corresponding object name is passed to the `View()` function.
+
+#### Reading in Data from an Online Source
+
+The Quality of Government hosts its data online, and instead of reading the data into R from a downloaded local file, we could have read the data into R directly from the online source by using the [appropriate URL](https://www.qogdata.pol.gu.se/data/qog_bas_cs_jan25.csv). For example, the code below reads in the same QoG dataset directly from its website, and assigns the data to a new object named `qog_direct`:
+
+```{r}
+# Reads in cross-national CSV dataset directly from QoG website and assigns it to a new object named "qog_direct"
+qog_direct<-read_csv("https://www.qogdata.pol.gu.se/data/qog_bas_cs_jan25.csv")
+```
+
+We can print `qog_direct` to the console to confirm that the data was successfully read in, and that its contents are identical to `qog:`
+
+```{r}
+# prints contents of qog_direct
+qog_direct
+```
+
+#### Reading in Data from Cloud Storage
+
+Sometimes, the dataset you are working with won't be available on a public website, and it may be more convenient to read the data in from a cloud storage account (i.e. Dropbox, OneDrive, Google Drive etc) than to download the data to your machine and read in a local file.
+
+The specific steps required to read in a dataset from cloud storage depend on your provider, as well as the nature of the account (for example, additional steps or functions may be required to read in password protected or non-public files), and you may need to do a bit of research to determine the specific steps required in your case.
+
+In general, though, the process tends to be fairly simple. For example, we've placed a copy of the QoG dataset on a publicly shared [Dropbox page](https://www.dropbox.com/scl/fi/xxd5otw869auq56fs4c9k/qog_bas_cs_jan25.csv?rlkey=8thev7gb5u1ffbtmhs2tutxxp&e=1&st=folhfq67&dl=0). In order to read this data from Dropbox directly into R, we simply change the "0" at the end of the Dropbox url into a "1", and pass this modified URL to the `read_csv()` function. Below, we'll read in the dataset from Dropbox, and assign it to a new object named `qog_cloud:`
+
+```{r}
+# reads dataset into R from Dropbox and assigns it to a new object named "qog_cloud"
+qog_cloud<-read_csv("https://www.dropbox.com/scl/fi/xxd5otw869auq56fs4c9k/qog_bas_cs_jan25.csv?rlkey=8thev7gb5u1ffbtmhs2tutxxp&e=1&st=folhfq67&dl=1")
+```
+
+We can print out the contents of `qog_cloud` to the console to ensure that the data has been read in correctly:
+
+```{r}
+# prints contents of "qog_cloud" to the console
+qog_cloud
+```
+
+#### Reading in data saved in different file formats
+
+The QoG dataset that we read in from different sources in the subsections above was saved as a CSV file; though this is a widely-used and flexible file format, it's likely that you'll also have to read in datasets in file formats other than CSV (for example, .xlsx, or Stata, SPSS, or SAS files). There are useful *tidyverse* packages that can help with importing datasets stored in a variety of such file formats. For example, the [readxl](https://readxl.tidyverse.org) package offers handy functions for reading in Excel files (i.e. .xls and .xlsx files), while the [haven](https://haven.tidyverse.org) package provides functions to read in Stata, SPSS, or SAS files.
+
+To get a sense of how to read in a non-CSV file, let's quickly explore how to use the *haven* package's `read_dta()` function to read a Stata file into R as a data frame. As part of the data package you downloaded for this workshop, there is a Stata version of the QoG dataset ("qog_bas_cs_jan25.dta"). Below, we'll read this version of the dataset into R from our local directory by passing the file path and file name as an argument to the `read_dta()` function and assigning it to a new object named `qog_stata:`
+
+```{r}
+# reads in stata version of QoG crossnational dataset from local drive using haven's "read_dta" function and assigns the data to a new object named "qog_stata"
+qog_stata <- read_dta("data/quality_of_government/qog_bas_cs_jan25.dta")
+```
+
+Now, let's print the contents of `qog_stata` to the console, and confirm that the Stata dataset was successfully read in as an R data frame/tibble:
+
+```{r}
+# prints contents of "qog_stata"
+qog_stata
+```
+
+### Importing Multiple Datasets
+
+Sometimes, you may be working with more than one dataset, in which case it could make sense to iteratively load multiple datasets into memory. In such cases, it is typically useful to read the datasets directly into a list.
+
+Within the "world_bank" subdirectory in the "data" directory, there are four CSV files downloaded from the World Bank's development indicators site:
+
+-   *wdi_debt2019.csv* (country level World Bank data on debt as a share of GDP in 2019)
+
+-   *wdi_fdi2019.csv* (country level World Bank data on foreign direct investment as a share of GDP in 2019)
+
+-   *wdi_trade2019.csv* (country level World Bank data on trade as a share of GDP in 2019)
+
+-   *wdi_urban2019.csv* (country level World Bank data on the urban population as a share of the overall population in 2019).
+
+The first step we must take to iteratively read these files into a list is to make a character vector of the file names we want to read in. The code below uses the `list.files()` function to extract the file names of the files in the "data/world_bank" directory to a character vector, which we'll assign to an object named "worldbank_filenames":
+
+```{r}
+# prints the names of the files we want to read in and assigns the vector of strings to a new object named "worldbank_filenames" 
+worldbank_filenames<-list.files("data/world_bank")
+```
+
+Let's confirm that the file names have been written correctly:
+
+```{r}
+# prints "worldbank_filenames"
+worldbank_filenames
+```
+
+Now, we'll use the `map()` function to iteratively pass the file names in the `worldbank_filenames` vector to the `read_csv()` function, and deposit the imported files into a list named `world_bank_list`:
+
+```{r}
+# iteratively passes file names in "worldbank_filenames" to the "read_csv" function, and deposits imported world bank files into a list that is assigned to an object named "world_bank_list"; assumes the working directory is the one with the world bank files
+setwd("data/world_bank")
+world_bank_list <- map(worldbank_filenames, read_csv)
+```
+
+Now, let's go ahead print the contents of `world_bank_list`:
+
+```{r}
+# prints contents of "world_bank_list"
+world_bank_list
+```
+
+It could be useful to label the list elements of `world_bank_list`. For labels, it would make sense to use the file names in `worldbank_filenames`, without the ".csv" extension. Below, we use the `str_remove()` function to remove the ".csv" extension from the file names in `worldbank_filenames` and assign the result to a new object named `worldbank_filenames_base`:
+
+```{r}
+# removes CSV extension from "worldbank_filenames"
+worldbank_filenames_base <- str_remove(worldbank_filenames, ".csv")
+```
+
+Now, let's use the `names()` argument to assign the labels in `worldbank_filenames_base` to the elements in `world_bank_list`:
+
+```{r}
+# assigns names to datasets in "world_bank_list"
+names(world_bank_list) <- worldbank_filenames_base
+```
+
+Now that the file names are assigned, we can extract list elements by their labels. Below, for example, we extract the FDI dataset from `world_bank_list` using its label:
+
+```{r}
+# extracts fdi dataset from "world_bank_list" by assigned label
+world_bank_list[["wdi_fdi2019"]]
+```
+
+## Data Processing and Wrangling
+
+Once we've read in our dataset(s) of interest, we typically need to carry out a variety of processing and wrangling tasks to prepare to data for analysis and visualization. In this section, we'll consider a variety of useful functions (most of them from *tidyverse* packages such as *dplyr*) that can help with a variety of these data preparation tasks.
+
+We'll start by making a copy of the `qog` object, by assigning it to a new object named `qog_copy`; we'll work with `qog_copy` instead of the original `qog` object, to ensure that we can always revert to the original data when needed. Keeping a "clean" version of the dataset of interest, and carrying out data processing and analysis tasks on a copy of this dataset, is good data management practice.
+
+```{r}
+# makes a copy of "qog", called "qog_copy" that we can use for processing; keeps the original data frame, "qog" untouched
+qog_copy<-qog
+```
+
+### Introducing the `%>%` ("pipe") operator
+
+One of the most useful features of the *tidyverse* is the `%>%` operator (pronounced "pipe") which helps chain together different functions to form a clear and explicit data processing and analysis pipeline. To illustrate how a pipe works, let's first consider a simple data processing operation that does *not* use a pipe. In particular, we will use the `select()` function from the *dply*r package to select a few columns from `qog_copy`; this dataset has over 300 variables, so it would make sense to create a more tractable dataset that extracts the specific columns/variables we're interested in. Let's say, for example, that we want to select the "cname_qog", "cname", "ccodealp", "undp_hdi", and "wdi_expedu" variables from `qog_copy`. We can do so by passing the name of the data object containing the columns we want to select, along with the names of the desired columns, as arguments to the `select()` function. Below, we'll select these columns from `qog_copy` and assign the modified data frame to a new object named `qog_copy_select_initial`:
+
+```{r}
+# selects columns/variables from "qog_copy" and assigns the 
+# modified data frame to a new object named "qog_copy_select"
+qog_copy_select_initial <- select(qog_copy, cname_qog, cname, ccodealp, undp_hdi, wdi_expedu)
+```
+
+Let's view `qog_copy_select_initial` in the data viewer:
+
+```{r}
+#| echo: false
+qog_copy_select_initial_withna<-qog_copy_select_initial %>% 
+  mutate(across(everything(), ~ replace_na(as.character(.x), "NA")))
+
+```
+
+```{r}
+#| eval: false
+# Views "qog_copy_select_initial" in the data viewer
+View(qog_copy_select_initial)
+
+```
+
+```{r}
+#| echo: false
+reactable(qog_copy_select_initial_withna,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+Now that we've seen how to use the `select()` function using traditional syntax, let's see how we can carry out the same operation with a pipe operator. In particular, the piping syntax looks something like this:
+
+```{r}
+# selects columns/variables from "qog_copy" using the 
+# pipe syntax and assigns the modified data frame 
+# to a new object named "qog_copy_select"
+qog_copy_select_pipe <- 
+  qog_copy %>% 
+    select(cname_qog, cname, ccodealp, undp_hdi, wdi_expedu)
+```
+
+Note that the pipe operator `%>%` comes immediately after `qog_copy` and immediately before we call the `select()` function. In essence, the pipe operator takes the contents to its left, and then uses these contents as an input to the code on its right. Above, the pipe takes the contents of `qog_copy` on its left, and then feeds this data into the `select()` function on the right, and returns a modified data frame which is assigned to `qog_copy_select_pipe`. We can pass `qog_copy_select_pipe` into the data viewer to confirm that the operation worked as expected:
+
+```{r}
+#| eval: false
+# views "qog_copy_select_pipe" in data viewer
+View(qog_copy_select_pipe)
+```
+
+```{r}
+#| echo: false
+qog_copy_select_pipe_withna<-qog_copy_select_pipe %>% 
+  mutate(across(everything(), ~ replace_na(as.character(.x), "NA")))
+```
+
+```{r}
+#| echo: false
+reactable(qog_copy_select_pipe_withna,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+We can already see that the pipe makes our code slightly more readable even when performing a simple operation, but the pipe's usefulness for the task of writing concise and readable code becomes even more visible when performing more complex operations that involve several different data processing functions.
+
+For example, let's say that in addition to selecting the columns above, we also want to subset the dataset to include only countries for which the "undp_hdi" variable is higher than 0.8. We can subset datasets based on such conditions using the `filter()` function. Below, we'll take `qog_copy_select_initial` and subset this dataset to meet the `undp_hdi>0.8` condition, and assign the final version of our processed dataset to a new object named `qog_final_processed`:
+
+```{r}
+# subsets "qog_copy_select_initial" using the "filter()" function to include only observations with undp_hdi>0.8, and deposits the modified dataset into a new object named "qog_final_processed"
+qog_final_processed <- filter(qog_copy_select_initial, undp_hdi>0.8)
+```
+
+Now, let's view `qog_final_processed` in the data viewer and confirm that it only includes the selected variables and is appropriately subsetted according to the specified condition:
+
+```{r}
+#| eval: false
+View(qog_final_processed)
+```
+
+```{r}
+#| echo: false
+qog_final_processed_withna<-qog_final_processed %>% 
+  mutate(across(everything(), ~ replace_na(as.character(.x), "NA")))
+```
+
+```{r}
+#| echo: false
+reactable(qog_final_processed_withna,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+Notice that using conventional notation (i.e. notation without a pipe), we arrived at our final processed dataset in two steps; first, we had to select columns using the `select()` function, and then we had to take the resulting object and call the `filter()` function to subset the data based on the "undp_hdi" variable. This process can by a little clunky, and the pipe operator helps to streamline it, making for more efficient and readable code. In short, when we use pipe (rather than conventional) notation, we can get from `qog_copy` to the final processed dataset with just the following:
+
+```{r}
+qog_copy %>% 
+  select(cname_qog, cname, ccodealp, undp_hdi, wdi_expedu) %>% 
+  filter(undp_hdi>0.8)
+```
+
+This code takes the `qog_copy` dataset, and then feeds it into the `select()` function; the output of the `select()` function is then fed into the `filter()` function, which then returns a final dataset equivalent to `qog_final_processed`. Given the readability and conciseness of pipe notation, we will use it extensively in our exploration of data processing and wrangling.
+
+Below, we'll explore the `select()` and `filter()` functions (along with other data processing functions) at greater length; our main purpose in this sub-section was to motivate the utility of the `%>%` operator in helping to create complex data processing pipelines with intuitive and readable code.
+
+### Selecting and Deleting Variables
+
+In this section, we'll explore the `select()` function at greater length, and use it to select some key variables of interest from `qog_copy`; this will allow us to subsequently work with a more tractable dataset.
+
+In particular, let's select the following variables from `qog_copy` (additional information about the variables is available in the [Quality of Government Basic Dataset Codebook](https://www.qogdata.pol.gu.se/data/codebook_bas_jan25.pdf):
+
+-   "cname_qog": Country name as standardized by QoG
+
+-   "cname": Country name based on the ISO standard
+
+-   "ccodealp": 3-digit ISO country code
+
+-   "undp_hdi": Human development index
+
+-   "wdi_expedu": Government expenditure on education as a percentage of GDP
+
+-   "wdi_acel": Percentage of population with access to electricity
+
+-   "wdi_area": Land area in sq km
+
+-   "wdi_taxrev": Tax revenue as a percentage of GDP
+
+-   "wdi_expmil": Military expenditure as a percentage of GDP
+
+-   "wdi_fdiin": Foreign direct investment (FDI) inflows as a share of GDP
+
+-   "wdi_trade": Foreign trade as a percentage of GDP
+
+-   "cbie_index": Central bank independence index
+
+-   "ht_region": World region of the country
+
+-   "wbgi_rle": Rule of law index
+
+-   "bmr_dem": Dichotomous democracy measure
+
+-   "atop_ally": Member of a military alliance
+
+-   "gol_est": Electoral system (majoritarian/proportional/mixed)
+
+-   "mad_gdppc": Real GDP per capita in 2018 (2011 dollars)
+
+-   "mad_gdppc1900": Real GDP per capita in 1900 (2011 dollars)
+
+-   "bci_bci": Bayesian Corruption Indicator
+
+-   "lis_gini": Gini coefficient
+
+-   "top_top1_income_share": Income share of the population's top 1%
+
+-   "wdi_wip": Percentage of lower house or single house parliamentary seats held by women
+
+Below, we select these variables by passing `qog_copy` to the `select()` function via a `%>%`, and then specify the columns we want to select as arguments to the `select()` function; we assign the resulting selection to a new object named `qog_copy_selection`:
+
+```{r}
+# selects specific variables from "qog_copy" and assigns the selection to a new object named "qog_copy_selection"
+qog_copy_selection <- qog_copy %>% 
+                        select(cname_qog, 
+                               cname, 
+                               ccodealp, 
+                               undp_hdi, 
+                               wdi_expedu,
+                               wdi_acel,
+                               wdi_area,
+                               wdi_taxrev,
+                               wdi_expmil,
+                               wdi_fdiin,
+                               wdi_trade,
+                               cbie_index,
+                               ht_region,
+                               wbgi_rle,
+                               bmr_dem,
+                               atop_ally,
+                               gol_est,
+                               mad_gdppc,
+                               mad_gdppc1900,
+                               bci_bci,
+                               lis_gini,
+                               top_top1_income_share,
+                               wdi_wip)
+```
+
+When we view `qog_copy_selection` in the R Studio data viewer, it looks something like this:
+
+```{r}
+#| eval: false
+# Views "qog_copy_selection" in the data viewer
+View(qog_copy_selection)
+```
+
+```{r}
+#| echo: false
+qog_copy_selection_withoutna<-qog_copy_selection %>% 
+  mutate(across(everything(), ~ replace_na(as.character(.x), "NA")))
+```
+
+```{r}
+#| echo: false
+reactable(qog_copy_selection_withoutna,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```

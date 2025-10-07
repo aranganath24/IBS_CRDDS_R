@@ -1,0 +1,15 @@
+/* Add this to a styles.css file in your project */
+#quarto-sidebar .menu-text {
+  display: flex;
+}
+#quarto-sidebar .chapter-number {
+  display: block;
+  width: 1.8em; /* Controls the space for the number */
+  text-align: right;
+}
+#quarto-sidebar .chapter-title {
+  display: block;
+  padding-left: 0.5em; 
+  text-indent: -1.8em; /* Needs to match the width above */
+  width: 100%;
+}
