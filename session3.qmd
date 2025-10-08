@@ -3,6 +3,11 @@
 library(reactable)
 ```
 
+```{r}
+#| echo: false
+options(scipen = 999)
+```
+
 # Transferring, Processing, and Wrangling Data
 
 ## Introduction
@@ -221,7 +226,7 @@ Now that the file names are assigned, we can extract list elements by their labe
 world_bank_list[["wdi_fdi2019"]]
 ```
 
-## Data Processing and Wrangling
+## Processing and Wrangling a Single Dataset
 
 Once we've read in our dataset(s) of interest, we typically need to carry out a variety of processing and wrangling tasks to prepare to data for analysis and visualization. In this section, we'll consider a variety of useful functions (most of them from *tidyverse* packages such as *dplyr*) that can help with a variety of these data preparation tasks.
 
@@ -448,3 +453,392 @@ reactable(qog_copy_selection_withoutna,
           bordered=TRUE,
           striped=TRUE)
 ```
+
+Sometimes, it could make more sense to directly delete columns, instead of deciding on which ones to keep or select. For example, the code below deletes the "cname" variable from `qog_copy_selection` by passing it to the `select()` column with a "-" in front of it:
+
+```{r}
+# removes "cname" column from "qog_copy_selection"
+qog_copy_selection %>% select(-cname)
+```
+
+Note that the "cname" column is not permanently deleted since we didn't assign the code back to `qog_copy_selection` (i.e. with `qog_copy_selection <- qog_copy_selection %>% select(-cname).`) We can confirm this by reprinting `qog_copy_selection` and noting that "cname" is still in the data frame:
+
+```{r}
+# prints contents of "qog_copy_selection"
+qog_copy_selection
+```
+
+If we want to delete multiple columns, we can pass a vector containing the names of the columns to be deleted to the `select()` function, preceded by a minus sign. For example, if we want to delete "cname", "undp_hdi", and "wdi_acel" from `qog_copy_selection` we can do so with the following:
+
+```{r}
+# deletes "cname", "undp_hdi", and "wdi_acel" from "qog_copy_selection"
+qog_copy_selection %>% select(-c(cname, undp_hdi, wdi_acel))
+```
+
+### Rearranging Columns
+
+We can change the order of the columns in a dataset using the `relocate()` function. For example, the code below uses the `relocate()` function to shift the "ccdoealp" column to the front of the `qog_copy_selection` data frame:
+
+```{r}
+# moves "ccdoealp" to front of "qog_copy_selection" dataset
+qog_copy_selection %>% relocate(ccodealp)
+```
+
+We can specify more than one argument to the `relocate` function. For example, in the code below, passing the "ccodealp", "wdi_acel", "wdi_expmil", and "wdi_wip" variables/columns to the `relocate()` function will make "ccodealp" the first column, "wdi_acel" the second column, "wdi_expmil" the third column, and "wdi_wip" the fourth column. Below, we specify this order, and assign the result back to `qog_copy_selection`:
+
+```{r}
+# sets the order for the first four columns of "qog_copy_selection" and assigns the result back to "qog_copy_selection"
+qog_copy_selection <- qog_copy_selection %>% 
+                        relocate(ccodealp, wdi_acel, wdi_expmil, wdi_wip)
+```
+
+Now, let's print the contents of "qog_copy_selection" to the console and confirm the change has been made:
+
+```{r}
+# prints contents of updated "qog_copy_selection" object
+qog_copy_selection
+```
+
+### Renaming Variables
+
+In order to rename variables, we can use the `rename()` function; the argument to this function takes the form **new_name=old_name**. The code below renames the existing "ccodealp" variable in the `qog_copy_selection` data frame to "iso3" using the `%>%` operator to pass
+
+```{r}
+# renames "ccodealp" variable in "qog_copy_selection" to "iso3"
+qog_copy_selection %>% 
+  rename(iso3=ccodealp)
+```
+
+Note the "ccodealp" variable was changed to "iso3". If we want to change the name of more than one variable, the `rename()` function can take multiple arguments, separated by a comma. For example, the code below changes "undp_hdi" to "hdi" and "wdi_area" to "wdi_area_sqkm":
+
+```{r}
+# renames "undp_hdi" variable to "hdi", and "wdi_area" to "wdi_area_sqkm" in "qog_copy_selection" data frame
+qog_copy_selection %>% 
+  rename(hdi=undp_hdi,
+         wdi_area_sqkm=wdi_area)
+```
+
+### Sorting data
+
+It is often useful to sort a data frame in ascending or descending order with respect to a given variable. The code below sorts the `qog_copy_selection` data frame in ascending order with respect to the "wdi_trade" variable using the `arrange()` function, and then uses the `relocate()` function to move "wdi_trade" towards the front of the dataset, right after the country name and country code variables:
+
+```{r}
+# sorts "qog_copy_selection" data frame in ascending (low to high) order with respect to the "wdi_trade" variable, and then brings the "wdi_trade" variable
+qog_copy_selection %>% 
+  arrange(wdi_trade) %>% 
+  relocate(cname_qog, cname, ccodealp, wdi_trade)
+                      
+```
+
+If, instead, we want to sort the dataset in *descending* order with respect to the "wdi_trade" variable, we can pass the name of the variable to the `desc()` function within the `arrange()` function, as below:
+
+```{r}
+# sorts "qog_copy_selection" data frame in descending (high to low) order with respect to the "wdi_trade" variable, and then brings the "wdi_trade" variable
+qog_copy_selection %>% 
+  arrange(desc(wdi_trade)) %>% 
+  relocate(cname_qog, cname, ccodealp, wdi_trade)
+```
+
+Note that it's also possible to pass several arguments to the arrange function, and thereby sort a dataset with respect to multiple variables; for example, the code below sorts the `qog_copy_selection` dataset by region ("ht_region), and then further sorts it in descending order by "wdi_trade". It assigns the result back to `qog_copy_selection` to effectively "save" these changes to the object:
+
+```{r}
+# arranges the "qog_copy_selection" data frame in ascending order with respect to "ht_region" and then in descending order with respect to "wdi_trade", and then relocates these variables to the front of the dataset; changes are assigned back to "qog_copy_selection" to store these changes
+qog_copy_selection<-qog_copy_selection %>% 
+                      arrange(ht_region, desc(wdi_trade)) %>% 
+                      relocate(cname_qog, cname, ccodealp, ht_region, wdi_trade)
+```
+
+Let's view the updated version of the `qog_copy_selection` in the data viewer:
+
+```{r}
+#| eval: false
+# Views "qog_copy_selection" in the data viewer
+View(qog_copy_selection)
+```
+
+```{r}
+#| echo: false
+qog_copy_selection_withoutnaB<-qog_copy_selection %>% 
+  mutate(across(everything(), ~ replace_na(as.character(.x), "NA")))
+```
+
+```{r}
+#| echo: false
+reactable(qog_copy_selection_withoutnaB,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+As we can see, sorting the data in this way allows us to quickly note the country in each regional grouping with the highest value on the "trade" variable. Sorting a dataset with respect to more than one variable can be especially useful in certain contexts, particularly in cases where you're dealing with nested data. For example, in a time series dataset, it can be useful to first sort by year, then by months within the year. In a dataset with regional information, it could be helpful to first sort by regional, then by cities within those regional groupings.
+
+### Creating New Variables Based on Existing Variables
+
+Depending on your research question and empirical strategy, it is often useful or necessary to create new variables in your dataset, based on existing variables. The `mutate()` function from the *dplyr* package is particularly useful for this purpose. To see how it works, consider the code below, which uses the `mutate()` function to create a new variable named "mip" (which stands for "men in parliament") that is computed by subtracting the existing "wdi_wip" (percentage of parliamentary seats held by women) variable from 100. For convenience, we'll also move "wdi_wip" and the newly created "mip" variables to the front of the dataset using `relocate()`:
+
+```{r}
+# Creates new variable named "mip" (percentage of men in parliement) that is calculated by substracting the women's share of parliamentary sets ("wdi_wip") from 100 and relocates these variables to the front of the dataset
+qog_copy_selection %>% 
+  mutate(mip=100-wdi_wip) %>% 
+    relocate(cname_qog, cname, ccodealp, wdi_wip, mip)
+```
+
+Note that the argument to the mutate function takes the form **new_variable=old_variable**. It's possible to define more than one new variable at a time using `mutate()`; simply separate the arguments by a comma within the `mutate()` function. For example, the code below creates a new variable ("land_area_sqmiles") that is created based on "wdi_area" (land area in sq km), as well as a new variable ("no_electricity_access") that presents the percentage of the population *without* access to electricity (based on the "wdi_acel" variable that represents the percentage of the population with access to electricity):
+
+```{r}
+# creates "land_area_sqmiles" variable based on "wdi_area" and "no_electricity_access" variable based on "wdi_acel"
+qog_copy_selection %>% 
+  mutate(land_area_sqmiles=wdi_area/2.5899,
+         no_electricity_access=100-wdi_acel) %>% 
+    relocate(cname_qog, 
+             cname, 
+             ccodealp, 
+             land_area_sqmiles, 
+             wdi_area, 
+             no_electricity_access, 
+             wdi_acel)
+```
+
+## Processing and Wrangling Multiple Datasets
+
+### Joining Data
+
+Joining, or merging, distinct datasets into a single dataset based on a common variable that exists in both individual datasets is an essential operation in most research projects. To see how we can implement joins in R using the `join()` family of functions, let's first pull out two of the list elements in `world_bank_list` and assign them to objects in the global environment. First, we'll extract the dataset on foreign direct investment, and assign it to an object named `wdi_fdi`:
+
+```{r}
+# extracts fdi dataset from "world_bank_list" by assigned name and assigns it to a new object named "wdi_fdi"
+wdi_fdi<-world_bank_list[["wdi_fdi2019"]]
+```
+
+Then, we'll extract the World Bank trade dataset and assign it to an object named `wdi_trade`:
+
+```{r}
+# extracts debt dataset from "world_bank_list" by assigned name and assigns it to a new object named "wdi_trade"
+wdi_trade<-world_bank_list[["wdi_trade2019"]]
+```
+
+Then, we'll clean up these datasets by dropping rows with NA values, and then renaming the awkwardly named "2019 \[YR2019'" variables in each of the datasets to something more intuitive and descriptive:
+
+```{r}
+# drop na's and rename variable in in trade dataset and assign to "wdi_trade_cleaned"
+wdi_trade_cleaned<-wdi_trade %>%
+            drop_na() %>% 
+            rename(trade_2019=`2019 [YR2019]`)
+
+# drop na's and rename variable in in FDI dataset and assign to "wdi_fdi_cleaned"
+wdi_fdi_cleaned<-wdi_fdi %>% 
+            drop_na() %>% 
+            rename(fdi_2019=`2019 [YR2019]`)
+```
+
+Now, we can go ahead and use a `join()` function, to merge the datasets together. There are several different versions of the `join()` function, and you should read the documentation to learn more, and make sure you're applying the correct function given the context of your research (`?join`). We will use the `full_join()` function, which keeps all of the observations from each of the component datasets in the joined (i.e. output) dataset (even those that do not have a corresponding observation in the other dataset). Below, we call the `full_join()` function, and pass as arguments the two datasets we'd like to join. The specification `by="Country Code"` indicates that the join field (i.e. the common field that can be used to link the data frames) is the "Country Code" variable. The column containing the country codes is named "Country Code" in both columns, which makes this especially easy; if, however, the columns containing the join variable were named differently, we could equate them within the `full_join()` function by passing a vector to the "by" argument that specifies the join field from each component dataset. For example, if the country code variable was in a column named "iso3" in `wdi_fdi` and "Country Code" in `wdi_trade`, we could specify `by=c("iso3"="Country Code")` to let the function know that the join field in `wdi_fdi` is "iso3" and the join field in `wdi_trade` is "Country Code". Below, we assign the product of the join to a new object named `fdi_trade_join`:
+
+```{r}
+# join together "wdi_fdi_cleaned" and "wdi_fdi_cleaned" using country code
+fdi_trade_join<-full_join(wdi_fdi_cleaned, wdi_trade_cleaned, by="Country Code")
+```
+
+Let's see what `fdi_trade_join` looks like by passing it to the R Studio Viewer:
+
+```{r}
+#| eval: false
+View(fdi_trade_join)
+```
+
+```{r}
+#| echo: false
+fdi_trade_join_withna<-fdi_trade_join %>% 
+  mutate(across(everything(), ~ replace_na(as.character(.x), "NA")))
+```
+
+```{r}
+#| echo: false
+reactable(fdi_trade_join_withna,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+Note that both variables are now in the dataset as separate columns.
+
+### Appending Data
+
+If joining datasets is fundamentally about situating disparate datasets side-by-side in a new unified dataset, appending datasets is about stacking disparate datasets with a similar structure on top of each other in a new unified dataset. In other words, joining datasets leads to a unified dataset with more columns than the original individual datasets, while appending datasets leads to a unified dataset with more rows than the original individual datasets. Depending on the type of data you're working with, appending data can be just as important a method for bringing together disparate datasets.
+
+We can easily append data frames a single unified data frame using the `bind_rows()` function from *dplyr*. Below, we append `wdi_fdi`to `wdi_trade` by passing these objects as arguments to the `bind_rows()` function. We'll assign the appended dataset to a new object named `worldbank_trade_fdi_appended`:
+
+```{r}
+# Appends "worldbank_trade_2019" to "worldbank_fdi_2019" and assigns new dataset to object named "worldbank_trade_fdi"
+worldbank_trade_fdi_appended<-bind_rows(wdi_trade, wdi_fdi)
+```
+
+To confirm that the appending operation worked as expected, please view `worldbank_trade_fdi_appended` in the data viewer.
+
+### Reshaping Data
+
+In a "wide" dataset, each variable or measurement is stored in a separate column; on the other hand, in a "long" dataset, each measurement is stored in a single column, and there is an additional column that identifies the specific variable or category for each observation. For example, in our context, `fdi_trade_join` is a "wide" dataset, while `worldbank_trade_fdi_appended` is formatted as a long dataset.
+
+The process of converting a wide dataset to a long one, or vice versa, is typically referred to as reshaping data. Often, one will need to bring different datasets together (either through a join or append operation), but in order to successfully implement the required procedure, it is first necessary to reshape at least one of the datasets so that they're correctly formatted. Below, we'll quickly review some functions for carrying out these reshaping operations from the *tidyr* package, which is part of the *tidyverse* suite.
+
+#### Long to Wide
+
+To see how a "long to wide" operation works using the *tidyr* lets imagine we want to transform `worldbank_trade_fdi_appended`, currently formatted as a long dataset, into a wide dataset. First we'll clean up `worldbank_trade_fdi_appended` using some familiar *tidyverse* functions, and assign the result to a new object named `worldbank_trade_fdi_cleaned` cleaned:
+
+```{r}
+# cleans the dataset before reshaping
+worldbank_trade_fdi_cleaned<-worldbank_trade_fdi_appended %>% 
+                              rename(economic_variables="2019 [YR2019]",
+                                     series_code="Series Code") %>% 
+                              select(-"Series Name") %>% 
+                              drop_na()
+                      
+                                      
+```
+
+Before proceeding, we should note that the column containing the data, "economic_variables" is formatted as a character variable:
+
+```{r}
+# prints class of "economic_variables" column
+class(worldbank_trade_fdi_cleaned$economic_variables)
+```
+
+In order for the reshaping process to work, we need to transform that column into the "numeric" class, which we do with the following:
+
+```{r}
+# converts "economic_variables" to numeric
+worldbank_trade_fdi_cleaned$economic_variables<-as.numeric(worldbank_trade_fdi_cleaned$economic_variables)
+```
+
+Now, we use *tidyr*'s `pivote_wider` function to "pivot" the data from long to wide. Below, we'll take `worldbank_trade_fdi_cleaned` and then feed that data into the `pivot_wider()` function using the %\>% operator. Within the `pivot_wider()` function, the "names_from" argument specifies the current column that contains the names we would like to use as column names in the reshaped dataset, while the "values_from" argument specifies the name of the current column that contains the data that will be used to populate the columns in the reshaped dataset. We'll assign this code to a new object named `worldbank_trade_fdi_wide`:
+
+```{r}
+# reshapes "worldbank_trade_fdi_cleaned" from long to wide and assigns the wide dataset to an object named "worldbank_trade_fdi_wide"
+worldbank_trade_fdi_wide<-worldbank_trade_fdi_cleaned %>% 
+                              tidyr:: pivot_wider(names_from=series_code,
+                                          values_from=economic_variables)
+```
+
+Let's quickly take a look at the reshaped dataset:
+
+```{r}
+#| eval: false
+# prints contents of "worldbank_trade_fdi_wide"
+worldbank_trade_fdi_wide
+```
+
+```{r}
+#| echo: false
+head(worldbank_trade_fdi_wide)
+```
+
+It might be nice to rename the variables to something more intuitive:
+
+```{r}
+# renames columns in "worldbank_trade_fdi_wide"
+worldbank_trade_fdi_wide<-worldbank_trade_fdi_wide %>% 
+                          rename(trade2019=NE.TRD.GNFS.ZS,
+                                 FDI2019=BX.KLT.DINV.WD.GD.ZS)
+```
+
+Go ahead and inspect `worldbank_trade_fdi_wide` in the data viewer:
+
+```{r}
+#| eval: false
+View(worldbank_trade_fdi_wide)
+```
+
+```{r}
+#| echo: false
+worldbank_trade_fdi_wide_withna<-worldbank_trade_fdi_wide %>% 
+  mutate(across(everything(), ~ replace_na(as.character(.x), "NA")))
+```
+
+```{r}
+#| echo: false
+reactable(worldbank_trade_fdi_wide_withna,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+#### Wide to Long
+
+To make the conversion in the opposite direction, i.e. reshaping a dataset from wide to long, we can use the `pivot_longer()` function. Below, we take the `worldbank_trade_fdi_wide` data frame, and feed it into the `pivot_longer()` function using the `%>%` operator. Within the function, we use `cols=c(FDI2019, trade2019)` to specify the current columns that we're going to collapse into a single column in the new dataset. The "names_to" argument specifies the name of column that will hold the original "FDI2019" and "trade2019" columns, while the "values_to" argument specifies the name of the column that will actually hold the data. Let's go ahead and run the code, and assign the output to a new object named `world_bank_trade_long`:
+
+```{r}
+# reshapes "worldbank_trade_fdi_wide" back to long format and assigns the reshaped dataset to a new object named "world_bank_trade_long"
+world_bank_trade_long<-worldbank_trade_fdi_wide %>% 
+                        pivot_longer(cols=c(FDI2019, trade2019),
+                                     names_to="economic_variable",
+                                     values_to = "2019")
+                        
+```
+
+Let's view `world_bank_trade_long` in the data Viewer to confirm that it has been successfully reshaped:
+
+```{r}
+#| eval: false
+View(world_bank_trade_long)
+```
+
+```{r}
+#| echo: false
+world_bank_trade_long_withna<-world_bank_trade_long %>% 
+  mutate(across(everything(), ~ replace_na(as.character(.x), "NA")))
+```
+
+```{r}
+#| echo: false
+reactable(world_bank_trade_long_withna,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+### Automating Data Processing with Functions
+
+When working with multiple datasets, we may need to carry out identical operations on those datasets, in which case we could save time by wrapping up the relevant code in a function and iterating over the dataset elements we'd like to transform. Let's say, for example, that we want to clean up our World Bank dataset by deleting a column, renaming others, and removing the rows where the country code is NA. Rather than carrying out these operations individually, let's create a function, called `worldbank_cleaning_function`, that implements these changes and returns a clean dataset:
+
+```{r}
+# write function to clean World Bank dataset
+worldbank_cleaning_function<-function(input_dataset){
+  modified_dataset<-input_dataset %>% 
+                      select(-"Series Code") %>% 
+                      rename("Country"="Country Name",
+                             "CountryCode"="Country Code",
+                             "Series"="Series Name",
+                             "2019"="2019 [YR2019]") %>% 
+                      drop_na(CountryCode)
+  return(modified_dataset)
+}
+```
+
+Let's test the function using `wdi_trade`:
+
+```{r}
+#| eval: true
+# passes "wdi_trade" to "worldbank_cleaning_function"
+worldbank_cleaning_function(wdi_trade)
+```
+
+That looked like it worked, so lets go ahead and apply `worldbank_cleaning_function` to all of the data frames in `world_bank_list`. We'll use the familiar `map()` function to do so; below, `world_bank_list` is the list we're iterating over, while `worldbank_cleaning_function()` is the function we're applying:
+
+```{r}
+# Iteratively apply "worldbank_cleaning_function" to all of the datasets in "world_bank_list", and deposit the cleaned datasets into a new list named "world_bank_list_cleaned"
+world_bank_list_cleaned<-map(.x=world_bank_list, .f=worldbank_cleaning_function)
+```
+
+Let's print out the list and confirm that the operation worked:
+
+```{r}
+# prints contents of "world_bank_list_cleaned"
+world_bank_list_cleaned
+```
+
+As expected, each of the processed datasets is an element in `world_bank_list_cleaned`.
+
+## Exporting Processed Data
