@@ -600,6 +600,160 @@ qog_copy_selection %>%
              wdi_acel)
 ```
 
+The `mutate()` function is particularly handy when we want to transform continuous numeric variables into a dichotomous (i.e. a "dummy" variable that takes on a value of 1 if a condition is met and 0 otherwise) or categorical variable. For example, let's say we want to create a new variable, named "trade_open" that takes on the value of 1 if the "wdi_trade" variable is greater than or equal to 60, and 0 otherwise. We can generate this new dummy variable using the `mutate()` function. In particular, within the `mutate()` function below, we specify that we want to create a new variable named "trade_open"; the `ifelse()` function specifies the desired condition (trade\>=60), followed by the value the new "trade_open" variable is to take if the condition is met (1), and the value the new "trade_open" variable is to take if the condition is not met (0). In other words, we can translate `ifelse(wdi_trade>=77, 1, 0)` to "if wdi_trade\>=60, set the 'trade_open' variable to 1, otherwise set it to 0." We'll assign the data frame with the new "trade_open" variable back to "qog_copy_selection":
+
+```{r}
+# Creates a new dummy variable based on the existing "wdi_trade" variable named "trade_open" (which takes on a value of "1" if "trade" is greater than or equal to 60, and 0 otherwise) and then moves the newly created variables to the front of the datasetall changes are assigned to "qog_copy_selection", thereby overwriting the existing version of "qog_copy_selection"
+
+qog_copy_selection<-
+  qog_copy_selection %>% 
+    mutate(trade_open=ifelse(wdi_trade>=60, 1, 0)) %>% 
+      relocate(cname_qog, cname, ccodealp, wdi_trade, trade_open)
+```
+
+Let's print the updated contents of `qog_copy_selection` to see that the changes have been made:
+
+```{r}
+# prints updated contents of "qog_copy_selection"
+qog_copy_selection
+```
+
+It can also be useful to create categorical variables based on numeric thresholds from an existing variable. For instance, let's say we want to take the existing "wdi_trade" variable, and define a new variable named "trade_level", which is set to "Low_Trade" when the "trade" variable is greater than 15 and less than 50; "Intermediate_Trade" when the "trade" variable is greater than or equal to 50 and less than 100; and "High_Trade" when the "trade" variable is greater than or equal to 100. The code below creates this new "trade_level" variable using the `mutate()` function; within `mutate()` the `case_when()` function maps the conditions onto the desired variable values for "trade_level" using the following syntax:
+
+```{r}
+# Creates a new variable in the "pt_copy" dataset named "trade_level" (that is coded as "Low_Trade" when the "wdi_trade" variable is greater than 15 and less than 50, coded as "Intermediate_Trade" when "wdi_trade" is greater than or equal to 50 and less than 100, and coded as "High_Trade" when "wdi_trade" is greater than or equal to 100), and then reorders the dataset to move "trade_level" and "wdi_trade" to the front of the dataset; the changes are assigned back to "qog_copy_selection"
+qog_copy_selection<-
+  qog_copy_selection %>% 
+  mutate(trade_level=case_when(wdi_trade>15 & wdi_trade<50~"Low_Trade",
+                              wdi_trade>=50 & wdi_trade<100~"Intermediate_Trade",
+                              wdi_trade>=100~"High_Trade")) %>% 
+                    relocate(cname_qog, cname, ccodealp, wdi_trade, trade_level)
+```
+
+Let's print the contents of the updated `qog_copy_selection` data frame and confirm that the changes have been made:
+
+```{r}
+# prints updated contents of "qog_copy_selection"
+qog_copy_selection
+```
+
+Another useful operation is to create dummy variables based on a categorical variable. For example, consider the "trade_level" variable we just created. Let's say we want to use the "trade_level" column to create dummy variables for each of the categories in that column. We can do so with the *fastDummies* package, which can quickly generate dummy variables for the categories in a categorical variable using the `dummy_cols()` function. Below, we simply take the existing `qog_copy_selection` dataset, and pass the name of the categorical variable out of which we want to create the dummies ("trade_level") to the `dummy_cols()` function:
+
+```{r}
+# Creates dummy variables from "trade_level" column, and relocates the new dummies to the front of the dataset; assigns changes back to "qog_copy_selection"
+qog_copy_selection<-
+  qog_copy_selection %>% 
+  dummy_cols("trade_level") %>% 
+    relocate(cname_qog, 
+             cname,
+             ccodealp,
+             trade_level, 
+             trade_level_High_Trade, 
+             trade_level_Intermediate_Trade, 
+             trade_level_Low_Trade, 
+             trade_level_NA)
+```
+
+You'll notice that there are now dummy variables corresponding to each of the categories in the categorical "trade_level" variable; for example, the "trade_level_High_Trade" dummy variable takes on the value of 1 for all observations where the "trade_level" variable is "High_Trade" and 0 otherwise; the "trade_level_Intermediate_Trade" dummy variable takes on the value of 1 for all observations where the "trade_level" variable is "Intermediate_Trade" and 0 otherwise; and so on. If we were to incorporate these dummy variables into a regression model, we would exclude one set of dummy variables (which would then serve as the reference category).
+
+Let's view the updated version of `qog_copy_selection` in the data viewer to see our newly created variables. First, we'll bring the variables of interest to the front of the data frame:
+
+```{r}
+# specifies variable order
+qog_copy_selection<-
+  qog_copy_selection %>% 
+    relocate(cname_qog, cname, ccodealp, wdi_trade, trade_open, trade_level, trade_level_High_Trade, trade_level_Intermediate_Trade, trade_level_Low_Trade, trade_level_NA)
+```
+
+Let's now view the modified data frame and note the new variables:
+
+```{r}
+#| eval: false
+# Views "qog_copy_selection" in the data viewer
+View(qog_copy_selection)
+```
+
+```{r}
+#| echo: false
+qog_copy_selection_categorical<-qog_copy_selection %>% 
+  mutate(across(everything(), ~ replace_na(as.character(.x), "NA")))
+```
+
+```{r}
+#| echo: false
+reactable(qog_copy_selection_categorical,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+### Subsetting (Filtering) Variables
+
+We already introduced the `filter()` function in an earlier section, in the context of our discussion of the `%>%` operator. We'll now briefly return to this function, and provide additional examples of how it can be used to subset our data frames.
+
+Let's say that we want to subset the `qog_copy_selection` data frame to extract only countries part of the South-East Asia region (coded as a "7" in the "ht_region" variable), and assign this South-East Asia data frame to its own object, named `se_asia_data`. We can do so with the following:
+
+```{r}
+# uses the filter() function to extract South East Asia observations from "qog_copy_selection" and assigns the result to a new object named "se_asia_data"
+se_asia_data<-qog_copy_selection %>% 
+                filter(ht_region==7)
+```
+
+Let's print out the contents of `se_asia_data` to see if it worked as expected:
+
+```{r}
+# prints "se_asia_data" to console
+se_asia_data
+```
+
+We can also chain together multiple conditions. For example, let's use the `filter()` condition to extract observations for countries that are part of the "Sub-Saharan Africa" region, and have a Human Development Index ("und_hdi") score greater than or equal to 0.65. We can do so by setting up an expression that uses the "&" logical operator:
+
+```{r}
+# subsets data to include Sub-Saharan African countries with a "undp_hdi" value greater than or equal to 0.65 and assigns the result to an object named "sub_saharan_africa_hdi"
+sub_saharan_africa_hdi<-qog_copy_selection %>% 
+                          filter(ht_region==4 & undp_hdi>=0.65)
+```
+
+Let's print out the contents of `sub_saharan_africa_hdi`:
+
+```{r}
+# prints "sub_saharan_africa_hdi"
+sub_saharan_africa_hdi
+```
+
+We can also subset datasets using non-numeric data. For example, if we wanted to extract all of the observations from `sub_saharan_africa_hdi` for which the "trade_level" variable we created earlier is "Intermediate_Trade", we can do the following:
+
+```{r}
+# Filters observations from "sub_saharan_africa_hdi" for which the "trade_level" variable is set to "Intermediate_Trade"
+sub_saharan_africa_hdi %>% 
+  filter(trade_level=="Intermediate_Trade")
+```
+
+We can also extract observations that do NOT meet a given condition. In particular, the condition "not equal to" is denoted by a "!=". For example, an operation equivalent to the one immediately above would be to exclude observations for which "trade_level" is set to "High_Trade":
+
+```{r}
+# filters observations from "sub_saharan_africa_hdi" for which the "trade_level" variable is NOT set to "High_Trade"
+sub_saharan_africa_hdi %>% 
+  filter(trade_level != "High_Trade")
+```
+
+It can also be useful to filter data using "or" conditions; we can make such statements within the `filter()` function using a "\|". For example, the code below creates a new "east_asia" dataset by using the `filter()` function to extract South-East Asia or East Asia observations from `qog_copy_selection` :
+
+```{r}
+# uses the "filter()" function to extract observations from South-East Asia (ht_region=7) and East Asia (ht_region=6) and assigns the result to a new object named "east_asia"
+east_asia<-qog_copy_selection %>% 
+              filter(ht_region==6|ht_region==7) %>% 
+                relocate(cname_qog, cname, ccodealp, ht_region)
+```
+
+Now, let's print the contents of the newly created `east_asia` object:
+
+```{r}
+# prints contents of "east_asia"
+east_asia
+```
+
 ## Processing and Wrangling Multiple Datasets
 
 ### Joining Data
@@ -680,7 +834,7 @@ To confirm that the appending operation worked as expected, please view `worldba
 
 In a "wide" dataset, each variable or measurement is stored in a separate column; on the other hand, in a "long" dataset, each measurement is stored in a single column, and there is an additional column that identifies the specific variable or category for each observation. For example, in our context, `fdi_trade_join` is a "wide" dataset, while `worldbank_trade_fdi_appended` is formatted as a long dataset.
 
-The process of converting a wide dataset to a long one, or vice versa, is typically referred to as reshaping data. Often, one will need to bring different datasets together (either through a join or append operation), but in order to successfully implement the required procedure, it is first necessary to reshape at least one of the datasets so that they're correctly formatted. Below, we'll quickly review some functions for carrying out these reshaping operations from the *tidyr* package, which is part of the *tidyverse* suite.
+The process of converting a wide dataset to a long one, or vice versa, is typically referred to as reshaping data. Often, one will need to bring different datasets together (either through a join or append operation), but in order to successfully implement the required procedure, it is first necessary to reshape at least one of the datasets so that they're correctly formatted; the first step in integrating datasets, therefore, is frequently a reshaping operation that ensures that the datasets have a common structure. Below, we'll quickly review some functions for carrying out these reshaping operations from the *tidyr* package, which is part of the *tidyverse* suite.
 
 #### Long to Wide
 
@@ -842,3 +996,37 @@ world_bank_list_cleaned
 As expected, each of the processed datasets is an element in `world_bank_list_cleaned`.
 
 ## Exporting Processed Data
+
+After we have processed our datasets, it's often necessary to get the transformed data out of the R environment. There are a variety of functions that can export data frames from R to your local disk in various file formats. Because CSV files are so flexible and commonly used, we'll explore how to export R data frames to your local disk as CSV files; if you need to export your data frames into another file format (for example .xlsx or .dta files), you would need to look up the relevant packages and functions that enable this.
+
+To write out an R data frame to disk as a CSV, we can use the `read_csv()` function. Below, we export the `east_asia` data frame we created earlier as a CSV to the "outputs" folder in our working directory. The first argument is the name of the object we want to export, while the second argument specifies the file path, name, and extension of the desired output file.
+
+```{r}
+# exports "east_asia" to a local directory (i.e. the "outputs" sub-directory of our working directory)
+write_csv(east_asia, "outputs/east_asia.csv")
+```
+
+In order to export multiple data frames (for example, we may want to export a bunch of cleaned data frames out of R to use in another package) we can use the `walk()` function and its relatives; these functions are a part of the *purrr* package, and work similarly to the `map()` family of functions.
+
+Let's say we want to export the cleaned World Bank data frames in `world_bank_list_cleaned`. First, we'll create a vector of file names for the exported files using the `paste0()` function. We'll assign this vector to a new object named `WB_filenames_export`:
+
+```{r}
+# create file names for exported World Bank files
+WB_filenames_export<-paste0("outputs/", worldbank_filenames_base, "_cleaned.csv")
+```
+
+Let's see what this looks like:
+
+```{r}
+# prints "WB_filenames_export" contents
+WB_filenames_export
+```
+
+Now, we'll use the `walk2()` function to iteratively pass the data frames (contained in `world_bank_list_cleaned` and the file names contained in `WB_filenames_export` to the `write_csv()` function. The code below takes the first elements from `world_bank_list_cleaned` and `WB_filenames_export`, and passes them to `write_csv()` which exports the first data frame with the first file name; then, it takes the second elements from `world_bank_list_cleaned` and `WB_filenames_export`, and passes them to `write_csv()` which exports the second data frame with the second file name; and so on.
+
+```{r}
+# exports datasets in "world_bank_list_cleaned" to "outputs" directory using filenames in "WB_filenames_export"
+walk2(.x=world_bank_list_cleaned, .y=WB_filenames_export, write_csv)
+```
+
+Check your "outputs" directory to ensure that the files have been written out as expected.
