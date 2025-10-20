@@ -3,6 +3,140 @@
 library(reactable)
 ```
 
-# Data Analysis and Visualization
+# Elementary Data Visualization and Analysis 
 
-Introduction
+## Introduction
+
+In this session, we'll turn from tasks related to data processing and wrangling to creating basic visualization and analysis products in R. We will cover descriptive statistics, data visualization using the *ggplot2* package (part of the *tidyverse* suite), and linear regression, and also explore how to export analysis and visualization objects related to such tasks (i.e. plots, regression and summary statistics tables etc.) out of R for use in external applications. Our focus will be on practical issues related to implementing analysis workflows in R, rather than conceptual or methodological issues related to visualization or statistical techniques (which is beyond our curren scope)
+
+## Preliminaries and Set-Up
+
+We will be using the following packages. Please install any packages that are not already installed (using the `install.packages()` function, and load them into memory using the `library()` function:
+
+```{r}
+# load packages
+library(tidyverse)
+library(psych)
+library(janitor)
+library(fastDummies)
+library(summarytools)
+library(stargazer)
+library(gtsummary)
+library(ggeffects)
+library(effects)
+library(interplot)
+```
+
+We will continue working with the Quality of Government Institute's basic cross-sectional dataset, which we introduced and began exploring in the previous lesson. Please go ahead and read in that data if it is not already in memory, and assign it to an object named `qog`:
+
+```{r}
+# read in qog data and assign to object named "qog"
+qog<-read_csv("data/quality_of_government/qog_bas_cs_jan25.csv")
+```
+
+As before, we'll make a copy of `qog` to work with:
+
+```{r}
+# make a copy of the "qog" data and assign to "qog_copy"
+qog_copy<-qog
+```
+
+Now, we'll go ahead and select some variables of interest to work with, and assign the modified dataset to a new object named `qog_copy_selection`:
+
+```{r}
+# select qog variables and assign modified dataset to object named "qog_copy_selection"
+qog_copy_selection <- 
+  qog_copy %>% 
+   dplyr::select(cname_qog, 
+          cname, 
+          ccodealp, 
+          undp_hdi, 
+          wdi_expedu,
+          wdi_acel,
+          wdi_area,
+          wdi_taxrev,
+          wdi_expmil,
+          wdi_fdiin,
+          wdi_trade,
+          cbie_index,
+          ht_region,
+          wbgi_rle,
+          bmr_dem,
+          atop_ally,
+          gol_est,
+          mad_gdppc,
+          mad_gdppc1900,
+          bci_bci,
+          lis_gini,
+          top_top1_income_share,
+          wdi_wip)
+```
+
+Currently, the "ht_region" variable contains numeric codes that specify a country's region in the world (see the QOG dataset codebook for more details). We will use this variable to make a new categorical variable that encodes the region information as a string, which will make it easier to interpret in the course of making visualizations and computing relevant statistics. To do so, we will use the `case_when()` function introduced in the previous session. We'll assign the change back to the `qog_copy_selection` object:
+
+```{r}
+# Create new character variable named "region" based on "ht_region" variable that contains region information encoded as strings
+qog_copy_selection<-
+  qog_copy_selection %>% 
+    mutate(region=case_when(ht_region==1~"EasternEuropePostSoviet",
+                          ht_region==2~"LatinAmerica",
+                          ht_region==3~"NorthAfricaMiddleEast",
+                          ht_region==4~"SubSaharanAfrica",
+                          ht_region==5~"WesternEuropeNorthAmerica",
+                          ht_region==6~"EastAsia",
+                          ht_region==7~"SouthEastAsia",
+                          ht_region==8~"SouthAsia",
+                          ht_region==9~"Pacific",
+                          ht_region==10~"Caribbean"))
+```
+
+## Missing Data
+
+Before proceeding, it is important to briefly acquaint ourselves with how R handles missing data, which has implications for our main topics of interest below. Most real-world social science datasets (including the QOG dataset we are working with) have missing data, and when they are read into R, "blank" cells in a dataset are automatically coded as "NA" by R. To confirm this, view `qog_copy_selection` in the data viewer:
+
+```{r}
+#| eval: false
+# view "qog_copy_selection" in Viewer; note NA values
+View(qog_copy_selection)
+```
+
+```{r}
+#| echo: false
+qog_copy_selection_na<-qog_copy_selection %>% 
+                  mutate(across(everything(), ~ replace_na(as.character(.x), "NA")))
+```
+
+```{r}
+#| echo: false
+reactable(qog_copy_selection_na,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+Before w
+
+but before working with missing data in real-world contexts, we'll develop our intuitions about how R handles missing data by using a simple toy dataset, which we'll create below:
+
+```{r}
+# makes toy dataset, assigned to object named "student_scores"
+student_scores<-data.frame(ID=c(1:5),
+                           Age=c(25, NA, 30, 22, NA),
+                           Score=c(85, 90, NA, 78, 88))
+```
+
+Let's print our toy `student_scores` data frame to get a clear sense of what it looks like:
+
+```{r}
+# prints "student_scores"
+student_scores
+```
+
+Note the "NA" values, which indicate that data corresponding to those cells is missing.
+
+## Descriptive Statistics
+
+## Exploratory Visualization
+
+## Linear Regression 

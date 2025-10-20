@@ -68,7 +68,7 @@ setwd("/Users/adra7980/Library/CloudStorage/OneDrive-UCB-O365/Desktop/git-reposi
 We can now pass the name of file and its extension in quotation marks to the `read_csv()` function (since the data we want to load is a CSV file). We'll assign it to an object named `qog` (for "Quality of Government"):
 
 ```{r}
-# reads in the workshop dataset (Persson and Tabellini cross-national dataset) by passing the file path as an argument to the "read_csv" and assigns it to a new object named "pt"
+# reads in the workshop dataset (Persson and Tabellini cross-national dataset) by passing the file path as an argument to the "read_csv" and assigns it to a new object named "qog"
 qog<-read_csv("data/quality_of_government/qog_bas_cs_jan25.csv")
 ```
 
@@ -340,6 +340,7 @@ reactable(qog_final_processed_withna,
 Notice that using conventional notation (i.e. notation without a pipe), we arrived at our final processed dataset in two steps; first, we had to select columns using the `select()` function, and then we had to take the resulting object and call the `filter()` function to subset the data based on the "undp_hdi" variable. This process can by a little clunky, and the pipe operator helps to streamline it, making for more efficient and readable code. In short, when we use pipe (rather than conventional) notation, we can get from `qog_copy` to the final processed dataset with just the following:
 
 ```{r}
+# uses pipe notation to select columns and filter according to a condition
 qog_copy %>% 
   select(cname_qog, cname, ccodealp, undp_hdi, wdi_expedu) %>% 
   filter(undp_hdi>0.8)
@@ -533,7 +534,7 @@ qog_copy_selection %>%
 If, instead, we want to sort the dataset in *descending* order with respect to the "wdi_trade" variable, we can pass the name of the variable to the `desc()` function within the `arrange()` function, as below:
 
 ```{r}
-# sorts "qog_copy_selection" data frame in descending (high to low) order with respect to the "wdi_trade" variable, and then brings the "wdi_trade" variable
+# sorts "qog_copy_selection" data frame in descending (high to low) order with respect to the "wdi_trade" variable, and then brings the "wdi_trade" variable to the front of the dataset
 qog_copy_selection %>% 
   arrange(desc(wdi_trade)) %>% 
   relocate(cname_qog, cname, ccodealp, wdi_trade)
@@ -578,7 +579,7 @@ As we can see, sorting the data in this way allows us to quickly note the countr
 Depending on your research question and empirical strategy, it is often useful or necessary to create new variables in your dataset, based on existing variables. The `mutate()` function from the *dplyr* package is particularly useful for this purpose. To see how it works, consider the code below, which uses the `mutate()` function to create a new variable named "mip" (which stands for "men in parliament") that is computed by subtracting the existing "wdi_wip" (percentage of parliamentary seats held by women) variable from 100. For convenience, we'll also move "wdi_wip" and the newly created "mip" variables to the front of the dataset using `relocate()`:
 
 ```{r}
-# Creates new variable named "mip" (percentage of men in parliement) that is calculated by substracting the women's share of parliamentary sets ("wdi_wip") from 100 and relocates these variables to the front of the dataset
+# Creates new variable named "mip" (percentage of men in parliement) that is calculated by substracting the women's share of parliamentary seats ("wdi_wip") from 100 and relocates these variables to the front of the dataset
 qog_copy_selection %>% 
   mutate(mip=100-wdi_wip) %>% 
     relocate(cname_qog, cname, ccodealp, wdi_wip, mip)
@@ -1030,3 +1031,13 @@ walk2(.x=world_bank_list_cleaned, .y=WB_filenames_export, write_csv)
 ```
 
 Check your "outputs" directory to ensure that the files have been written out as expected.
+
+## End-of-Lesson Exercises
+
+**Exercise 1**
+
+Write a function to perform some operation(s) on one of the World Bank datasets, then iteratively apply that function to all of the World Bank datasets. Write out the transformed files to a local directory on your computer.
+
+**Exercise 2**
+
+Apply the `filter()` AND the `mutate()` function to one of the datasets we've worked with in this lesson (chaining together operations with the `%>%` operator), and assign the modified dataset to a new object that you write out to a local directory on your computer as a CSV file.

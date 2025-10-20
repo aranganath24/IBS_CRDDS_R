@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -146,7 +181,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./session4.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Data Analysis and Visualization</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Elementary Data Visualization and Analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -172,8 +207,30 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#preliminaries" id="toc-preliminaries" class="nav-link active" data-scroll-target="#preliminaries"><span class="header-section-number">6.1</span> Preliminaries</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="header-section-number">6.2</span> Introduction</a></li>
+  <li><a href="#r-projects" id="toc-r-projects" class="nav-link" data-scroll-target="#r-projects"><span class="header-section-number">6.3</span> R Projects</a>
+  <ul>
+  <li><a href="#what-is-an-r-project" id="toc-what-is-an-r-project" class="nav-link" data-scroll-target="#what-is-an-r-project"><span class="header-section-number">6.3.1</span> What is an R Project?</a></li>
+  <li><a href="#what-are-the-benefits-of-using-r-projects" id="toc-what-are-the-benefits-of-using-r-projects" class="nav-link" data-scroll-target="#what-are-the-benefits-of-using-r-projects"><span class="header-section-number">6.3.2</span> What are the benefits of using R Projects?</a></li>
+  <li><a href="#how-do-you-initiate-an-r-project" id="toc-how-do-you-initiate-an-r-project" class="nav-link" data-scroll-target="#how-do-you-initiate-an-r-project"><span class="header-section-number">6.3.3</span> How do you initiate an R Project?</a></li>
+  </ul></li>
+  <li><a href="#quarto" id="toc-quarto" class="nav-link" data-scroll-target="#quarto"><span class="header-section-number">7</span> Quarto</a>
+  <ul>
+  <li><a href="#making-a-new-quarto-document" id="toc-making-a-new-quarto-document" class="nav-link" data-scroll-target="#making-a-new-quarto-document"><span class="header-section-number">7.1</span> Making a New Quarto Document</a></li>
+  <li><a href="#writing-the-document" id="toc-writing-the-document" class="nav-link" data-scroll-target="#writing-the-document"><span class="header-section-number">7.2</span> Writing the Document</a></li>
+  <li><a href="#rendering-the-document" id="toc-rendering-the-document" class="nav-link" data-scroll-target="#rendering-the-document"><span class="header-section-number">7.3</span> Rendering the Document</a></li>
+  <li><a href="#r-projects-quarto-and-the-here-package" id="toc-r-projects-quarto-and-the-here-package" class="nav-link" data-scroll-target="#r-projects-quarto-and-the-here-package"><span class="header-section-number">7.4</span> R Projects, Quarto, and the <em>here()</em> package</a></li>
+  </ul></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">8</span> Exercises</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">9</span> Further Reading</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/aranganath24/IBS_CRDDS_R/blob/main/session5.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/aranganath24/IBS_CRDDS_R/edit/main/session5.qmd" class="toc-action"><i class="bi empty"></i>Edit this page</a></li><li><a href="https://github.com/aranganath24/IBS_CRDDS_R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -197,9 +254,465 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Introduction</p>
+<section id="preliminaries" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="preliminaries"><span class="header-section-number">6.1</span> Preliminaries</h2>
+<p>Please load the <em>tidyverse</em>. Below, we’ll also eventually install and load a library called <em>here</em>, but it is not necessary to do so at the outset.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load library</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="introduction" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="introduction"><span class="header-section-number">6.2</span> Introduction</h2>
+<p>In this lesson, we’ll learn about some tools that can help you write reproducible R code and manage your projects, as well as communicate your results with others (whether collaborators, students, the broader scholarly community, or the public) in a transparent and compelling way. In particular, we will introduce R Studio’s <em>Projects</em> feature, which provides a useful container for the various components of an R project (i.e.&nbsp;raw data, analysis outputs and processed data, scripts etc) and helps keep these components organized and sharable. We will also introduce <em>Quarto</em>, an open-source publishing system that enables you to produce articles, websites, slides, books, and other documents. The <em>Quarto</em> ecosystem is too vast for us to explore in a comprehensive here, so our focus will be on using <em>Quarto</em> as a platform for literate programming, which refers to the practice of writing code as human readable scripts that integrate narrative text, code, and code outputs into cohesive and accessible documents.</p>
+</section>
+<section id="r-projects" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="r-projects"><span class="header-section-number">6.3</span> R Projects</h2>
+<p>As you move forward in using R, the scope and complexity of your work will increase, which means that it will become increasingly important (and challenging) to systematically track the various components of your projects, and to share these projects with others. R Studio’s <em>Project</em> functionality can make these data and project management tasks more tractable and streamlined, which in turn facilitates the reproducibility of your work.</p>
+<section id="what-is-an-r-project" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="what-is-an-r-project"><span class="header-section-number">6.3.1</span> What is an R Project?</h3>
+<p>An R Studio Project, quite simply, is a folder/directory in which you can store all of the materials associated with an R-based project, such as your raw data, your scripts, outputs (i.e.&nbsp;visualizations, processed data etc.), and reports. For each of these project components, you should create dedicated sub-directories within the main R Project directory; to make this more concrete, your R Project directory should look something like this:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic1_alt.png" class="img-fluid figure-img" width="921">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.1: R Project Directory
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Note the <code>.Rproj</code> file within the directory. It is this file that defines a directory as an R Project directory that functions as a self-contained workspace for a given project. File paths within an R Project can be defined in relative terms with respect to this main project directory (i.e.&nbsp;the directory which has the <code>.Rproj</code> file), which is a point we’ll return to below.</p>
+</section>
+<section id="what-are-the-benefits-of-using-r-projects" class="level3" data-number="6.3.2">
+<h3 data-number="6.3.2" class="anchored" data-anchor-id="what-are-the-benefits-of-using-r-projects"><span class="header-section-number">6.3.2</span> What are the benefits of using R Projects?</h3>
+<p>One of the primary benefits of an R Project is that it creates a standard working directory. When you create an R project, and subsequently use it as a container for your project files, R automatically sets the working directory to the root directory of the project, ensuring that relative paths work consistently and reliably regardless of where in the folder your scripts or files are located. In other words, this feature allows you to not worry about managing file directories; everything in the project file can be referenced in your script with respect to the root directory of the project (i.e.&nbsp;the project’s top-level directory that contains the <code>.Rproj</code> file).</p>
+<p>Let’s say, for example, that your project directory looks like the one above, in Figure 1. First, note the <strong><code>.Rproj</code></strong> file within the directory, which indicates that this directory (<strong>r-crash-course-class-example</strong>) is the root directory of this R Project. Let’s say, for the sake of argument, that you are storing your scripts in the <strong>scripts</strong> sub-directory, and your raw data in the <strong>raw_data</strong> sub-directory. Because the working directory is standardized to be the root directory of the project, a script in the <strong>scripts</strong> sub-directory can refer to data living in the <strong>raw_data</strong> sub-directory using a relative path that is defined with respect to the Project’s root directory. So, for example, assuming the <strong>raw_data</strong> folder contains another folder named <strong>cc-data</strong> (for “crash course data”), which in turn contains two more sub-directories (<strong>pt</strong> for “persson-tabellini” and <strong>wb</strong> for “world bank”), with the <code>persson_tabellini_workshop.csv</code> file residing in <strong>pt,</strong> we could read in the Persson-Tabellini data with <code>read_csv("raw_data/cc-data/pt/persson_tabellini_workshop.csv"</code>). If we weren’t working within an R Project environment, this would not be possible, since the <code>persson_tabellini_workshop.csv</code> file is not within the <strong>scripts</strong> sub-directory.</p>
+<p>The standardization of the working directory makes project management more convenient, and also enables sharing. For example, if you needed to share your work with a collaborator, you could zip up the R Project directory and send it to them. When they run your scripts, everything should work as they did on your own computer even though their directory structure is different, since all the file paths are defined in relative terms with respect to the root of the project directory. In addition, GitHub recognizes <strong>.RProj</strong> files, which allows you to push an R project directory and its components to GitHub. When a collaborator clones the repository to their local machine, they will be able to run your scripts (since the working directory is the Project’s root directory, and all file paths are defined in relation to it), add to your scripts, and push the changes back up to GitHub. When you update your local repository, everything should continue to work seamlessly.</p>
+<p>Second, each R Project is self-contained, which means that variables and objects in one project do not interfere with another. In addition, you can have multiple RStudio windows open for different projects, and they won’t share variables or loaded packages, which is helpful if you’re working on multiple research projects at a time.</p>
+<p>Third, each Project can have its own set of package versions, which prevents conflicts between projects that require different package versions. More generally, R Projects allow for a lot of customization that defines R’s behavior for that specific project, without generalizing to other projects and R-related files.</p>
+<p>Finally, working within a project allows for more effective and organized file management. Instead of dispersing relevant files and directories across your computer, which makes it difficult to keep track of everything, a project allows us to create sub-directories for scripts, data, results, and documents and reports that are centrally located and easy to find.</p>
+<p>In short, R Projects offer meaningful benefits in the realm of project and data management, and facilitate sharing, collaboration, and reproducibility.</p>
+</section>
+<section id="how-do-you-initiate-an-r-project" class="level3" data-number="6.3.3">
+<h3 data-number="6.3.3" class="anchored" data-anchor-id="how-do-you-initiate-an-r-project"><span class="header-section-number">6.3.3</span> How do you initiate an R Project?</h3>
+<p>To start an R Project, first go to <strong>File</strong> and click <strong>New Project</strong>:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic2.png" class="img-fluid figure-img" width="845">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.2: Start a Project
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Then select the option to start a project in a new working directory:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic3.png" class="img-fluid figure-img" width="790">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.3: Create Project in New Directory
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>After that, select the <strong>New Project</strong> option:</p>
+<p><img src="pictures/pic5b.png" class="img-fluid"></p>
+<p>You will then specify the location of the new R Project on your computer’s directory:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-5" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic5-alt.png" class="img-fluid figure-img" width="529">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.4: Specify directory location
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>At this point, your project will be created (to confirm this, go to your project directory and confirm the existence of the <strong>.RProj</strong> file). You should configure your project directory something like in <a href="#fig-plot-1" class="quarto-xref">Figure&nbsp;<span>6.1</span></a> , with sub-directories for your raw or unprocessed data, scripts, R outputs (like processed data and visualizations), and reports and documents. This will help you keep track of a project’s many moving parts, and stay organized.</p>
+<p>Once the project is set up, you can open your project by double-clicking the <strong>.RProj</strong> files, within R Studio or from your project directory; this will launch R Studio with the correct settings and working directory.</p>
+<p>Once a project is created, you can also set the project options by going to <strong>Tools</strong> in the R Studio menu bar, and then clicking <strong>Project Options:</strong></p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-6" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic6.png" class="img-fluid figure-img" width="790">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.5: Project Options
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This will bring you to a menu interface that looks like the following:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-7" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic7.png" class="img-fluid figure-img" width="790">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.6: Project Options Menu
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>You can explore the various options, but it’s generally recommended to set all of the workspace options to “No”, especially if you are working on a research project that will ultimately be shared and published. <strong>.RData</strong> is a binary file that R uses to save your workspace (which includes all of the R objects you create) across multiple sessions. Hadley Wickham, a leading R developer (particularly on the <em>tidyverse</em> suite we’ve been using extensively the past few days), recommends avoiding <strong>.RData</strong>, and saving all of your work in reproducible scripts that can precisely regenerate all of your work. Using scripts, rather than .RData, to keep track of your objects and work (and regenerate them as necessary) will make your work more reproducible, since it reduces the likelihood that you unknowingly carry over old objects into new work and create hidden dependencies in your code ( by relying on objects from a previous session that were not explicitly created in your current script). In addition, carrying over the workspace session to session may end up leading to a cluttered environment, with a lot of superfluous objects you can’t keep track of. In short, you will generally be best-served by relying on well-documented scripts, rather than <strong>.RData</strong> to track your work and restore your environment after closing a session; using <strong>.RData</strong> to save your workspace could be more convenient in the short run, but will likely be more painful in the long run.</p>
+</section>
+</section>
+<section id="quarto" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Quarto</h1>
+<p>Quarto is an open source publishing system that allows us to create a variety of outputs (such as reports, presentations, websites, and dashboards) that facilitate research related communications with a variety of audiences, including colleagues, collaborators and co-authors, students, and the public. It is compatible with a variety of programming languages, including R.</p>
+<p>One of the many benefits of Quarto is that it enables <em>literate programming</em>, a concept developed by the computer scientist Donald Knuth. Literate programming is a practice in which the authors of code embed their code in human-readable documents that also contain narrative exposition of the code, and the actual outputs of the code, so that others can clearly understanding how the different parts of an analysis fit together. Among other things, literate programming facilitates transparency and clarity when communicating about the scripts used to generate research results. The lesson plans we’ve used in this workshop work within the literate programming paradigm, to the extent that they combine narrative text, blocks of code, and code outputs into an integrated document. Below, we’ll learn how to create simple literate programming documents using Quarto.</p>
+<section id="making-a-new-quarto-document" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="making-a-new-quarto-document"><span class="header-section-number">7.1</span> Making a New Quarto Document</h2>
+<p>To start a new Quarto Document, open up R Studio, then click <strong>New File</strong>, then select <strong>Quarto Document</strong>:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-8" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic8.png" class="img-fluid figure-img" width="665">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.1: Create New Quarto Document
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Once you do so, it will bring up a menu like the one below; go ahead and give your document a name, and list your name as the author, then click <strong>OK</strong>:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-9" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic9.png" class="img-fluid figure-img" width="552">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.2: Create New Quarto Document
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Once you click OK, a new Quarto document, with file extension “.qmd” will be created. It’ll look something like this:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-10" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic10.png" class="img-fluid figure-img" width="824">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.3: Create New Quarto Document
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The document comes prepopulated with some text that can serve as a useful guide to some relevant syntax.</p>
+</section>
+<section id="writing-the-document" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="writing-the-document"><span class="header-section-number">7.2</span> Writing the Document</h2>
+<p>A Quarto document is comprised of three main elements. First, there is the YAML header, which contains metadata for the entire document, and allows us to define document settings and set rules for how the document will behave. Among many other things, we can use the YAML header to specify the desired output type (i.e.&nbsp;html, pdf, word), and define a table of contents. For example, see the YAML header associated for the first lesson plan we worked through on the first day of the workshop:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-11" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic11.png" class="img-fluid figure-img" width="824">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.4: Sample YAML Header
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Note that this is a pretty simple YAML header, and it is possible to customize a document in complex ways using the YAML header; however, this is beyond the scope of our lesson.</p>
+<p>Second, there is document text, which is formatted in the Markdown language. Markdown is extremely simple, and if you are not familiar with it, can quickly get started by consulting this <a href="https://www.markdownguide.org/basic-syntax/">guide</a>. You also have the option of formatting your text using the Quarto toolbar; from there, you can do all of the things you could also do with Markdown, such as add headers, add bullet points, format your text, add hyperlinks, and add images (among other things):</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-12" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic12.png" class="img-fluid figure-img" width="795">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.5: Formatting Toolbar
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Finally, the third main components of a Quarto file are “code chunks”, where you can create blocks of code which generate outputs embedded in the document. You can also comment the code added within these blocks, just as you would comment code in a script. To create a code chunk you can go to to <strong>Code</strong> in the R Studio Menu bar up top, then click <strong>Insert Chunk</strong>. Another way, perhaps easier, is to click the green “C” button in the Quarto menu:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-13" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic13.png" class="img-fluid figure-img" width="795">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.6: Adding a Code Chunk
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Then, you can add code (and code comments) within the code chunk, and run it by clicking the green arrow:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-14" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic14.png" class="img-fluid figure-img" width="795">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.7: Running a Code Chunk
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>After you click the “Run” button, the, code will run and the result will print immediately below:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-15" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic15.png" class="img-fluid figure-img" width="795">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.8: Output of Code Chunk
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>There are various ways to customize your code blocks and specify their behavior. For example, you can hide code blocks so that only the output is shown; you can also create code blocks that don’t execute, so that the final report shows the code block without the output; you can suppress code warnings; and so on. For more information on the relevant syntax needed to customize code chunks in these (and other) ways, see this <a href="https://quarto.org/docs/computations/execution-options.html">guide to Quarto</a>.</p>
+</section>
+<section id="rendering-the-document" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="rendering-the-document"><span class="header-section-number">7.3</span> Rendering the Document</h2>
+<p>Let’s go ahead and modify the document; we’ll delete the pre-populated text, and add our own heading, as well as another code chunk. The document looks something like this:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-16" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic16.png" class="img-fluid figure-img" width="1134">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.9: Updated File
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Now, let’s go ahead and save this .qmd file to the <strong>documents-reports</strong> directory within the R Project we created earlier. We can do so by clicking <strong>File</strong>, then <strong>Save As</strong>, then navigating to the directory and saving. We’ll save the file as “quarto-example.qmd”. Now that it’s saved in the desired directory, we can render the html file by clicking the <strong>Render</strong> button in the Quarto Menu:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-17" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic17.png" class="img-fluid figure-img" width="855">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.10: Render File
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The rendered document should appear in either a separate window, or in your R Studio Viewer pane. You can choose where the document renders by clicking the small downward-pointing arrow next to the <strong>Render</strong> button, and clicking either <strong>Preview in Window</strong> or <strong>Preview in Viewer Pane</strong>:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-18" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-18-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic18.png" class="img-fluid figure-img" width="855">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-18-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.11: Render File
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>If you choose to preview in the viewer pane, it’ll look something like what you see below. Note the HTML preview on the right. This is a nice way of keeping track of what the rendered document looks like as you write your document within the <strong>.qmd</strong> file:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-19" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-19-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic19.png" class="img-fluid figure-img" width="1427">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-19-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.12: Preview
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Note that after rendering, an html file will also be created in the same directory as your .qmd file, and will update each time you render the <strong>.qmd</strong> file by clicking the <strong>Render</strong> button.</p>
+</section>
+<section id="r-projects-quarto-and-the-here-package" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="r-projects-quarto-and-the-here-package"><span class="header-section-number">7.4</span> R Projects, Quarto, and the <em>here()</em> package</h2>
+<p>R Projects and Quarto are two essential R tools that enable data management, sharing, and communication, both within the scholarly community and with the broader public. Though we’ve introduced these tools separately, it’s likely you’ll want to use them in conjunction (for instance, by placing your Quarto files and rendered documents within the <strong>reports-documents</strong> subdirectory of your R Project directory, as we did above).</p>
+<p>As we discussed above, the R Project environment is a self-contained directory, where file paths can be set relative to the project’s root directory (i.e.&nbsp;the highest-level directory within the R project, which contains the <strong>.RProj</strong> file). When working with Quarto, the program automatically sets the root directory for the code that’s executed within the document to the same location as the <strong>.qmd</strong> file. When Quarto files are in an R Project, the working directory set by the location of the Quarto file overrides the working directory set by the R Project. For example, if the .qmd file is in the <strong>documents-reports</strong> directory (as it is here), it will set that as its root directory; as a result, it would be impossible to access the data (in the <strong>raw_data</strong> folder) from the Quarto document using a file path that is set relative to the Project’s root directory.</p>
+<p>To make this more concrete, let’s first note the directory structure of the R Project root directory:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-20" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-20-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic20.png" class="img-fluid figure-img" width="976">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-20-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.13: The R Project Root Directory
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>WIthin the <strong>raw-data</strong> sub-directory, there is another directory called <strong>cc-data</strong>, and within <strong>cc-data</strong>, there is a directory named <strong>pt</strong>, within which the <strong>persson_tabellini_workshop.csv</strong> data that we’ve been using resides. Thus, the path to the data from the Project’s root directory runs as follows:</p>
+<p><strong>raw_data</strong>–&gt;<strong>cc-data</strong>–&gt;<strong>pt</strong>–&gt;<strong>persson_tabellini_workshop.csv</strong></p>
+<p>We can use this file path to read in the Persson-Tabellini data from a script stored in the <strong>scripts</strong> subdirectory. In particular, we could read the data in with the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(<span class="st">"raw_data/cc-data/pt/persson_tabellini_workshop.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Within our sample R script, it looks like this:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-21" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-21-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic21.png" class="img-fluid figure-img" width="943">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-21-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.14: Reading in data from a script in the script folder
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Now, let’s try to read the data in from within a <strong>.qmd</strong> file in the <strong>report-documents</strong> subdirectory:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-22" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-22-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic22.png" class="img-fluid figure-img" width="943">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-22-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.15: Error when running code chunk to set working directory in Quarto
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Note that trying to run the code chunk throws an error, since the code chunk is interpreting the location of the <strong>.qmd</strong> file (the <strong>report-documents</strong> directory) as the working directory. As a result, the file path doesn’t work; the code chunk is looking for the data in the <strong>reports-documents</strong> directory, but it doesn’t exist there. As expected, attempts to render the document fail for the same reason; when the rendering process hits the code chunk that tries to read in the data, it fails, and the rendering process terminates:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-23" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-23-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic-23-alt.png" class="img-fluid figure-img" width="1460">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-23-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.16: Error when trying to render document as html
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The easiest solution to this problem is to use the <code>here()</code> function from the <em>here</em> package, which automatically finds the root directory of the R Project you’re working in (remember that the root directory of your R project is the directory in which the <code>.Rproj</code> file is located) and builds paths from there. To see how it works, go ahead and install this package with the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"here"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Then, load the <em>here</em> package at the top of your Quarto document by passing it to the <code>library()</code> function:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Then, whenever you need to read in data from your <strong>raw_data</strong> directory into a <strong>.qmd</strong> file in another (i.e.&nbsp;<strong>report-documents</strong>) directory, simply use the <code>here()</code> function within that code chunk to set the working directory as the Project’s root directory. After setting the working directory as the root directory, go ahead and read in your data as you would in a script (i.e.&nbsp;using a path defined relative to the root directory), and it should successfully read in. In short, the <code>here()</code> function overrides the default behavior within Quarto documents to set the working directory as the directory with the <strong>.qmd</strong> file, and forces these documents to follow the default behavior of R Project files and use the root directory of the R Project as the working directory that can be used to define relative file paths. Let’s see how it works; first, we’ll read in the data using a file path relative to the root directory by first using the <code>here()</code> function to set the working directory as the Project’s root directory:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(here<span class="sc">::</span><span class="fu">here</span>())</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pt<span class="ot">&lt;-</span><span class="fu">read_csv</span>(<span class="st">"raw_data/cc-data/pt/persson_tabellini_workshop.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now, when you run the code chunk, it should successfully execute:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-24" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-24-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic-24-alt-alt.png" class="img-fluid figure-img" width="1408">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-24-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.17: Code chunk works when using here() to set working directory
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>After this, the file will also successfully render:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-25" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-25-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures/pic25.png" class="img-fluid figure-img" width="1426">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-25-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.18: Rendering works when using here() to set working directory within code chunk
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>So, to summarize:</p>
+<ol type="1">
+<li><p>In an R Project, the working directory is automatically set to be the root of the R Project directory, and files can be read into the R environment in scripts that use file paths that are defined relative to the root directory</p></li>
+<li><p>However, when working in Quarto documents, Quarto defaults to setting the working directory as the directory in which the <strong>.qmd</strong> file exists, which overrides the behavior of an R Project (which defaults to setting the working directory as the Project’s root directory). As a result, while one could read in data from the <strong>raw_data</strong> folder into a script in the <strong>scripts</strong> folder using a relative path defined with respect to the Project’s root directory, it would not be possible to read in data from the <strong>raw_data</strong> folder into a Quarto document in the <strong>reports-documents</strong> using a relative path defined with respect to the Project’s root directory.</p></li>
+<li><p>In order to force Quarto to use the root directory of the R Project as the working directory, we can use the <code>here()</code> function. By using the <code>here()</code> function to set the working directory as the Project’s root directory (within a code block right before reading in data), we can read in the data using a file path that is defined with respect to the root of the R Project directory, rather one that is defined with respect to the directory in which the <strong>.qmd</strong> file is located.</p></li>
+</ol>
+</section>
+</section>
+<section id="exercises" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Exercises</h1>
+<p><em>Question 1</em></p>
+<p>Create a new R Project that will serve as a “practice” workspace for you to continue practicing your R skills going forward, with the directory structure recommended earlier. In the Project, you may wish to add the scripts and data from our workshops. Check to make sure your scripts use relative paths with respect to the root project directory, and are able to run successfully. As you continue to practice R, you can add new scripts and data to this R Project, and keep all of your practice and skill-development work in one place.</p>
+<p><em>Question 2</em></p>
+<p>Create a new Quarto document, and use it to present the relevant code and output from previous practice exercises. Make sure to comment your code, and render the completed file as an html document.</p>
+</section>
+<section id="further-reading" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> Further Reading</h1>
+<p>For more on Quarto, please see this <a href="https://quarto-tdg.org">guide</a>. More generally, if you wish to continue learning R, the best resource is the online book <a href="https://r4ds.hadley.nz">R for Data Science</a>. Please reach out to me if there are particular things you’d like to learn, and are looking for more tailored resources.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <div style="text-align:right; margin-top: 1em;">
@@ -607,8 +1120,8 @@ ul.task-list li input[type="checkbox"] {
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./session4.html" class="pagination-link" aria-label="Data Analysis and Visualization">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Data Analysis and Visualization</span></span>
+      <a href="./session4.html" class="pagination-link" aria-label="Elementary Data Visualization and Analysis">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Elementary Data Visualization and Analysis</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
@@ -622,4 +1135,4 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/aranganath24/IBS_CRDDS_R/blob/main/session5.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/aranganath24/IBS_CRDDS_R/edit/main/session5.qmd" class="toc-action"><i class="bi empty"></i>Edit this page</a></li><li><a href="https://github.com/aranganath24/IBS_CRDDS_R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/aranganath24/IBS_CRDDS_R/blob/main/session5.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/aranganath24/IBS_CRDDS_R/edit/main/session5.qmd" class="toc-action"><i class="bi empty"></i>Edit this page</a></li><li><a href="https://github.com/aranganath24/IBS_CRDDS_R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
