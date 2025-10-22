@@ -50,7 +50,8 @@ qog_copy_selection <-
          top_top1_income_share,
          wdi_wip)
 
-# Create Column of Continent Names
+# Create new character variable named "region" based on "ht_region" variable that
+# contains region information encoded as strings
 qog_copy_selection<-
   qog_copy_selection %>% 
     mutate(region=case_when(ht_region==1~"EasternEuropePostSoviet",
@@ -67,8 +68,7 @@ qog_copy_selection<-
 # Missing Data ------------------------------------------------------------
 
 # makes toy dataset, assigned to object named "student_scores"
-student_scores<-data.frame(ID=c(1:5),
-                           Age=c(25, NA, 30, 22, NA),
+student_scores<-data.frame(Age=c(25, NA, 30, 22, NA),
                            Score=c(85, 90, NA, 78, 88))
 
 # uses "is.na" to return a logical matrix indicating missing values (TRUE for missing values)
@@ -107,7 +107,10 @@ missing_data_percentage<-function(dataset){
 # which yields the percentage of missing data in the "student_scores" dataset
 missing_data_percentage(student_scores)
 
-# calculates missing data percentage in pt_copy
+# calculates missing data percentage in "qog_copy"
+missing_data_percentage(qog_copy)
+
+# calculates missing data percentage in "qog_copy_selection"
 missing_data_percentage(qog_copy_selection)
 
 # calculates percentage of missing data per column in "student_scores" and 
@@ -128,6 +131,16 @@ drop_na(student_scores, Score)
 
 # replace NA values in the "Score" column with 0
 replace_na(student_scores, list(Score=0))
+
+# changes NA values in Age column to 22 where ID is equal to 5, and makes no changes otherwise; assigns modified data frame to "student_scores_modified"
+student_scores_modified<-student_scores %>% 
+                            mutate(Age = if_else(is.na(Age) & row_number()==5, 22, Age))
+
+# prints "student_scores_modified"
+student_scores_modified
+
+# prints "student_scores_modified"
+student_scores_modified
 
 # calculates mean of "Score" (NA values are not excluded; default behavior)
 mean(student_scores$Score)
@@ -157,10 +170,10 @@ qog_copy_selection_numeric<-qog_copy_selection %>%
 # (i.e. those in qog_copy_selection_numeric) using "describe()
 qog_copy_selection_numeric_summarystats2<-describe(qog_copy_selection_numeric)
 
-# prints "qog_copy_selection_summarystats1"
+# prints "qog_copy_selection_numeric_summarystats2"
 qog_copy_selection_numeric_summarystats2
 
-# views "qog_copy_selection_summarystats1"
+# views "qog_copy_selection_numeric_summarystats2"
 View(qog_copy_selection_numeric_summarystats2)
 
 # looks up documentation for "describe"

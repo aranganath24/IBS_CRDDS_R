@@ -258,6 +258,11 @@ qog_copy_selection$region<-str_wrap(qog_copy_selection$region, width=10)
 
 # prints contents of "qog_copy_selection_numeric_cor_matrix"
 
+wdi_trade_inverted
+
+tax_trade_scatter
+
+tax_trade_scatter_line
 
 
 

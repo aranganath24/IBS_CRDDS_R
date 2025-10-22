@@ -14,6 +14,8 @@ In this session, we'll turn from tasks related to data processing and wrangling 
 We will be using the following packages. Please install any packages that are not already installed (using the `install.packages()` function, and load them into memory using the `library()` function:
 
 ```{r}
+#| message: false
+#| warning: false 
 # load packages
 library(tidyverse)
 library(psych)
@@ -115,14 +117,11 @@ reactable(qog_copy_selection_na,
           striped=TRUE)
 ```
 
-Before w
-
-but before working with missing data in real-world contexts, we'll develop our intuitions about how R handles missing data by using a simple toy dataset, which we'll create below:
+We'll begin by developing some basic intuitions about missing data in R using a simple toy dataset, which we'll create below and assign to the `student_scores` data frame:
 
 ```{r}
 # makes toy dataset, assigned to object named "student_scores"
-student_scores<-data.frame(ID=c(1:5),
-                           Age=c(25, NA, 30, 22, NA),
+student_scores<-data.frame(Age=c(25, NA, 30, 22, NA),
                            Score=c(85, 90, NA, 78, 88))
 ```
 
@@ -135,8 +134,294 @@ student_scores
 
 Note the "NA" values, which indicate that data corresponding to those cells is missing.
 
+If we want to identify missing data, we can do so with the `is.na()` function, which returns a logical matrix with the value TRUE for missing values:
+
+```{r}
+# uses "is.na" to return a logical matrix indicating missing values (TRUE for missing values)
+is.na(student_scores)
+```
+
+If we want the total number of missing values in the dataset, we can take the sum of `is.na(student_scores)` :
+
+```{r}
+# calculates total number of missing values in "student_scores"
+sum(is.na(student_scores))
+```
+
+If we want the total number of missing values per column, we can pass `is.na(student_scores)` as an argument to the `colSum()` function, which we can do because in R, logical values can be used in numeric operations; when they're used in this way, `TRUE=1` and `FALSE=0`.
+
+```{r}
+# calculates total number of missing values per column
+colSums(is.na(student_scores))
+```
+
+If we wanted to calculate the percentage of missing data in the dataset, we could use our count of the number of NA values in the dataset `sum(is.na(student_scores))` and divide it by the total number of cells in the dataset, derived by multiplying the dataset's rows and columns:
+
+```{r}
+# calculates missing data percentage in "student_scores"
+# first calculates count of missing values and assigns it to "total_missing"
+total_missing<-sum(is.na(student_scores))
+# calculates total number of cells and assigns it to "total_values"
+total_values<-prod(dim(student_scores))
+# calculates percentage of missing data and assigns it to "missing_pct"
+missing_pct<-(total_missing/total_values)*100
+
+# prints contents of "missing_pct"
+missing_pct
+```
+
+Calculating the percentage of data missing in a dataset can be useful, and something we may want to do frequently, so it could be useful to wrap this code into a function, which we'll do below, and assign to a new object named `missing_data_percentage()`:
+
+```{r}
+# creates function to calculate the percentage of missing data in a dataset
+missing_data_percentage<-function(dataset){
+  # generates count of missing values
+  total_missing<-sum(is.na(dataset))
+  # calculates total number of cells
+  total_values<-prod(dim(dataset))
+  # calculates percentage of missing data
+missing_pct<-(total_missing/total_values)*100
+return(missing_pct)
+}
+
+```
+
+Let's test out the function on `student_scores`:
+
+```{r}
+# passes "student_scores" as an argument to custom function "missing_data_percentage" which yields the percentage of missing data in the "student_scores" dataset
+missing_data_percentage(student_scores)
+```
+
+We can now use this function for any other datasets we might create or work with, without having to retype a bunch of code. For example, if we wanted to calculate the percentage of missing data in `qog_copy`, we could pass it as an argument to `missing_data_percentage`:
+
+```{r}
+# calculates missing data percentage in "qog_copy"
+missing_data_percentage(qog_copy)
+```
+
+If we wanted to calculate the percentage of missing data in the modified `qog_copy_selection` dataset, we could pass it as an argument to the `missing_data_percentage` function:
+
+```{r}
+# calculates missing data percentage in "qog_copy_selection"
+missing_data_percentage(qog_copy_selection)
+```
+
+It could also be useful to get a sense of the percentage of missing data at more granular levels. For example, if we wanted to uncover the percentage of missing data per column, we could carry out a simple calculation using the `colSums()` and `nrow()` functions:
+
+```{r}
+# calculates percentage of missing data per column in "student_scores" and assigns the resulting vector to an object named "missing_pct_per_col"
+missing_pct_per_col<-colSums(is.na(student_scores))/nrow(student_scores)*100
+
+# prints contents of "missing_pct_per_col"
+missing_pct_per_col
+```
+
+In many cases, after identifying patterns in the missing data, we may want to remove "NA" values from a dataset or a certain section of a dataset. If we want to remove missing data, the `drop_na()` function from the *tidyverse* is useful. The `drop_na()` function will remove all rows from the dataset with NA values in any column. For example, the following removes all rows with NA values from the "student_scores" data frame.
+
+```{r}
+# removes all rows with NA values from "student_scores"
+drop_na(student_scores)
+```
+
+The default behavior of the `drop_na()` function is to drop all rows with NA values in any column (i.e. only rows with complete data are kept in the dataset). However, it's possible to change this default behavior by specifying column/variable names after passing the data frame object as an argument; when we do this, `drop_na()` no longer drops all rows with missing data in any column, but all rows with missing data in any specified column. For example, the code below drops all rows where "Age" values are NA, but not all rows where "Score" scores are NA
+
+```{r}
+# removes all rows where "Age" has NA values in "student_scores"
+drop_na(student_scores, Age)
+```
+
+If, instead, we specify "Score" as an argument, the function drops all rows where "Score" values are NA, but not all rows where "Age" values are NA.
+
+```{r}
+# removes all rows where "Score" has NA values in "student_scores"
+drop_na(student_scores, Score)
+```
+
+Note that we can specify more than one column argument to `drop_na()`, in which case rows which have NA values associated with those specified columns will be dropped, but rows which have NA values with other (non-specified) columns are kept.
+
+Imputing missing values is a complex topic beyond the scope of our workshop, but it's worth briefly noting that for whatever reason, NA values may be incorrectly coded, or used as placeholders for other values. For example, you may know from a dataset's codebook, or from context, that for a particular column in the dataset, observations that appear as missing/NA should actually be coded as "0". We can use the `replace_na()` function to replace such NA values with their proper values. For example, let's say that NA values in the "Score" column should actually be "0" (perhaps NA was being used as a placeholder, and needs to be converted to 0 since the student never turned in their assignment). In the `replace_na()` function, the first argument is the name of the data frame object, while the second is a list that indicates the column(s) with NA values that need replacement, and a specification for what they will be replaced with. In our case, the syntax looks something like this:
+
+```{r}
+# replace NA values in the "Score" column with 0
+replace_na(student_scores, list(Score=0))
+```
+
+Sometimes, we may need to make even more targeted replacements of "NA" values. For example, let's say we want to replace the "NA" value associated with the "Age" variable that is in row #5, with the numeric value "22", but do not want to change the "NA" in row #2 for that column. In such scenarios, using the `mutate()` and `if_else()` functions in conjunction may provide more flexibility than the `replace_na()` function:
+
+```{r}
+# changes NA values in Age column to 22 where ID is equal to 5, and makes no changes otherwise; assigns modified data frame to "student_scores_modified"
+student_scores_modified<-student_scores %>% 
+                          mutate(Age = if_else(is.na(Age) & row_number()==5, 22, Age))
+
+# prints "student_scores_modified"
+student_scores_modified
+```
+
+In the code above, note the use of `row_number()` in our conditional expression; `row_number()` is a handy *dplyr* function that allows us to quickly reference row positions within data processing pipelines.
+
+Finally, it's important to note that base R functions like `mean()` and `sum()` will return NA if there are missing values. For example:
+
+```{r}
+# calculates mean of "Score" (NA values are not excluded; default behavior)
+mean(student_scores$Score)
+```
+
+If we want such functions to carry out their calculations on non-NA values (while ignoring NA values), we must set `na.rm=TRUE` as a function argument.
+
+```{r}
+# calculates mean of "Score" (NA values are excluded due to na.rm=TRUE specification; as a result, the function computes an average based on non-NA values)
+mean(student_scores$Score, na.rm=TRUE)
+```
+
+It is important to emphasize that when working in R, different packages or functions may handle missing data differently, so it's useful to consult the documentation of the packages you use for more information (especially when something is not working as expected).
+
 ## Descriptive Statistics
+
+Once we have a dataset loaded into R, and we have wrangled it into a usable form that is appropriate for analysis (the main subject of the previous lesson), the next step is usually to get a sense of the basic structure of the dataset by calculating summary statistics. This section reviews some summary statistics functions and tools we can call on for this purpose.
+
+### Summary Statistics Tables
+
+A quick way to generate a table of summary statistics is to use the `describe()` function from the *psych* package. Below, we’ll generate summary statistics for the `qog_copy_selection` data frame by passing it as an argument to the `describe()` function. We'll assign the resulting table of summary statistics to a new object named `qog_copy_selection_summarystats1`:
+
+```{r}
+# Generate summary statistics for "qog_copy_selection" and assign table of 
+# summary statistics to a new object named "qog_copy_selection_summarystats1"
+qog_copy_selection_summarystats1<-describe(qog_copy_selection)
+```
+
+Let's print the first few rows of `qog_copy_selection_summarystats1` to the console:
+
+```{r}
+# prints first few rows of "qog_copy_selection_summarystats1" to console
+head(qog_copy_selection_summarystats1)
+```
+
+We can also view it in the R Studio data viewer:
+
+```{r}
+#| eval: false
+# view "qog_copy_selection_summarystats1" in Viewer
+View(qog_copy_selection_summarystats1)
+```
+
+```{r}
+#| echo: false
+qog_copy_selection_summarystats1_nan<-
+  qog_copy_selection_summarystats1 %>%
+  mutate(across(everything(), ~ replace_na(as.character(ifelse(is.nan(.x), "NaN", .x)), "NA")))
+
+```
+
+```{r}
+#| echo: false
+reactable(qog_copy_selection_summarystats1_nan,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+Note that the `describe()` function returns statistics for non-numeric variables (marked with a "\*" in the summary statistics table output), but these results often do not have an intuitive or meaningful interpretation. We could limit the summary statistics output to numeric variables by first modifying the data frame to remove non-numeric columns and assigning the result to a new object named `qog_copy_selection_numeric`:
+
+```{r}
+# removes non-numeric variables and assigns modified data frame to new object named "qog_copy_selection_numeric"
+qog_copy_selection_numeric<-
+  qog_copy_selection %>% 
+    dplyr::select(-ht_region) %>% 
+    dplyr::select(where(is.numeric))
+```
+
+Now, let's pass `qog_copy_selection_numeric` to the `describe()` function and create our summary statistics table, which we'll assign to a new object named `qog_copy_selection_numeric_summarystats2`:
+
+```{r}
+# Generates summary statistics for numeric variables 
+# (i.e. those in qog_copy_selection_numeric) using "describe()
+qog_copy_selection_numeric_summarystats2<-describe(qog_copy_selection_numeric)
+```
+
+Let's now view the modified "numeric variables only" summary statistics table:
+
+```{r}
+#| eval: false
+# views "qog_copy_selection_numeric_summarystats2" in data viewer
+View(qog_copy_selection_numeric_summarystats2)
+```
+
+```{r}
+#| echo: false
+qog_copy_selection_numeric_summarystats2_na<-
+  qog_copy_selection_numeric_summarystats2 %>%
+  mutate(across(everything(), ~ replace_na(as.character(ifelse(is.nan(.x), "NaN", .x)), "NA")))
+
+reactable(qog_copy_selection_numeric_summarystats2_na,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+Recall that we can view the documentation for any function (including those from external packages) by printing a "?" before the name of the function in the R console:
+
+```{r}
+#| eval: false
+# pulls up documentation for describe() function in the "Help" tab in the bottom-right window of R Studio
+?describe
+```
+
+One thing to note from the documentation is that the `describe()` function defaults to setting `na.rm=TRUE`; under this setting, the `describe()` function simply omits NA (i.e. missing) values when calculating summary statistics. If, instead, we set `na.rm=FALSE`, the function deletes all rows that contain missing data, and calculates summary statistics with reference to this truncated dataset that has been excised of missing values. In practical terms, it will typically make the most sense to go with the default `na.rm=TRUE` option, but it's important to be clear about these different options for handling missing data in the context of the `describe()` function.
+
+If you're still struggling to understand the difference, we can explore how this works in the context of our toy dataset, `student_scores`:
+
+```{r}
+# prints "student_scores"
+student_scores
+```
+
+Let's pass `student_scores` as an argument to the `describe()` function, and set `na.rm=TRUE`; we'll assign the result to a new object named `student_scores_summarystats`:
+
+```{r}
+# generates summary statistics with "describe()" function 
+# and assigns it to "df_sample_summary_default"; 
+# na.rm=TRUE ignores NA values when calculating summary statistics
+student_scores_summarystats<-describe(student_scores, na.rm=TRUE)
+```
+
+Let's now print `student_scores_summarystats`:
+
+```{r}
+# prints "student_scores_summarystats"
+student_scores_summarystats
+```
+
+Note that the calculations are carried out by simply ignoring NA values. For example, the mean for the "Age" variable is (25+30+22)/3=25.67, while the mean for the "Score" variable is (85+90+78+88)/4=85.25. Now, let's see how these calculations change when `na.rm=FALSE`:
+
+```{r}
+# generates summary statistics with describe function and assigns
+# it to "df_sample_summary_B"; na.rm=FALSE removes rows with any NA values 
+# before calculating summary statistics (in other words, summary statistics 
+# are computed on rows with complete data)
+student_scores_summarystats_B<-describe(student_scores, na.rm=FALSE)
+
+# prints "student_scores_summarystats_B"
+student_scores_summarystats_B
+```
+
+Note that the mean of the "Age" column is now (25+22)/2=23.5, since `na.rm=FALSE` deletes all rows with NA values (here, rows 2, 3, and 5) before implementing the calculation. Analogously, the mean of the "Score" column is now (85+78)/2=81.5
+
+### Writing a Custom Summary Statistics Function
+
+It might be the case that the summary statistics table created by `describe()` does not contain information you'd like, in which case it may be possible to customize it to provide that information. For example, it could be nice to have a column in the summary statistics table that provides information on the number of NA values there are for each variable. To get that information into the summary statistics table, we'll first write a very simple function, `count_missing()`, to count the number of NA values in a vector:
+
+```{r}
+# Define a named function to count missing values
+count_missing <- function(x) {
+  sum(is.na(x))
+}
+```
 
 ## Exploratory Visualization
 
 ## Linear Regression 
+
+## Exporting Analysis Objects
