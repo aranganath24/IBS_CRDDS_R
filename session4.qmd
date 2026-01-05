@@ -3,7 +3,7 @@
 library(reactable)
 ```
 
-# Elementary Data Visualization and Analysis 
+# Elementary Data Visualization and Analysis
 
 ## Introduction
 
@@ -398,9 +398,9 @@ Note that the calculations are carried out by simply ignoring NA values. For exa
 
 ```{r}
 # generates summary statistics with describe function and assigns
-# it to "df_sample_summary_B"; na.rm=FALSE removes rows with any NA values 
-# before calculating summary statistics (in other words, summary statistics 
-# are computed on rows with complete data)
+# it to "df_sample_summary_B"; na.rm=FALSE removes rows with any NA 
+# values  before calculating summary statistics (in other words, 
+# summary statistics are computed on rows with complete data)
 student_scores_summarystats_B<-describe(student_scores, na.rm=FALSE)
 
 # prints "student_scores_summarystats_B"
@@ -409,9 +409,47 @@ student_scores_summarystats_B
 
 Note that the mean of the "Age" column is now (25+22)/2=23.5, since `na.rm=FALSE` deletes all rows with NA values (here, rows 2, 3, and 5) before implementing the calculation. Analogously, the mean of the "Score" column is now (85+78)/2=81.5
 
-### Writing a Custom Summary Statistics Function
+### Customizing Summary Statistics Tables
 
-It might be the case that the summary statistics table created by `describe()` does not contain information you'd like, in which case it may be possible to customize it to provide that information. For example, it could be nice to have a column in the summary statistics table that provides information on the number of NA values there are for each variable. To get that information into the summary statistics table, we'll first write a very simple function, `count_missing()`, to count the number of NA values in a vector:
+There are a variety of other packages that can help you generate summary statistics tables, beyond *psych*. For example, the *summarytools* package provides the `descr()` , which is similar to `describe()` from the *psych* package. The *summarytools* package defaults to providing information as a matrix, which we haven't covered, so we pass `descr(qog_copy_selection)` to the `as.data.frame()` function to get the summary statistics table output as a data frame, which we'll assign to a new object named `qog_copy_selection_numeric_ST`:
+
+```{r}
+# uses "descr" function from summarytools package to 
+# create a table of summary statistics as a data frame 
+# and assigns it to "qog_copy_selection_numeric_ST"
+qog_copy_selection_numeric_ST<-as.data.frame(descr(qog_copy_selection_numeric))
+
+```
+
+Let's go ahead and view `qog_copy_selection_numeric_ST` in the data viewer:
+
+```{r}
+#| eval: false
+# views "qog_copy_selection_numeric_ST" in Viewer
+View(qog_copy_selection_numeric_ST)
+```
+
+```{r}
+#| echo: false
+qog_copy_selection_numeric_ST_na<-
+  qog_copy_selection_numeric_ST %>%
+  mutate(across(everything(), ~ replace_na(as.character(ifelse(is.nan(.x), "NaN", .x)), "NA")))
+
+reactable(qog_copy_selection_numeric_ST_na,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+Another handy package for generating summary statistics is *stargazer*. Though *stargazer* is most useful for creating and exporting regression tables (which we'll explore further below), it can also produce a well-formatted summary statistics table that can be exported as a text file. For example, the code below uses *stargazer* to create a summary statistics table for `qog_copy_selection_numeric` (we'll export it out of R as a text file in a later section):
+
+```{r}
+# uses stargazer package to generate summary statistics for qog_copy_selection_numeric
+stargazer(as.data.frame(qog_copy_selection_numeric), type = "text")
+```
+
+Despite the variety of options available for generating summary statistics, it is important to emphasize that if the available options do not provide exactly what you are looking for, it is possible to customize summary statistics functions to produce outputs tailored to your specific needs. For example, it could be nice to have a column in the `student_scores_summarystats` summary statistics table that provides information on the number of NA values there are for each variable. The `describe()` function does not provide this information, but that is something we can add with a little bit of extra work on our own. To get that information into `student_scores_summarystats`, we'll first write a very simple function, `count_missing()`, to count the number of NA values in a vector:
 
 ```{r}
 # Define a named function to count missing values
@@ -420,8 +458,1100 @@ count_missing <- function(x) {
 }
 ```
 
+Next, we'll iteratively apply the `count_missing` function to the columns of the original `student_scores` data frame, and generate a new vector that contains the number of NA values for each column; we will assign this vector to a new object named `missing_values_vector`:
+
+```{r}
+# applies "count_missing" function to the columns of "student_scores",
+# and deposits the results (i.e. count of missing values in each 
+# column of "student_scores") to a numeric vector assigned to the object "missing_values_vector"
+missing_values_vector <- map_dbl(.x=student_scores, .f=count_missing)
+```
+
+Recall that `map()` family functions iteratively apply a function to elements of a list or vector. It might seem surprising, then, that we used a `map()` function to apply a function across the columns of a data frame, but under the hood, a data frame is a kind of list, where the elements (columns) are vectors. This is what allows us to use `map_dbl()` across the columns of `student_scores`.
+
+Now, we'll add this vector as a column to `student_scores_summarystats`:
+
+```{r}
+# adds "missing_values_vector" as a column named "missing_values" to "student_scores_summarystats" summary stats table
+student_scores_summarystats<-
+  student_scores_summarystats %>% 
+      mutate(missing_values=missing_values_vector)
+```
+
+Let's view the updated `student_scores_summarystats` object in the R Studio data viewer, and confirm that a new "missing_values" column that indicates the number of NA values for each variable has been added to the data frame:
+
+```{r}
+#| eval: false
+View(student_scores_summarystats)
+```
+
+```{r}
+#| echo: false
+reactable(student_scores_summarystats,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+In case we expect to carry out this procedure for several datasets, we can wrap up this process for adding a "missing_values" column to the standard summary statistics table generated by `describe()` into a custom function that we'll call `summary_stats_na`:
+
+```{r}
+# makes function to automate the creation of a "missing_value" column in summary statistics
+# generated. by describe()
+summary_stats_na<-function(dataset_input){
+  
+# create summary stats table and assign to "summary_stats"
+summary_stats<-describe(dataset_input)
+  
+# create a missing values vector and adds it as a column to "summary_stats"; the result
+# is assigned to "summary_stats_missing_values"
+summary_stats_missing_values<-
+  summary_stats %>% 
+      mutate(missing_values=map_dbl(.x=dataset_input, .f=count_missing))
+  
+  return(summary_stats_missing_values)
+}
+```
+
+Let's test out `summary_stats_na()` by using it to generate a summary statistics table with a "missing_values" column for the data in `qog_copy_selection_numeric`. We'll assign the result to a new object named `qog_copy_selection_numeric_summaryNA:`
+
+```{r}
+# creates a summary statistics table for the data in "qog_copy_selection_numeric" that includes a "missing_values" column that indicates the number of NA values for each variable by passing "qog_copy_selection_numeric" as an argument to the "summary_stats_na" function; the resulting summary statistics table is assigned to "qog_copy_selection_numeric_summaryNA" 
+qog_copy_selection_numeric_summaryNA<-summary_stats_na(qog_copy_selection_numeric)
+```
+
+Now, let's view `qog_copy_selection_numeric_summaryNA` in the data viewer and confirm the existence of the "missing_values" column:
+
+```{r}
+#| eval: false
+# views "qog_copy_selection_numeric_summaryNA" in data viewer
+View(qog_copy_selection_numeric_summaryNA)
+```
+
+```{r}
+#| echo: false
+qog_copy_selection_numeric_summaryNA_nan<-
+  qog_copy_selection_numeric_summaryNA %>%
+  mutate(across(everything(), ~ replace_na(as.character(ifelse(is.nan(.x), "NaN", .x)), "NA")))
+
+reactable(qog_copy_selection_numeric_summaryNA_nan,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+### Frequency tables and cross-tabulations
+
+Frequency tables and cross-tabulations (often referred to as "crosstabs") are especially useful ways to quickly convey the basic structure and relevant patterns in qualitative data. A frequency table shows how often each value of a single variable occurs, while a crosstab is essentially a bivariate frequency table that shows how often different combinations of two different variables appear in a given dataset.
+
+We can quickly create a frequency table using the `count()` function in *dplyr*. Below, we use `count()` to create a table that displays the number of observations associated with each value of the "region" variable:
+
+```{r}
+# creates frequency table for the region variable
+qog_copy_selection %>% 
+  count(region)
+```
+
+Now, let's say that we'd like to add a column to this table, based on the information about the number of observations associated with each regional category, that displays the percentage associated with each regional category (as a share of the overall dataset). We can do so by using `mutate()` to define a "percent" column; we'll add the resulting frequency table to a new object named `region_frequency`:
+
+```{r}
+# adds percentage column and assigns modified frequency
+# table to new object called "region_frequency"
+region_frequency<-qog_copy_selection %>% 
+                    count(region) %>% 
+                      mutate(percent=n/sum(n)*100)
+```
+
+Let's view `region_frequency` in the data viewer:
+
+```{r}
+#| eval: false
+# Views "region_frequency" in data viewer
+View(region_frequency)
+```
+
+```{r}
+#| echo: false
+region_frequency_NA<-
+  region_frequency %>%
+  mutate(across(everything(), ~ replace_na(as.character(ifelse(is.nan(.x), "NaN", .x)), "NA")))
+
+reactable(region_frequency,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+We can create crosstabs by passing two variable names to `count()`. The following creates a "long" crosstab of region and democracy status (the dichotomous "bmr_dem" variable), in which the combinations of variables are displayed as separate rows:
+
+```{r}
+# creates long crosstab of region and democracy status (bmr_dem)
+# variables from "qog_copy_selection" data frame
+qog_copy_selection %>% 
+  count(region, bmr_dem)
+```
+
+If, instead, we want a "wide" crosstab in which the combinations are displayed across columns, we can pass the "long" crosstab we just created to the `pivot_wider()` function introduced in the previous session:
+
+```{r}
+# creates wide crosstab of region and democracy status (bmr_dem)
+# variables from "qog_copy_selection" data frame
+qog_copy_selection %>% 
+  count(region, bmr_dem) %>% 
+  pivot_wider(names_from=bmr_dem,
+              values_from=n,
+              values_fill=0)
+```
+
+We might further refine the appearance of this crosstab by adding rows and columns containing information on the total number of observations associated with each value of the two variables, as well as modifying the column names so that they are more intuitive and descriptive. We can do the former using the `adorn_totals()` function from the *janitor* package, while we can modify the column names using the familiar `rename()` function. We'll assign the result to a new object named `region_demo_crosstab`:
+
+```{r}
+# creates wide cross-tab of region and democracy status, with
+# row and column totals and modified column names and assigns the 
+# result to "region_demo_crosstab"
+region_demo_crosstab<-
+  qog_copy_selection %>% 
+  count(region, bmr_dem) %>% 
+  pivot_wider(names_from=bmr_dem,
+              values_from=n,
+              values_fill=0) %>% 
+  adorn_totals(where=c("row", "col")) %>% 
+  rename(Region=region,
+         Democracy = `1`,
+         `Non-Democracy` = `0`,
+         Missing = `NA`)
+  
+```
+
+You may have noticed the backticks in some of the arguments to the `rename()` function, which may be confusing at a first glance. In general, such notation is *not* required to specify arguments within the `rename()` function (note, for example, the absence of such notation when we rename "region" to "Region"), but such backticks are required when referencing non-syntactic (i.e. invalid) variable names. Numeric column names, as well as "NA" and column names with symbols such as a hyphen, are considered non-syntactic, which is why the "1", "0", "NA", and "Non-Democracy" are enclosed by backticks. If non-syntactic variable names were not flagged with backticks, R would not know what exactly you were referring to. For example, if we wrote `Democracy=1`, R would read that as "rename the value 1 to 'Democracy'" which makes no sense; writing `` Democracy=`1` ``, ensures that R correctly interprets it as "rename the variable named 1 to 'Democracy'", which is what we want.
+
+Let's go ahead and view `region_demo_crosstab` in the data viewer:
+
+```{r}
+#| eval: false
+# views "region_demo_crosstab" in crosstab
+View(region_demo_crosstab)
+```
+
+```{r}
+#| echo: false
+reactable(region_demo_crosstab,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+If we wanted to create wide crosstab in which the regions are arrayed across columns (rather than rows), we can modify the argument to `pivot_wider()`; we'll assign the crosstab structured in this way to a new object named `demo_region_crosstab`:
+
+```{r}
+# creates wide cross-tab of democracy status and region (with regional # categories spread across columns), with row and column totals and modified column names and assigns the result to "demo_region_crosstab"
+demo_region_crosstab<-
+  qog_copy_selection %>% 
+    count(bmr_dem, region) %>% 
+    pivot_wider(names_from=region,
+                values_from=n,
+                values_fill=0) %>% 
+    adorn_totals(where=c("row", "col")) %>% 
+    rename(Democracy=bmr_dem)
+```
+
+```{r}
+#| eval: false
+# views "demo_region_crosstab" in Viewer
+View(demo_region_crosstab)
+```
+
+```{r}
+#| echo: false
+reactable(demo_region_crosstab,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+Another handy function for making frequency tables and crosstabs is the `tabyl()` function from the *janitor* package. If we want to make a frequency table, we can pass a data frame and variable of interest to `tabyl()` as arguments. For example, the following makes a frequency table for the "region" variable:
+
+```{r}
+# makes frequency table of region variable using tabyl()
+tabyl(qog_copy_selection, region)
+```
+
+Note that the frequency table generated by `tabyl()` automatically includes a column that includes the percentage of observations associated with each category.
+
+To create a wide crosstab using `tabyl()`, we can supply the names of the relevant data frame, followed by the names of the variables of interest, as arguments to the function:
+
+```{r}
+# makes crosstab of region and democracy status using tabyl(); adds 
+# row and column totals using "adorn_totals" function
+tabyl(qog_copy_selection, region, bmr_dem) %>% 
+  adorn_totals(where=c("row", "col"))
+```
+
+Within `tabyl()` the first variable argument specifies the variable that will form the crosstab's rows, while the second specifies the variable that will form its columns; so, if we wanted to create a crosstab in which the regions are spread across columns (as in `demo_region_crosstab`, we could simply reverse the order of "region" and "bmr_dem" in the code above.
+
+### Group-level Summary Statistics
+
+In many cases, it is useful to generate summary statistics for subgroups in a dataset, in addition to summary statistics for the dataset as a whole (which we discussed above). One way to generate group-level summary statistics is to use the `describeBy()` function (from the *psych* package), where the first argument is the data frame we would like to generate group-level summary statistics for, and the second argument is the name of the column that contains the relevant groups for which we want disaggregated summary statistics. Below, we use `describeBy()` to generate summary statistics for each of the different regional categories that comprise the "region" variable (referenced using dollar sign notation) within `qog_copy_selection`. The output of the `describeBy()` function is a list in which the various elements are summary statistics tables for each group; we'll assign this output list to a new object named `summary_stats_by_region`:
+
+```{r}
+#| warning: false
+# Creates summary statistics for each regional grouping, 
+# and puts results in list object named "summary_stats_by_region"
+summary_stats_by_region<-describeBy(qog_copy_selection, qog_copy_selection$region)
+
+```
+
+You may notice that the function throws a warning (along the lines of "no missing arguments..."), which is driven by the fact that for some groups, there is no valid data for certain variables, which makes it impossible to compute the desired statistic. In this case, this warning can be safely ignored.
+
+The `summary_stats_by_region` list object contains summary statistics for each regional grouping, which we can access by name using double bracket notation. For example, the following extracts the summary statistics table for the Pacific region observations:
+
+```{r}
+#| eval: false
+# Accessing continent-level summary statistics for 
+# The Pacific from the "summary_stats_by_region" list
+summary_stats_by_region[["Pacific"]]
+```
+
+```{r}
+#| echo: false
+head(summary_stats_by_region[["Pacific"]])
+```
+
+Recall that we can extract an element from a list and assign it to a separate object. For example, the following extracts the summary statistics for observations from Western Europe and North America ("WesternEuropeNorthAmerica") and assigns it to a new object named `we_na_summary`; after creating that object, we'll view the corresponding summary statistics table in the data viewer.
+
+```{r}
+# Extracts group level summary statistics table for "WesternEuropeNorthAmerica" from "summary_stats_by_region" list and assigns it to a new object named "we_na_summary"
+we_na_summary<-summary_stats_by_region[["WesternEuropeNorthAmerica"]]
+```
+
+```{r}
+#| eval: false
+# views "we_na_summary" in data viewer
+View(we_na_summary)
+```
+
+```{r}
+#| echo: false
+we_na_NA<-
+  we_na_summary %>%
+  mutate(across(everything(), ~ replace_na(as.character(ifelse(is.nan(.x), "NaN", .x)), "NA")))
+
+reactable(we_na_NA,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+In addition to calculating separate summary statistics for different subgroups in a dataset, it could also be useful calculate summary statistics at different levels of aggregation. For example, the `qog_copy_selection` data frame is a country-level dataset (i.e. each row in the dataset represents a country), and the summary statistics we calculated above were calculated using countries as the unit of analysis. However, if we are interested in analyzing phenomena at the regional level, we can calculated summary statistics for selected variables using regions as the unit of analysis. To do this, we can use the handy `group_by()` and `summarise()` functions of *dplyr*. The `group_by()` function specifies a grouping variable that defines the unit of analysis, while `summarise()` defines the relevant summary statistics to compute for each group.
+
+For example, the following code generates a table presenting the mean, standard deviation, and number of observations for the "wdi_trade" and "wdi_fdiin" variables, aggregated by region. The resulting table is assigned to an object named `trade_fdi_by_region`:
+
+```{r}
+# Generate a table that displays summary statistics for "wdi_trade" # and "wdi_fdiin" at the regional level and assign to object named # "trade_fdi_by_region"
+trade_fdi_by_region<-
+  qog_copy_selection %>% 
+  group_by(region) %>% 
+  summarise(meanTrade=mean(wdi_trade, na.rm=TRUE),
+            sdTrade=sd(wdi_trade, na.rm=TRUE),
+            meanFDI=mean(wdi_fdiin, na.rm=TRUE), 
+            sdFDI=sd(wdi_fdiin, na.rm=TRUE),
+            n=n())
+```
+
+Let's go ahead and view `trade_fdi_by_region` in the data viewer:
+
+```{r}
+#| eval: false
+# views "trade_fdi_by_region" in data viewer
+View(trade_fdi_by_region)
+```
+
+```{r}
+#| echo: false
+reactable(trade_fdi_by_region,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
+As we can see, `trade_fdi_by_region` summarizes variation in trade and foreign direct investment (FDI) across world regions. Each row now corresponds to a region, and the columns display the regional mean and standard deviation of the "wdi_trade" and "wdi_fdiin" variables, along with the number of countries ("n") within that region.
+
+It's worth noting that we can explicitly control the number of decimal places to which values in a data frame are rounded by embedding the functions that define the summary statistics within the `round()` function. For example, the following code modifies `trade_fdi_by_region` by rounding the values in the output table to two digits:
+
+```{r}
+# round to two decimal places
+trade_fdi_by_region<-qog_copy_selection %>% 
+  group_by(region) %>% 
+  summarise(meanTrade=round(mean(wdi_trade, na.rm=TRUE), 2),
+            sdTrade=round(sd(wdi_trade, na.rm=TRUE), 2),
+            meanFDI=round(mean(wdi_fdiin, na.rm=TRUE), 2), 
+            sdFDI=round(sd(wdi_fdiin, na.rm=TRUE), 2),
+            n=n())
+
+```
+
+Let's view the modified version of `trade_fdi_by_region`:
+
+```{r}
+#| eval: false
+# views "trade_fdi_by_region" in data viewer
+View(trade_fdi_by_region)
+```
+
+```{r}
+#| echo: false
+reactable(trade_fdi_by_region,
+          searchable=FALSE,
+          filterable=FALSE,
+          bordered=TRUE,
+          striped=TRUE)
+```
+
 ## Exploratory Visualization
 
-## Linear Regression 
+In this section, we'll discuss how to use *ggplot2* to visualize our data. *ggplot2* is the *tidyverse*'s visualization package, and is rooted in a framework known as the "grammar of graphics" (the "gg" in *ggplot2* stands for "grammar of graphics").
+
+The central idea behind the grammar of graphics is to create plots by systematically layering different visualization elements on top of each other. The foundational layer is always the data used to create the plot. In relation to this foundational data layer, we define a visualization's aesthetic mappings (often referred to as "aes"), which specifies how to connect the underlying data to the visual properties of the visualization (such as the x and y axes, position, color, size, and shape). In other words, aesthetic mappings tell *ggplot2* how to represent the underlying data visually.
+
+Next, on top of the data layer, we add *geometries* (or "geoms") which determine the visual symbols used to represent the data, such as points, lines, or bars. Other layers, such as *themes*, can further refine the plot, by specifying aspects of its appearance not directly tied to the data (like background color, text size, or font) but which affect readability and style.
+
+The syntax of *ggplot2* flows from the logic of layering that is at the heart of the grammar of graphics: each component of a plot (i.e. data, aesthetics, geometries, and so on) is added to the plot by chaining together relevant functions with a "+" symbol. Complex visualizations are thereby constructed piece by piece, one layer at a time.
+
+*ggplot2* is a remarkable package, and builds on R's longstanding strengths as a data visualization platform. Though it's possible to make beautiful and sophisticated publication-quality visualizations using *ggplot2*, our focus here will be on getting acquainted with the basic syntax of the package, and making some quick exploratory visualizations based on data from the `qog_copy_selection` dataset. In this regard, this section follows naturally from the previous section's discussion of descriptive and summary statistics, since the creation of quick visualizations is another important tool of exploratory data analysis.
+
+### Bar Charts
+
+We'll start our exploration of *ggplot2*, and get a sense of how the grammar of graphics works in practice, by making some simple bar charts that display the "wdi_trade" data from `qog_copy_selection`. A bar chart with all of the country observations in the dataset would be too crowded and cluttered, so we'll focus on plotting the observations from South Asia. Our first step will be to extract South Asian observations with non-"NA" values for "wdi_trade":
+
+```{r}
+# filters South Asia observations and drops countries with "na" values for "wdi_trade"
+qog_south_asia<-qog_copy_selection %>% 
+                  filter(region=="SouthAsia") %>% 
+                  drop_na(wdi_trade)
+```
+
+Now that we have the data object with the data we want to plot, let's go ahead and create our bar chart that compares trade openness ("wdi_trade") across countries in South Asia, and assign the plot to a new object named `trade_southasia`:
+
+```{r}
+# Creates a bar chart of the "wdi_trade" variable (central government expenditure as a share of GDP) 
+# for the South Asia observations and assigns the plot to an object named "trade_southasia"
+trade_southasia<-
+  ggplot(data=qog_south_asia)+
+  geom_col(aes(x=cname, y=wdi_trade))+
+  labs(
+    title="Trade as a Percentage of GDP in South Asia\n(2017-2020)",
+    caption = "Source: Quality of Government Institute", 
+    x="Country", 
+    y="Trade as a Percentage of GDP")+
+  theme(plot.title=element_text(hjust=0.5),
+        axis.text.x = element_text(angle = 90))
+```
+
+Let's print `trade_southasia` and see what the plot looks like:
+
+```{r}
+# prints "trade_southasia"
+trade_southasia
+```
+
+Let's unpack the code we used to create `trade_southasia`:
+
+-   The expression `ggplot(qog_south_asia)` specifies that we want to initialize *ggplot2*, and establishes `qog_south_asia` as the data object that contains the data we want to plot. In other words, in terms of the grammar of graphics, it sets `qog_south_asia` as the plot's foundational data layer.
+
+-   `geom_col()` is a geometry function, which we use use because we want to represent the underlying data with data with a bar/column chart. Within `geom_col()`, we specify the x and y axes of the plot within `aes()`, the function used to set the aesthetic mappings that describe how variables in the data are translated into visual properties of the chosen geom.
+
+-   Within the `labs()` function, we set labels for the x and y axes. We also indicate our desired title and caption.
+
+-   We can use the `theme()` function to control aspects of the plot's appearance that are not directly related to the data itself. Here, our arguments within `theme()` specify the need for a center-justified position for the plot title, and an orientation for the x-axis labels.
+
+This is a nice start, but it may look a slightly cleaner if we arrayed the chart in ascending order with respect to the "wdi_trade" variable. We can rearrange the visual representation of the data in this way by by using the `reorder()` function within our aesthetic mapping to specify that we want observations on the x-axis to be arrayed in ascending order with respect to "wdi_trade". Below, we create a bar chart with the "wdi_trade" values arrayed in ascending order and assign the modified plot to a new object named `trade_southasia_ascending`:
+
+```{r}
+# Creates a bar chart of the "wdi_trade" variable
+# for the South Asia observations; countries are on the 
+# x axis and arrayed in ascending order with respect to the 
+# trade variable, which is on the y-axis; assigns the plot to an 
+# object named "trade_southasia_ascending"
+trade_southasia_ascending<-
+  ggplot(qog_south_asia)+
+  geom_col(aes(x=reorder(cname, wdi_trade), y=wdi_trade))+
+  labs(
+    title="Trade as a Percentage of GDP in South Asia\n(2017-2020)",
+    caption = "Source: Quality of Government Institute", 
+    x="Country", 
+    y="Trade as a Percentage of GDP")+
+  theme(plot.title=element_text(hjust=0.5),
+        axis.text.x = element_text(angle = 90))
+```
+
+Let's print `trade_southasia_ascending` and confirm that the data is now plotted in ascending order:
+
+```{r}
+# prints "trade_southasia_ascending"
+trade_southasia_ascending
+```
+
+If, instead, we want to array the data in descending order, we can simply add a minus sign in front of "wdi_trade". Below, we create a bar chart in which the countries are arrayed in descending order with respect to "wdi_trade", and assign the result to a new object named `trade_southasia_descending`:
+
+```{r}
+# Creates a bar chart of the "wdi_trade" variable 
+# for the South Asia observations; countries are on the x axis and arrayed in descending order with respect to the 
+# trade variable, which is on the y-axis; assigns the plot to an object named "trade_southasia_descending"
+trade_southasia_descending<-
+  ggplot(qog_south_asia)+
+  geom_col(aes(x=reorder(cname, -wdi_trade), y=wdi_trade))+
+  labs(
+    title="Trade as a Percentage of GDP in South Asia\n(2017-2020)",
+    caption = "Source: Quality of Government Institute", 
+    x="Country", 
+    y="Trade as a Percentage of GDP")+
+  theme(plot.title=element_text(hjust=0.5),
+        axis.text.x = element_text(angle = 90))
+```
+
+Let's now print `trade_southasia_descending` and confirm that the data is now in descending order:
+
+```{r}
+# prints "trade_southasia_descending"
+trade_southasia_descending
+```
+
+We can also flip a bar chart on its axis to create a "sideways" bar chart by using the`coord_flip()` function. The code below takes the `trade_southasia_ascending` we created above, inverts the axes using `coord_flip()`, and assigns the result to a new object named, `wdi_trade_inverted`:
+
+```{r}
+# creates inverted bar chart of "wdi_trade" for South Asian Countries
+# and assigns to "wdi_trade_inverted"
+wdi_trade_inverted<-trade_southasia_ascending+
+                      coord_flip()
+```
+
+Let's now print `wdi_trade_inverted` and view the reoriented bar chart:
+
+```{r}
+# prints "wdi_trade_inverted"
+wdi_trade_inverted
+```
+
+When we use `coord_flip()` in *ggplot2* it flips the axes (i.e. the x-axis becomes the y-axis and vice versa). As a result, the (now) x-axis labels in `wdi_trade_inverted` are difficult to read, and need to be adjusted. We can do so by modifying the "axis.text.x" argument within the `theme()` function:
+
+```{r}
+# fixes x axis labels
+wdi_trade_inverted<-wdi_trade_inverted+
+                      theme(axis.text.x=element_text(angle=0))
+```
+
+Let's see what the plot looks like now:
+
+```{r}
+# prints updated "wdi_trade_inverted"
+wdi_trade_inverted
+```
+
+### Scatterplots
+
+Now, let's see how we can use similar principles and syntax to build scatterplots using *ggplot2*.
+
+Below, we create a scatterplot of the `wdi_taxrev` and `wdi_trade` variables; we put the former on the x-axis and the latter variable on the y-axis. Instead of using `geom_col()` to create a bar chart, we use `geom_point()`; the remaining elements are similar to the bar charts we created above. We'll assign the scatterplot to a new object named `tax_trade_scatter`:
+
+```{r}
+# Creates scatterplot with "wdi_taxrev" variable on x-axis and "wdi_trade" 
+# variable on y-axis and assigns to object named "tax_trade_scatter"
+tax_trade_scatter<-
+  ggplot(qog_copy_selection)+
+    geom_point(aes(x=wdi_taxrev, y=wdi_trade))+
+    labs(title="Relationship Between Trade and Tax Revenue as % of GDP\n(2017-2021)",
+       x="Tax Revenue as a % of GDP", 
+       y="Trade as a % of GDP",
+       caption = "Source: Quality of Government Institute")+
+    theme(plot.title=element_text(size=11, hjust=0.5),
+        axis.title.x=element_text(size=10),
+        axis.title.y=element_text(size=10))
+```
+
+Let's print `tax_trade_scatter` and see what the plot looks like:
+
+```{r}
+# prints "tax_trade_scatter"
+tax_trade_scatter
+```
+
+Sometimes, we may wish to distinguish between different groups in a scatterplot. One way to do that is to assign different colors to different groups of interest. For example, if we wanted to distinguish continents in the scatterplot, we could specify `color=region` in the aesthetic mapping. The code below does so, and assigns the result to a new object named `tax_trade_scatter_color`:
+
+```{r}
+# uses color to distinguish between observations from different regions in the scatterplot 
+tax_trade_scatter_color<-
+  ggplot(qog_copy_selection)+
+  geom_point(aes(x=wdi_taxrev, y=wdi_trade, color=region))+
+  labs(title="Relationship Between Trade and Tax Revenue as % of GDP\n(2017-2021)",
+       x="Tax Revenue as a % of GDP", 
+       y="Trade as a % of GDP",
+       caption = "Source: Quality of Government Institute")+
+  theme(plot.title=element_text(size=11, hjust=0.5),
+        axis.title.x=element_text(size=10),
+        axis.title.y=element_text(size=10))
+```
+
+Let's print `tax_trade_scatter_color`, and confirm that observations from different regions have been assigned different colors:
+
+```{r}
+# prints "tax_trade_scatter_color"
+tax_trade_scatter_color
+```
+
+An alternative way of parsing categories is to use facets, which create separate visualizations for each of the different categories in a dataset. Below, for example, we use facets to create separate scatterplots for each region; we take the `tax_revenue_scatter` plot that we created above, and then call the `facet_wrap()` function to facet by region, and distribute the resulting plots across two different rows:
+
+```{r}
+# uses facets to make panel of different scatter plot ofs "wdi_trade" and "wdi_taxrev" 
+# for each region
+tax_trade_scatter_facets<-
+ tax_trade_scatter+
+  facet_wrap(~region, nrow=2)
+```
+
+Let's print the newly created scatter plot, faceted by region:
+
+```{r}
+# prints "tax_trade_scatter_facets"
+tax_trade_scatter_facets
+```
+
+Finally, it's important to note that it's possible to layer different geometries over each other. For example, the code below layers a line of best fit (using the `geom_smooth()` function) over the scatterplot of "wdi_taxrev" and "wdi_trade", and assigns the resulting plot to a new object named `tax_trade_scatter_line`:
+
+```{r}
+# layers line of best fit over scatterplot; wdi_trade on y axis axis 
+# and wdi_taxrev on x axis; assigns new plot to object named 
+# "tax_trade_scatter_line"
+tax_trade_scatter_line<-
+  ggplot(data=qog_copy_selection)+
+  geom_point(aes(x=wdi_taxrev, y=wdi_trade))+
+  geom_smooth(aes(x=wdi_taxrev, y=wdi_trade), method="lm")+
+  labs(title="Relationship Between Trade and Tax Revenue as % of GDP\n(2017-2021)",
+       x="Tax Revenue as a % of GDP", 
+       y="Trade as a % of GDP",
+       caption = "Source: Quality of Government Institute")+
+  theme(plot.title=element_text(size=11, hjust=0.5),
+        axis.title.x=element_text(size=10),
+        axis.title.y=element_text(size=10))
+```
+
+Let's print `tax_trade_scatter_line` and confirm that the scatterplot now has a line of best fit superimposed on the data:
+
+```{r}
+# prints "tax_trade_scatter_line"
+tax_trade_scatter_line
+```
+
+Note that the `geom_smooth()` function that we used to create the line of best fit automatically draws 95% confidence intervals around the line; this default behavior can be modified using the "se" and "level" arguments within `geom_smooth()` (for more information, see the function's documentation).
+
+In some cases, we may want to different overlay geometries on a single plot, but those geometries may be based on different datasets (unlike the `tax_trade_scatter_line` plot, in which both geometries are drawn from a single underlying dataset). The syntax of *ggplot2* can accommodate this in fairly straightforward fashion. For example, suppose we want to draw a horizontal line on `trade_southasia_descending` to indicate the average value of trade as a percentage of GDP for the countries in the `qog_south_asia` dataset; this will allow the viewer to easily tell whether a given country's trade share of GDP is above or below the average value for all the countries in the dataset.
+
+To add this horizontal dashed line, we'll first create a separate data frame that contains the average value for "wdi_trade" within `qog_south_asia` and assign it to a new object named `south_asia_trade_average`:
+
+```{r}
+# creates new single-row data frame with mean value of "wdi_trade"
+# variable from "south_asia_trade_average" data frame, and sets the
+# name of the column containing this value to "meanSA_trade"
+south_asia_trade_average<-
+  as.data.frame(mean(qog_south_asia$wdi_trade)) %>% 
+    rename(meanSA_trade=`mean(qog_south_asia$wdi_trade)`)
+```
+
+We'll print `south_asia_trade_average` to confirm it looks as expected:
+
+```{r}
+# prints "south_asia_trade_average"
+south_asia_trade_average
+```
+
+Now, let's create our plot, in which a horizontal line based on the information in `south_asia_trade_average` is overlaid on `trade_southasia_descending` :
+
+```{r}
+# makes bar chart of "wdi_trade" variable from "qog_south_asia" data
+# frame arrayed in descending order, along with a dark red horizontal 
+# line indicating the average "wdi_trade" value in the dataset, taken 
+# from "south_asia_trade_average" 
+ggplot(data=qog_south_asia)+
+  geom_col(aes(x=reorder(cname, -wdi_trade), y=wdi_trade))+
+  geom_hline(data=south_asia_trade_average,
+             aes(yintercept=meanSA_trade),
+             linetype="dashed",
+             color="darkred")+
+labs(title="Trade as a Percentage of GDP in South Asia\n(2017-2020)",
+     caption = "Source: Quality of Government Institute", 
+     x="Country", 
+    y="Trade as a Percentage of GDP")+
+theme(plot.title=element_text(hjust=0.5),
+      axis.text.x = element_text(angle = 90))
+```
+
+The key point to note is that `data=qog_south_asia` is set in `ggplot()`, and the `geom_col()` function therefore knows to draw the columns with respect to this dataset. However, we want to create the line geometry in `geom_hline()` using the `south_asia_trade_average` data frame, so we explicitly specify this within that function. If we did not do this, `geom_hline()` would assume that the relevant reference data is `qog_south_asia`. The final result is a plot with different geometries that are created using different reference datasets.
+
+As we have already mentioned, our discussion of *ggplot2* here scratches the surface of its capabilities. However, you will be able to build on this introduction to the grammar of graphics and corresponding *ggplot2* functions and syntax to make more complex exploratory and publication-quality plots that are relevant to your own work.
+
+## Basic Statistics and Linear Regression
+
+In this section, we'll review some functions that can implement some basic data analysis tasks, with a focus on linear regression (given its importance in empirical social science). Our focus is not on the methodologies themselves, or deeper questions about drawing inferences from data and the appropriateness of various models in different contexts. Our goal is simply to provide you with a tour of how to implement some standard statistical procedures in R; if you continue to use R, you will quickly come to appreciate the enormous resources if offers for statistical work. Indeed, it is in this domain that R really shines. As with the section on data visualization, our goal here is to provide a brief introduction that provides a starting point for your own exploration.
+
+### Correlations
+
+Before turning to regression analysis, it can be useful to compute simple bivariate correlations between variables of interest. In the section on visualization, we created a scatterplot showing the relationship between the "wdi_trade" and "wdi_taxrev" variables from `qog_copy_selection`; now, let's quantify this relationship by computing the correlation coefficient between these variables. We can do so by passing the variables to the `cor.test()` function; we'll then assign the output a new object named `tax_trade_cc:`
+
+```{r}
+# computes correlation coefficient between "wdi_taxrev" and "wdi_trade" variables and assigns 
+# the result to a new object named "trade_cgexp_cc"
+tax_trade_cc<-cor.test(qog_copy_selection$wdi_trade, qog_copy_selection$wdi_taxrev)
+
+```
+
+Let's print `tax_trade_cc` to see what this output looks like:
+
+```{r}
+# prints results of "tax_trade_cc"
+tax_trade_cc
+```
+
+This provides us with the relevant information that we need, but it could be helpful if the output was formatted in a more streamlined fashion. To generate a "cleaner" output, we can pass `tax_trade_cc` as an argument to the *broom* package's `tidy()` function; we'll assign this output to a new object named `tax_trade_clean_corr` and then print it to the console:
+
+```{r}
+# assigns well-formatted model output to "trade_cgexp_cc_clean"
+tax_trade_clean_corr<-broom::tidy(tax_trade_cc)
+
+# prints contents of "tax_trade_clean_corr"
+tax_trade_clean_corr
+```
+
+If we want to quickly inspect the correlations between several variables in a dataset, we can use the the `cor()` function to generate a correlation matrix. To illustrate the use of this function, we'll generate a correlation matrix that concisely displays the correlations between all of the continuous variables in `qog_copy_selection_numeric`. First we'll generate a new dataset that contains only the continuous variables of interest, by dropping the dichotomous variables from `qog_copy_selection_numeric` using the `select()` function; we'll assign this dataset to an object named `qog_copy_selection_numeric_continuous`:
+
+```{r}
+# removes dummy variables from "qog_copy_selection_numeric" 
+# before making correlation matrix
+qog_copy_selection_numeric_continuous<-
+  qog_copy_selection_numeric %>% 
+    dplyr::select(-c(atop_ally, bmr_dem, gol_est))
+```
+
+Now, we'll pass `qog_copy_selection_numeric_continuous` to the `cor()` function to generate our correlation and matrix, rounding to two digits.
+
+```{r}
+# creates correlation matrix for observations in 
+# "qog_copy_selection_numeric_continuous" and assigns result 
+# to object named "qog_copy_selection_numeric_cor_matrix"
+qog_copy_selection_numeric_cor_matrix<-round(cor(qog_copy_selection_numeric_continuous, use="complete.obs"), 2)
+
+```
+
+When we print the correlation matrix, it looks something like this:
+
+```{r}
+# prints "qog_copy_selection_numeric_cor_matrix"
+qog_copy_selection_numeric_cor_matrix
+```
+
+We can also view the correlation matrix in the data viewer:
+
+```{r}
+#| eval: false
+View(qog_copy_selection_numeric_cor_matrix)
+```
+
+```{r}
+#| echo: false
+reactable(
+  qog_copy_selection_numeric_cor_matrix,
+  bordered = TRUE,
+  striped = TRUE,
+  columns = list(
+    .rownames = colDef(
+      sticky = "left",
+      width = 150,
+      style = list(backgroundColor = "#f7f7f7", borderRight = "1px solid #eee")
+    )
+  )
+)
+
+```
+
+### Bivariate and Multiple Regression
+
+We can run a linear regression model in R using the `lm()` function, where the first argument is an expression that takes the form `dependent_variable~independent_variable`, and the second argument specifies the underlying dataset that contains the relevant variables. In cases where there is more than one independent variable (i.e. in a multiple regression context), the various independent variables can be separated with a "+" sign (i.e. `dependent_variable~independent_variable1 + independent_variable2 + independent_variable3~`). Below, we demonstrate how to implement a bivariate regression, by regressing "wdi_trade" on "wdi_taxrev" (using the data from `qog_copy_selection`). We assign the regression output to a new object named `regression1:`
+
+```{r}
+# implements bivariate regression with "wdi_trade" as DV and "wdi_taxrev" as IV; 
+# regresion output assigned to "regression1" object
+regression1<-lm(wdi_trade~wdi_taxrev, data=qog_copy_selection)
+```
+
+Now that we've run the regression, and assigned its corresponding output to the `regression1` object, we can print the output (which contains the relevant regression coefficients and standard errors) by passing `regression1` to the `summary()` function:
+
+```{r}
+# prints output of "regresion1"
+summary(regression1)
+```
+
+Now, we'll add some additional independent variables using a "+" sign, and assign the output to `regression2`:
+
+```{r}
+# Implements multiple regression with "wdi_trade" as DV, 
+# and assigns output to object named "regression2"
+regression2<-lm(wdi_trade~+wdi_taxrev+wdi_area+wdi_expmil+bmr_dem+top_top1_income_share+undp_hdi, data=qog_copy_selection)
+
+```
+
+As before, we can pass the regression output object as an argument to the `summary()` function to print the regression results:
+
+```{r}
+# prints regression2 output
+summary(regression2)
+```
+
+Sometimes, it is desirable or necessary to transform variables before they are included in a regression model. Of course, one could add the transformed variable to the dataset using `mutate()`, and then add it to the regression model, but it's also possible to make simple variable transformations "on the fly". For instance, instead of adding "wdi_area", let's say we want to add the natural logarithm of "wdi_area" to the model; we can do so by simply adding `log(wdi_area)` to the model, as below (we'll assign the resulting output to `regression2`, and thereby override the previously created object):
+
+```{r}
+# Implements multiple regression with "wdi_trade" as DV, 
+# and assigns output to object named "regression2"
+regression2<-lm(wdi_trade~wdi_taxrev+log(wdi_area)+wdi_expmil+bmr_dem+top_top1_income_share+undp_hdi, data=qog_copy_selection)
+
+# prints updated output
+regression2
+```
+
+Note that we can also use the *broom* package's `tidy()` function to organize and view the regression output:
+
+```{r}
+# prints regression output using "tidy" function
+broom::tidy(regression2)
+```
+
+Later, we'll learn how to assemble regression results into publication-quality regression tables.
+
+### Categorical Variables in Regression Models
+
+If we want to add categorical variables to a regression model, we can directly include variables that are of the class "character" without running into any issues. Under the hood, R will convert those character variables into dichotomous variables, and calculate the regression coefficients and standard errors accordingly. To see this, let's try adding the "region" variable to `regression2 above.` First, we'll confirm that the "region" variable is of the character class:
+
+```{r}
+# confirms that "region" is of class character
+class(qog_copy_selection$region)
+```
+
+```{r}
+# adds "region" categorical variable (of class "character") in 
+# regression model and assigns it to a new object named "regression3"
+regression3<-lm(wdi_trade~+wdi_taxrev+log(wdi_area)+wdi_expmil+bmr_dem+top_top1_income_share+undp_hdi+region, data=qog_copy_selection)
+
+```
+
+Let's now print the `regression3` output:
+
+```{r}
+# prints contents of "regression3" object
+summary(regression3)
+```
+
+Note that "Caribbean" is the excluded category that serves as the reference with against which the effects of the other regional categories are interpreted. If we are okay with accepting the default excluded category (which is always the first category by alphabetical order, hence "Caribbean" as the excluded category in this case) running the regression with a character variable is perfectly fine and provides valid results.
+
+However, if we want to change the reference category, we'll have to either use a factor variable or create and include dummy variables in our regression. In R, a factor is a data type that's specifically designed for categorical variables; factors consider each separate category within a categorical variable as a distinct "level", which allows them to be treated as dummy variables in regression models. Indeed, when we include a categorical variable of the "character" class, R converts that variable into a factor under the hood before including it in the regression, with the "levels" being treated as dummy variables, and the excluded level being the category that is first in alphabetical order. If we want to change the excluded level, we have to get under the hood and "relevel" the factor, so that the desired excluded category is first in the factor order.
+
+To see how this works, let's say that we want to make "LatinAmerica" the reference variable. First, we'll first change the region variable from a "character" variable to a "factor" variable:
+
+```{r}
+# Set "region" variable as factor
+qog_copy_selection$region<-as.factor(qog_copy_selection$region)
+```
+
+Before proceeding, well confirm that the conversion has successfully taken place:
+
+```{r}
+# confirm conversion
+class(qog_copy_selection$region)
+```
+
+Now, we'll check the levels of the "region" factor variable using the `levels()` function:
+
+```{r}
+# check levels of "region" factor variable
+levels(qog_copy_selection$region)
+```
+
+Note that by default, the levels are arrayed in alphabetical order. Let's relevel the region variable, and set "LatinAmerica" as the excluded/reference category using the `relevel()` function:
+
+```{r}
+# Relevels "region" factor variable to set "LatinAmerica" as reference category
+qog_copy_selection$region<-relevel(qog_copy_selection$region, ref="LatinAmerica")
+```
+
+Let's confirm that the releveling has successfully taken place:
+
+```{r}
+# check levels of "region" factor variable
+levels(qog_copy_selection$region)
+```
+
+Note that "LatinAmerica" is now the first category, which means that it will be used as the reference/excluded category in a regression. Let's confirm this by running a regression with the "region" factor variable and assigning the output to a new object named `regression4:`
+
+```{r}
+# runs regression with releveled factor variable with "LatinAmerica" as # reference and assigns output to "regression4"
+regression4<-lm(wdi_trade~+wdi_taxrev+log(wdi_area)+wdi_expmil+bmr_dem+top_top1_income_share+undp_hdi+region, data=qog_copy_selection)
+
+```
+
+Let's print the regression output and confirm that "LatinAmerica" is the excluded regional category:
+
+```{r}
+# prints model output for "regression4"
+broom::tidy(regression4)
+```
+
+If we want full control over the excluded/reference category when including categorical variables, another option is to simply create dichotomous/dummy variables based on the categorical variable, and explicitly decide which dichotomous variable to exclude as the reference category. To make these dummy variables, we can (as we have learned), use the `dummy_cols()` function from the *fastDummies* package.
+
+To illustrate, let's make dummy variables based on the "region" variable:
+
+```{r}
+#| message: false
+# Use "region" field to make region dummy variables in "qog_copy_selection"
+qog_copy_selection<-qog_copy_selection %>% dummy_cols("region")
+```
+
+Now, we will generate another regression, assigned to the new object named `regression5`, that adds these dummy variables, while excluding "LatinAmerica" as the reference variable:
+
+```{r}
+# includes dummy variables in regression with "LatinAmerica" as the 
+# excluded category; model output assigned to object named 
+# "regression5"
+regression5<-lm(wdi_trade~wdi_taxrev+log(wdi_area)++wdi_expmil+bmr_dem+top_top1_income_share+undp_hdi+region_Caribbean+region_EastAsia+region_EasternEuropePostSoviet+region_NorthAfricaMiddleEast+region_Pacific+region_SouthAsia+region_SouthEastAsia+region_SubSaharanAfrica+region_WesternEuropeNorthAmerica, data=qog_copy_selection)
+
+```
+
+Let's print the results from `regression5`:
+
+```{r}
+# prints model output for "regression5"
+broom::tidy(regression5)
+```
+
+Note that the coefficients and standard errors are the same as the results in `regression5`; this is expected since both regressions ultimately use dummy variables with "LatinAmerica" as the excluded reference category (even though they set it as the reference category in different ways).
+
+### Interaction Terms in a Regression
+
+It is often useful to include interaction terms in our regression models. Interaction terms allow us to explore situations in which the effect of one independent variable depends on the value of another independent variable. In R, interaction terms can be defined with a "\*" between the two components of the interaction. When an interaction term is included in a regression model using the "\*" operator, there is no need to include the individual components of the interaction separately in the model, because R automatically includes the main effects by default.
+
+Let's explore a simple regression model with an interaction term between "wdi_taxrev" and "bmr_dem", which is a dichotomous variable that indicates whether a country is a democracy. The dependent variable remains "wdi_trade". Below, we'll run the model, and assign the output to an object named `taxrev_democracy_interaction`:
+
+```{r}
+# run regression with interaction term between "wdi_taxrev" and "bmr_dem"
+taxrev_democracy_interaction<-lm(wdi_trade~wdi_taxrev*bmr_dem, data=qog_copy_selection)
+```
+
+Let's now print the regression results:
+
+```{r}
+# prints regression results of "taxrev_democracy_interaction"
+summary(taxrev_democracy_interaction)
+```
+
+The interpretation of regression results in the context of an interaction term is of course tricky, since the coefficients on the individual variables that are part of the interaction term can no longer be interpreted in isolation. They can only be interpreted in conjunction with the other component of the interaction. Let's say, for example, that we're interested in the impact of democracy ("bmr_dem") on trade as a share of GDP ("wdi_trade"). Given the interaction term, we cannot simply infer that the trade share of GDP is 39.4 percentage points lower in democracies, on average, than non-democracies. The coefficient on "bmr_dem" tells us that the trade share of GDP is on average 39.4 points lower for democracies when "wdi_taxrev" equals 0. However, this information is of limited substantive value, since all governments collect at least some tax revenue. Conversely, the coefficient on "wdi_taxrev" tells us the impact of a unit change in "wdi_taxrev" on "wdi_trade" for non-democracies (where "bmr_dem" is 0) but not for democracies (where "bmr_dem" is 1).
+
+Instead of trying to interpret the impact of "wdi_taxrev" and "bmr_dem" on "wdi_trade" from just looking at the regression table, it would be more useful to get a sense of the substantive impact of each of these variables while accounting for the interaction term by assigning meaningful values to the moderating variable. In particular, we'll calculate predicted values that demonstrate the substantive impact of each of these variables in the context of the interaction, and also plot these predicted values to visualize the impact of the independent variables after accounting for the interactive effect.
+
+We'll begin by calculating the predicted values of "wdi_trade" for democracies and non-democracies, while holding "wdi_taxrev" at its mean. First, we'll calculate the mean value of "wdi_taxrev":
+
+```{r}
+# Finds mean value of "wdi_taxrev" variable and assigns to
+# object named "mean_taxrev" 
+mean_taxrev<-mean(qog_copy_selection$wdi_taxrev, na.rm=TRUE)
+```
+
+Now, we'll use the *ggeffects* package's `ggpredict()` function to calculate the predicted values of "wdi_trade" for different values of "bmr_dem" (i.e. for democracies and non-democracies) while holding "wdi_taxrev" at its mean:
+
+```{r}
+# Calculates predicted values of "wdi_trade" for different values of 
+# "bmr_dem", with "wdi_taxrev" held at mean
+predicted_values_democracy<-ggpredict(model=taxrev_democracy_interaction, term="bmr_dem", condition=c(wdi_taxrev=mean_taxrev))
+```
+
+In the code above, the first argument specifies the regression model for which we want to calculate predicted values; the second argument is the independent variable whose impact on the dependent variable we want to predict; and the third argument specifies the value at which the moderating variable should be held when calculating the predicted values. We assigned the predicted values output to a new object named `predicted_values_democracy`, which we'll now inspect:
+
+```{r}
+# Prints "predicted_values_democracy" table
+predicted_values_democracy
+```
+
+These predicted values are generated by taking the regression equation and coefficients from `taxrev_democracy_interaction`, and plugging in the mean value of "wdi_taxrev" when "bmr_dem" is set to 0 and when it is set to 1.
+
+We can plot these values, along with their 95% confidence intervals, using *ggplot2*. In order to more explicitly connect the arguments used to create the plot to the values in `predicted_values_democracy`, it is useful to print `predicted_values_democracy` as a data frame:
+
+```{r}
+# prints underlying structure of "predicted_values_democracy"
+print(as.data.frame(predicted_values_democracy))
+```
+
+Now, let's go ahead and make our plot, which we'll assign to a new object named `predicted_values_democracy_plotted`:
+
+```{r}
+# creates plot of "predicted_values_democracy"; shows predicted values
+# of "wdi_trade" for different values of democracy ("bmr_dem") when 
+# "wdi_taxrev" is held at mean
+predicted_values_democracy_plotted<-
+  ggplot(predicted_values_democracy)+
+  geom_point(aes(x=x, y=predicted))+
+  geom_errorbar(aes(x, ymin=conf.low, ymax=conf.high), width=0.05)+
+  scale_x_continuous(breaks=seq(0,1, by=1))+
+  labs(title="Predicted Effects of Democracy on Trade\n(with tax revenue as a share of GDP set to mean)",
+       y="Predicted Trade Share of GDP",
+       x="Democracy")
+```
+
+Let's print `predicted_values_democracy_plotted`:
+
+```{r}
+# prints "predicted_values_democracy_plotted"
+predicted_values_democracy_plotted
+```
+
+Now, let's calculate the predicted values of "wdi_trade" for different values of "wdi_taxrev" for both democratic and non-democratic countries, by using the same `ggpredict()` function. The first argument to the `ggpredict()` function is the same as before; the second argument, `terms=c("wdi_taxrev", "bmr_dem)`, indicates that we want to calculate predicted values across a range of tax revenues, for both democracies and non-democracies. We'll assign these predicted values to a new object named `predicted_values_taxrev`:
+
+```{r}
+# calculates predicted values for trade share of GDP for
+# both values of the democracy indicator (bmr_dem=0 and 1), 
+# across the observed range of "wdi_taxrev" and assigns the result
+# to "predicted_values_taxrev" object
+predicted_values_taxrev <- ggpredict(model=taxrev_democracy_interaction, terms = c("wdi_taxrev", "bmr_dem"))
+```
+
+When we print `predicted_values_taxrev` it looks something like this:
+
+```{r}
+# prints contents of "predicted_values_taxrev"
+predicted_values_taxrev
+```
+
+Before creating a plot, let's print `predicted_values_taxrev` as a data frame:
+
+```{r}
+# prints contents of "predicted_values_taxrev" as data frame
+as.data.frame(predicted_values_taxrev)
+```
+
+Now, let's go ahead and create a plot of these predicted values and assign the result to a new object named `predicted_values_taxrev_plotted`:
+
+```{r}
+# creates plot of "predicted_values_taxrev"; shows predicted values
+# of "wdi_trade" for both values of the democracy indicator across the 
+# observed range of "wdi_taxrev" and assigns the result to "predicted_values_taxrev_plotted"
+predicted_values_taxrev_plotted <-
+  ggplot(predicted_values_taxrev)+
+  geom_line(aes(x = x, y = predicted, color = group), linewidth = 1) +
+  geom_ribbon(aes(x=x, ymin = conf.low, ymax = conf.high, fill = group), alpha = 0.2, color = NA) +
+  labs(title = "Predicted Effect of Tax Revenue on Trade Share of GDP\nby Democracy Status",
+       x = "Tax Revenue (% of GDP)",
+       y = "Predicted Trade Share of GDP",
+      color = "Democracy",
+      fill = "Democracy")+
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+Note that since we are plotting a line, rather than single points, we use the `geom_ribbon()` geometry to show the confidence intervals. Let's see what the plot looks like:
+
+```{r}
+# prints "predicted_values_taxrev_plotted"
+predicted_values_taxrev_plotted
+```
+
+Let's refine this plot by modifying the labels and colors of the legend, and how they map onto the lines and confidence intervals. We'll start by creating vectors to store the desired colors and labels:
+
+```{r}
+# defines colors and labels
+pv_colors<-c("0" = "#1f77b4", "1" = "#d62728")
+pv_labels<-c("0" = "Non-democracy", "1" = "Democracy")
+```
+
+Now, we'll modify the plot using this styling. We'll take the existing `predicted_values_taxrev_plotted` plot, and add this styling to the legend and the line (via `scale_color_manual()` and confidence intervals (via `scale_fill_manual()`). We'll assign the modified plot to a new object named `predicted_values_taxrev_plotted_refined`:
+
+```{r}
+# refines appearance of "predicted_values_taxrev_plotted" by modifying # legend and colors
+predicted_values_taxrev_plotted_refined<-
+  predicted_values_taxrev_plotted+
+  scale_color_manual(values=pv_colors, labels=pv_labels, name="Regime Type")+
+  scale_fill_manual(values=pv_colors, labels=pv_labels, name="Regime Type" )
+```
+
+Lets print `predicted_values_taxrev_plotted_refined`:
+
+```{r}
+# prints "predicted_values_taxrev_plotted_refined"
+predicted_values_taxrev_plotted_refined
+```
+
+The plot suggests that democracies tend to trade more as tax revenue as a share of GDP increases, while tax revenue does not have much of an impact on trade for non-democracies; however, the confidence intervals look like they overlap substantially, suggesting that the difference between regime types is likely small and that the interaction effect is weak. In other words, there does not appear to be a strong and unique "democracy effect" in the relationship between tax revenue as a share of GDP and trade as a share of GDP.
+
+So far, we've tried to interpret our regression results in the presence of an interaction term by generating and plotting predicted values. The predicted values plots we created, in particular, show the expected outcomes for trade as a percentage of GDP for countries with different characteristics with respect to democracy and tax revenue. It is also useful to generate marginal effects plots; unlike a predicted values plot, which shows predicted values of the dependent variable on the y-axis, a marginal effects plot shows the partial derivative/slope of the independent variable of interest on the y-axis, and values of the moderating variable on the x-axis. This plot helps us visualize how a small change in the independent variable impacts the dependent variable for different values of the moderating variable, which allows us to get a sense of the strength of the interaction. That is, if the marginal effect changes meaningfully across values of the moderating variable, it suggests a powerful interaction effect; on the other hand, if the marginal effect does not meaningfully change across values of the moderating variable, it suggests a weak interaction effect.
+
+The confidence intervals displayed on a marginal effects plot are especially useful. When the confidence intervals overlap with zero, it suggests that the impact of the independent variable of interest on the dependent variable of interest for a given level of the moderating variable is weak. On the other hand, in regions for the moderating variable where the confidence intervals do NOT include zero, it suggests a statistically significant impact of X on Y. Importantly, the impact of an independent variable of interest on the dependent variable may be statistically significant for some levels of the moderating variable but not others, and a marginal effects plot is especially useful in quickly identifying these "zones of significance".
+
+There are many ways to create a marginal effects plot, but the *interplot* package allows us to quickly generate useful marginal effects plots using the `interplot()` function. Below, we demonstrate the use of this `interplot()` function by creating a marginal effects plot that shows the impact of democracy on trade as a share of GDP across different levels of the moderating variable, tax revenues as a share of GDP ("wdi_taxrev"). We'll assign this marginal effects plot to a new object named `marginal_effect_democracy_plot`:
+
+```{r}
+# Marginal effect of democracy (bmr_dem) on trade share of GDP across 
+# different levels of the moderating variable (tax revenue as a share
+# of GDP)
+marginal_effect_democracy_plot <- 
+  interplot(
+  m = taxrev_democracy_interaction, # model object
+  var1 = "bmr_dem",      # independent variable of interest
+  var2 = "wdi_taxrev") +    # moderator
+  labs(x = "Tax Revenue (% of GDP)",
+       y = "Marginal Effect of Democracy on Trade",
+       title = "Marginal Effect of Democracy on Trade Across Tax Revenue")+
+  theme_minimal()
+```
+
+Let's now print `marginal_effect_democracy_plot`:
+
+```{r}
+# prints "marginal_effect_democracy_plot"
+marginal_effect_democracy_plot
+```
+
+The plot allows us to visualize the impact of regime type on trade at different levels of tax revenue; it suggests that the marginal effect of democracy increases as tax revenue rises, but the confidence intervals include zero across most of the observed range of the moderating variable, indicating that this relationship is not statistically distinguishable from zero at conventional confidence levels.
+
+Now, let's visualize the marginal effect of tax revenue as a share of GDP on trade for different levels of democracy:
+
+```{r}
+interplot(
+  m = taxrev_democracy_interaction,
+  var1 = "wdi_taxrev",   # independent variable of interest
+  var2 = "bmr_dem") +       # moderator (0 = non-democracy, 1 = democracy)) +
+  labs(x = "Democracy (0 = Non-democracy, 1 = Democracy)",
+       y = "Marginal Effect of Tax Revenue on Trade",
+       title = "Marginal Effect of Tax Revenue on Trade by Regime Type") +
+  theme_minimal()
+```
+
+This plot suggests that "wdi_taxrev" exerts a positive and statistically significant impact on "wdi_trade" for democracies, but not for non-democracies. However, although the marginal effect for democracies is statistically distinguishable from zero, the interaction term in the regression model is not statistically significant at the 95% level, indicating that we cannot conclude that the effect of tax revenue on trade is significantly different between democracies and non-democracies (this is reflected in the plot by the overlap of the regime-specific confidence intervals). In other words, while tax revenue appears to matter for trade in democracies, we cannot be confident that this difference across regime types is not due to random chance.
+
+We've just gone through some techniques to interpret regression results that include an interaction between a continuous independent variable, and a dichotomous one. We can also use these techniques to make sense of regression results that include an interaction between two continuous independent variables. To illustrate, let's consider another regression model, this time with "wdi_taxrev" and "undp_hdi" (the human development index), and an interaction between these variables, as the independent variables, and "wdi_trade" as the dependent variable. We'll assign the regression results to an object named `taxrev_hdi_interaction`:
+
+```{r}
+# run regression with "wdi_trade" as DV, and interaction term between 
+# "wdi_taxrev" and "undp_hdi" (two continuous variables) as IVs
+taxrev_hdi_interaction<-lm(wdi_trade~wdi_taxrev*undp_hdi, data=qog_copy_selection)
+```
+
+Let's print the regression results:
+
+```{r}
+# prints regression results
+summary(taxrev_hdi_interaction)
+```
+
+We can see that the regression results show an interaction term that is not significant at conventional thresholds, but we can further unpack this with some predicted values and
 
 ## Exporting Analysis Objects
