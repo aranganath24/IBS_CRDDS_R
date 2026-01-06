@@ -229,6 +229,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#making-a-new-quarto-document" id="toc-making-a-new-quarto-document" class="nav-link" data-scroll-target="#making-a-new-quarto-document"><span class="header-section-number">7.1</span> Making a New Quarto Document</a></li>
   <li><a href="#writing-a-quarto-document" id="toc-writing-a-quarto-document" class="nav-link" data-scroll-target="#writing-a-quarto-document"><span class="header-section-number">7.2</span> Writing a Quarto Document</a></li>
   <li><a href="#rendering-a-quarto-document" id="toc-rendering-a-quarto-document" class="nav-link" data-scroll-target="#rendering-a-quarto-document"><span class="header-section-number">7.3</span> Rendering a Quarto Document</a></li>
+  <li><a href="#managing-file-paths-in-quarto" id="toc-managing-file-paths-in-quarto" class="nav-link" data-scroll-target="#managing-file-paths-in-quarto"><span class="header-section-number">7.4</span> Managing file paths in Quarto</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/aranganath24/IBS_CRDDS_R/blob/main/session5.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/aranganath24/IBS_CRDDS_R/edit/main/session5.qmd" class="toc-action"><i class="bi empty"></i>Edit this page</a></li><li><a href="https://github.com/aranganath24/IBS_CRDDS_R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -741,6 +742,57 @@ Figure&nbsp;7.12: Rendered html file in same directory as .qmd file
 </div>
 </div>
 </div>
+</section>
+<section id="managing-file-paths-in-quarto" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="managing-file-paths-in-quarto"><span class="header-section-number">7.4</span> Managing file paths in Quarto</h2>
+<p>R Projects and Quarto are two essential R tools that enable data management, sharing, and communication, both within the scholarly community and with the broader public. Though we’ve introduced these tools separately, it’s likely you’ll want to use them in conjunction (for instance, by placing your Quarto files and rendered documents within the <strong>reports-documents</strong> subdirectory of your R Project directory, as we did above).</p>
+<p>As we discussed above, the R Project environment is a self-contained directory, where file paths can be set relative to the project’s root directory (i.e.&nbsp;the highest-level directory within the R project, which contains the <strong>.RProj</strong> file). When working with Quarto, the program automatically sets the root directory for the code that’s executed within the document to the same location as the <strong>.qmd</strong> file. When Quarto files are in an R Project, the working directory set by the location of the Quarto file overrides the working directory set by the R Project. For example, if the .qmd file is in the <strong>documents-reports</strong> directory (as it is here), it will set that as its root directory; as a result, it would be impossible to access the data (in the <strong>raw_data</strong> folder) from the Quarto document using a file path that is set relative to the Project’s root directory.</p>
+<p>To make this more concrete, recall that earlier, we showed that we can read in our dataset with a relative path defined with respect to the project root (i.e.&nbsp;<code>read_csv("raw_data/qog_bas_cs_jan25.csv")</code> ). If we try to read in the data in the same way using a code chunk in our Quarto document, we’ll get an error, because Quarto sets the working directory to the directory of the “.qmd” file:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-28" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-28-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures2/pic28.png" class="img-fluid figure-img" width="1378">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-28-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.13: Cannot read in data with relative path
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In other words, the file path doesn’t work; the code chunk is looking for the data in the <strong>reports-documents</strong> directory, but it doesn’t exist there. As expected, attempts to render the document fail for the same reason; when the rendering process hits the code chunk that tries to read in the data, it fails, and the rendering process terminates.</p>
+<p>The easiest solution to this problem is to use the <code>here()</code> function from the <em>here</em> package, which automatically finds the root directory of the R Project you’re working in (remember that the root directory of your R project is the directory in which the <code>.Rproj</code> file is located) and builds paths from there. To see how it works, go ahead and install this package with the following:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"here"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Then, load the <em>here</em> package at the top of your Quarto document by passing it to the <code>library()</code> function:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Then, whenever you need to read in data from your <strong>raw_data</strong> directory into a <strong>.qmd</strong> file in another (i.e.&nbsp;<strong>report-documents</strong>) directory, simply use the <code>here()</code> function within that code chunk to set the working directory as the Project’s root directory. After setting the working directory as the root directory, go ahead and read in your data as you would in a script (i.e.&nbsp;using a path defined relative to the root directory), and it should successfully read in. In short, the <code>here()</code> function overrides the default behavior within Quarto documents to set the working directory as the directory with the <strong>.qmd</strong> file, and forces these documents to follow the default behavior of R Project files and use the root directory of the R Project as the working directory that can be used to define relative file paths. Let’s see how it works; we’ll read in the data using a file path relative to the root directory by first using the <code>here()</code> function to set the working directory as the Project’s root directory, then running the code with the relative file path. Now, when we run the code chunk, it works:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-plot-29" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plot-29-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="session5/pictures2/pic29.png" class="img-fluid figure-img" width="1512">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plot-29-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.14: Using the here() package in Quarto
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>At this point, the file will also successfully render.</p>
+<p>So, to summarize:</p>
+<ol type="1">
+<li><p>In an R Project, the working directory is automatically set to be the root of the R Project directory, and files can be read into the R environment in scripts that use file paths that are defined relative to the root directory</p></li>
+<li><p>However, when working in Quarto documents, Quarto defaults to setting the working directory as the directory in which the <strong>.qmd</strong> file exists, which overrides the behavior of an R Project (which defaults to setting the working directory as the Project’s root directory). As a result, while one could read in data from the <strong>raw_data</strong> folder into a script in the <strong>scripts</strong> folder using a relative path defined with respect to the Project’s root directory, it would not be possible to read in data from the <strong>raw_data</strong> folder into a Quarto document in the <strong>reports-documents</strong> using a relative path defined with respect to the Project’s root directory.</p></li>
+<li><p>In order to force Quarto to use the root directory of the R Project as the working directory, we can use the <code>here()</code> function. By using the <code>here()</code> function to set the working directory as the Project’s root directory (within a code block right before reading in data), we can read in the data using a file path that is defined with respect to the root of the R Project directory, rather one that is defined with respect to the directory in which the <strong>.qmd</strong> file is located.</p></li>
+</ol>
 
 
 </section>
